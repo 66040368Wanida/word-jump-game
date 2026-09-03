@@ -170,6 +170,11 @@
 </head>
 <body class="w-screen h-screen flex justify-center items-center relative overflow-hidden bg-gradient-to-b from-[#bae6fd] via-[#e0f2fe] to-[#ffe4e6]">
 
+  <!-- ปุ่มเปิด/ปิดเสียง BGM มุมขวาบน -->
+  <button id="btn-audio-toggle" onclick="toggleAudio()" class="fixed top-3 right-3 z-50 p-2.5 bg-white/90 border-2 border-pink-300 rounded-2xl shadow-md text-lg cursor-pointer active:scale-95 transition-all">
+    🔊
+  </button>
+
   <!-- แสงออร่าด้านหลัง -->
   <div class="absolute -top-24 -left-24 w-80 h-80 bg-pink-300/40 rounded-full blur-3xl pointer-events-none"></div>
   <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-sky-300/40 rounded-full blur-3xl pointer-events-none"></div>
@@ -380,6 +385,140 @@
   </div>
 
   <script>
+    // ================= SOUND & BGM SYNTHESIZER (WEB AUDIO API) =================
+    let audioCtx = null;
+    let isAudioMuted = false;
+    let bgmInterval = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAudio() {
+      initAudio();
+      isAudioMuted = !isAudioMuted;
+      document.getElementById('btn-audio-toggle').innerText = isAudioMuted ? '🔇' : '🔊';
+      if (isAudioMuted) {
+        stopBGM();
+      } else {
+        startBGM();
+      }
+    }
+
+    // เสียงกระโดดแบบสปริงน่ารัก (Spring Jump SFX)
+    function playJumpSound() {
+      if (isAudioMuted) return;
+      initAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(260, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.15);
+
+      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.15);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.15);
+    }
+
+    // เสียงตอบถูก (Sweet Success Chime)
+    function playCorrectSound() {
+      if (isAudioMuted) return;
+      initAudio();
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      notes.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+
+        const startTime = audioCtx.currentTime + idx * 0.08;
+        gain.gain.setValueAtTime(0.2, startTime);
+        gain.gain.linearRampToValueAtTime(0, startTime + 0.25);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + 0.25);
+      });
+    }
+
+    // เสียงตอบผิด (Soft Thud)
+    function playWrongSound() {
+      if (isAudioMuted) return;
+      initAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.25);
+
+      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.25);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.25);
+    }
+
+    // เสียงดนตรีบรรเลง Sweet Pop Chiptune BGM
+    const bgmNotes = [
+      261.63, 329.63, 392.00, 329.63, // C4, E4, G4, E4
+      293.66, 369.99, 440.00, 369.99, // D4, F#4, A4, F#4
+      329.63, 392.00, 493.88, 392.00, // E4, G4, B4, G4
+      349.23, 440.00, 523.25, 392.00  // F4, A4, C5, G4
+    ];
+    let bgmStep = 0;
+
+    function startBGM() {
+      if (bgmInterval || isAudioMuted) return;
+      initAudio();
+      bgmInterval = setInterval(() => {
+        if (isAudioMuted) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = bgmNotes[bgmStep % bgmNotes.length];
+
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.22);
+
+        bgmStep++;
+      }, 240);
+    }
+
+    function stopBGM() {
+      if (bgmInterval) {
+        clearInterval(bgmInterval);
+        bgmInterval = null;
+      }
+    }
+
+    // เปิดเพลงเมื่อเริ่มคลิกครั้งแรก (ตามนโยบาย Autoplay ของเบราว์เซอร์)
+    window.addEventListener('click', () => {
+      initAudio();
+      if (!isAudioMuted && !bgmInterval) startBGM();
+    }, { once: true });
+    window.addEventListener('touchstart', () => {
+      initAudio();
+      if (!isAudioMuted && !bgmInterval) startBGM();
+    }, { once: true });
+
     // --- 1. คลังข้อสอบ Word พื้นฐาน ---
     const WORD_QUIZ = [
       { q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องกดปุ่มใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"], c: 0 },
@@ -767,7 +906,6 @@
 
     const keys = { left: false, right: false };
     function setupControls() {
-      // คีย์บอร์ด
       window.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
@@ -778,7 +916,6 @@
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
       });
 
-      // ปุ่มสัมผัส
       const bLeft = document.getElementById('btnLeft');
       const bRight = document.getElementById('btnRight');
       const bJump = document.getElementById('btnJump');
@@ -795,7 +932,6 @@
       bJump.addEventListener('touchend', (e) => { e.preventDefault(); bJump.classList.remove('active'); }, { passive: false });
       bJump.addEventListener('touchcancel', () => { bJump.classList.remove('active'); });
 
-      // เมาส์คลิกบน PC
       bLeft.onmousedown = () => { keys.left = true; bLeft.classList.add('active'); };
       bLeft.onmouseup = () => { keys.left = false; bLeft.classList.remove('active'); };
       bRight.onmousedown = () => { keys.right = true; bRight.classList.add('active'); };
@@ -832,6 +968,7 @@
         currentEnergy--;
         document.getElementById('hud-energy').innerText = currentEnergy;
         addSparkles(player.x, player.y + 16);
+        playJumpSound();
         if (currentEnergy === 0) openQuizModal();
       }
     }
@@ -906,7 +1043,6 @@
 
       const offsetX = (cssWidth - WORLD_WIDTH) / 2;
 
-      // ดาวลอย
       stars.forEach(st => {
         const ry = (st.y - cameraY * 0.4) % cssHeight;
         const actualY = ry < 0 ? ry + cssHeight : ry;
@@ -917,12 +1053,10 @@
         ctx.fill();
       });
 
-      // เสากำแพงข้าง
       ctx.fillStyle = '#ffccd5';
       ctx.fillRect(offsetX + LEFT_WALL - 12, 0, 12, cssHeight);
       ctx.fillRect(offsetX + RIGHT_WALL, 0, 12, cssHeight);
 
-      // แท่นลอย
       platforms.forEach(p => {
         const floatY = Math.sin(animTicks + p.floatOffset) * 2;
         const ry = (p.y + floatY) - cameraY;
@@ -951,7 +1085,6 @@
         }
       });
 
-      // ละอองดาว
       for (let i = particles.length - 1; i >= 0; i--) {
         const pt = particles[i];
         pt.x += pt.vx;
@@ -969,14 +1102,12 @@
         ctx.globalAlpha = 1.0;
       }
 
-      // วาดเพื่อนๆ
       playersInRoom.forEach((p, id) => {
         if (id !== myPeerId) {
           drawLivingMonster(p.x + offsetX, p.y, p.color, `${p.name} (${p.height || 0}m)`, false, 1, 1, 0);
         }
       });
 
-      // วาดตัวเอง
       drawLivingMonster(player.x + offsetX, player.y, myColor, `${myPlayerName} (เรา)`, true, player.scaleX, player.scaleY, player.breathTick);
     }
 
@@ -1077,9 +1208,11 @@
         currentEnergy += 5;
         correctCount++;
         document.getElementById('hud-energy').innerText = currentEnergy;
+        playCorrectSound();
         alert("เก่งมาก! ตอบถูกต้อง 🎉 ได้รับ +5 Energy");
       } else {
         wrongCount++;
+        playWrongSound();
         alert("ยังไม่ถูกต้องนะ ลองตอบใหม่อีกทีจ้า 😊");
       }
       document.getElementById('quiz-modal').classList.add('hidden');
@@ -1088,6 +1221,7 @@
 
     function endGameMatch() {
       isGameOver = true;
+      stopBGM();
       document.getElementById('quiz-modal').classList.add('hidden');
       if (!isHost) {
         const board = document.getElementById('gameOverModal');
