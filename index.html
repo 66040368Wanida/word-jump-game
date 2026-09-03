@@ -14,7 +14,6 @@
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
-      touch-action: manipulation;
       margin: 0;
       padding: 0;
       font-family: 'Kanit', sans-serif;
@@ -26,6 +25,7 @@
       overflow: hidden;
       background: #bae6fd;
       color: #0f172a;
+      touch-action: none;
     }
     .game-font { font-family: 'Fredoka', 'Kanit', sans-serif; }
 
@@ -51,7 +51,7 @@
       box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.2);
     }
 
-    /* ปุ่มกดสไตล์นูนเด้ง Tactile */
+    /* ปุ่มกดเมนู */
     .btn-sweet-pink {
       background: linear-gradient(180deg, #ff758f 0%, #ff4d6d 100%);
       box-shadow: 0 6px 0 #c9184a, 0 10px 20px rgba(255, 77, 109, 0.35);
@@ -94,7 +94,63 @@
       font-weight: 800;
     }
 
-    /* แอนิเมชันลูกเล่นดิ้นได้ */
+    /* === ดีไซน์ปุ่มควบคุมบนมือถือใหม่สุดพรีเมียม (Cyber Candy Joypad) === */
+    .touch-dpad-container {
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 2.5px solid rgba(255, 255, 255, 0.9);
+      border-radius: 36px;
+      padding: 6px;
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.18);
+      display: flex;
+      gap: 10px;
+    }
+    .touch-btn-arrow {
+      width: 68px;
+      height: 68px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+      border: 2px solid #bae6fd;
+      color: #0284c7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 900;
+      box-shadow: 0 5px 0 #7dd3fc, 0 8px 16px rgba(2, 132, 199, 0.15);
+      transition: all 0.08s ease;
+      cursor: pointer;
+    }
+    .touch-btn-arrow.active, .touch-btn-arrow:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #7dd3fc, inset 0 2px 6px rgba(2, 132, 199, 0.2);
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .touch-btn-jump {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+      border: 4px solid #ffffff;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 0 #047857, 0 14px 28px rgba(16, 185, 129, 0.4);
+      transition: all 0.08s ease;
+      cursor: pointer;
+    }
+    .touch-btn-jump.active, .touch-btn-jump:active {
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #047857, 0 6px 14px rgba(16, 185, 129, 0.3);
+      background: #059669;
+    }
+
+    /* Animation effects */
     @keyframes jellyBounce {
       0%, 100% { transform: scale(1, 1); }
       30% { transform: scale(1.15, 0.85); }
@@ -108,270 +164,20 @@
       50% { transform: translateY(-8px) rotate(2deg); }
     }
     .float-anim { animation: softFloat 3s ease-in-out infinite; }
-
-    @keyframes pulseGlow {
-      0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 117, 143, 0.4)); }
-      50% { filter: drop-shadow(0 0 22px rgba(255, 77, 109, 0.8)); }
-    }
-    .pulse-glow { animation: pulseGlow 2s infinite; }
-
-    /* ===== Responsive game controls ===== */
-    .mobile-controls {
-      display: block;
-      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-    }
-
-    .mobile-control-dock {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(120px, 0.95fr);
-      align-items: stretch;
-      gap: 0.7rem;
-      padding: 0.55rem;
-      border: 2px solid rgba(255,255,255,.82);
-      border-radius: 26px;
-      background: rgba(255,255,255,.58);
-      backdrop-filter: blur(18px) saturate(1.25);
-      -webkit-backdrop-filter: blur(18px) saturate(1.25);
-      box-shadow: 0 12px 30px rgba(15,23,42,.16), inset 0 1px 0 rgba(255,255,255,.9);
-    }
-
-    .control-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.55rem;
-    }
-
-    .game-control {
-      -webkit-tap-highlight-color: transparent;
-      touch-action: none;
-      user-select: none;
-      -webkit-user-select: none;
-      position: relative;
-      min-height: 68px;
-      border-radius: 21px;
-      border: 2px solid rgba(255,255,255,.92);
-      font-family: 'Kanit', sans-serif;
-      font-weight: 900;
-      cursor: pointer;
-      transition: transform .1s ease, filter .1s ease, box-shadow .1s ease;
-      overflow: hidden;
-    }
-
-    .game-control::before {
-      content: "";
-      position: absolute;
-      inset: 2px 2px 52% 2px;
-      border-radius: 18px 18px 12px 12px;
-      background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0));
-      pointer-events: none;
-    }
-
-    .game-control:active,
-    .game-control.pressed {
-      transform: translateY(3px) scale(.97);
-      filter: brightness(.98);
-    }
-
-    .move-control {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: .35rem;
-      flex-direction: column;
-      color: #e11d48;
-      background: linear-gradient(180deg, #fff 0%, #fff1f4 100%);
-      border-color: #fbcfe8;
-      box-shadow: 0 5px 0 #f9a8d4, 0 9px 18px rgba(244,114,182,.20);
-    }
-
-    .move-control:active,
-    .move-control.pressed {
-      box-shadow: 0 2px 0 #f9a8d4, 0 5px 12px rgba(244,114,182,.15);
-    }
-
-    .control-icon {
-      font-family: Arial, sans-serif;
-      font-size: 2rem;
-      line-height: .8;
-      font-weight: 900;
-      position: relative;
-      z-index: 1;
-    }
-
-    .control-label {
-      font-size: .68rem;
-      line-height: 1;
-      letter-spacing: .08em;
-      opacity: .78;
-      position: relative;
-      z-index: 1;
-    }
-
-    .jump-control {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 0;
-      color: white;
-      background: linear-gradient(180deg, #6ee7b7 0%, #10b981 55%, #059669 100%);
-      border-color: rgba(255,255,255,.9);
-      box-shadow: 0 6px 0 #047857, 0 12px 24px rgba(16,185,129,.30);
-    }
-
-    .jump-control:active,
-    .jump-control.pressed {
-      box-shadow: 0 2px 0 #047857, 0 6px 14px rgba(16,185,129,.22);
-    }
-
-    .jump-icon {
-      font-family: Arial, sans-serif;
-      font-size: 2rem;
-      line-height: .72;
-      font-weight: 900;
-      text-shadow: 0 2px 0 rgba(4,120,87,.28);
-      position: relative;
-      z-index: 1;
-    }
-
-    .jump-text {
-      font-size: 1rem;
-      line-height: 1.05;
-      letter-spacing: .03em;
-      position: relative;
-      z-index: 1;
-    }
-
-    .jump-sub {
-      font-family: 'Fredoka', sans-serif;
-      font-size: .53rem;
-      letter-spacing: .18em;
-      opacity: .82;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* จอมือถือแนวตั้ง */
-    @media (max-width: 640px) {
-      #game-wrapper {
-        width: 100vw;
-        height: 100dvh;
-        max-width: none;
-        max-height: none;
-      }
-
-      #gameCanvas {
-        min-width: 100%;
-        min-height: 100%;
-      }
-
-      .mobile-control-dock {
-        max-width: 520px;
-        grid-template-columns: minmax(0, 1.15fr) minmax(116px, .85fr);
-      }
-
-      .game-control {
-        min-height: 64px;
-      }
-
-      .control-icon,
-      .jump-icon {
-        font-size: 1.85rem;
-      }
-
-      .jump-text {
-        font-size: .95rem;
-      }
-    }
-
-    /* โทรศัพท์จอแคบมาก */
-    @media (max-width: 380px) {
-      .mobile-controls {
-        padding-left: .15rem;
-        padding-right: .15rem;
-      }
-
-      .mobile-control-dock {
-        gap: .45rem;
-        padding: .4rem;
-        border-radius: 22px;
-      }
-
-      .control-group {
-        gap: .4rem;
-      }
-
-      .game-control {
-        min-height: 58px;
-        border-radius: 18px;
-      }
-
-      .control-icon,
-      .jump-icon {
-        font-size: 1.55rem;
-      }
-
-      .control-label {
-        font-size: .58rem;
-      }
-
-      .jump-text {
-        font-size: .82rem;
-      }
-
-      .jump-sub {
-        font-size: .45rem;
-      }
-    }
-
-    /* มือถือแนวนอน: ลดพื้นที่ปุ่มให้ไม่บังเกม */
-    @media (orientation: landscape) and (max-height: 520px) {
-      .mobile-control-dock {
-        max-width: 430px;
-        padding: .35rem;
-      }
-
-      .game-control {
-        min-height: 50px;
-        border-radius: 17px;
-      }
-
-      .control-icon,
-      .jump-icon {
-        font-size: 1.35rem;
-      }
-
-      .control-label,
-      .jump-sub {
-        display: none;
-      }
-
-      .jump-text {
-        font-size: .82rem;
-      }
-    }
-
-    /* Desktop: ยังรองรับคีย์บอร์ด แต่ซ่อนปุ่มสัมผัสเพื่อไม่บังพื้นที่ */
-    @media (min-width: 768px) and (pointer: fine) {
-      .mobile-controls {
-        opacity: .88;
-      }
-    }
-
   </style>
 </head>
 <body class="w-screen h-screen flex justify-center items-center relative overflow-hidden bg-gradient-to-b from-[#bae6fd] via-[#e0f2fe] to-[#ffe4e6]">
 
-  <!-- แสงออร่าฟุ้งด้านหลัง -->
+  <!-- Ambient Glow -->
   <div class="absolute -top-24 -left-24 w-80 h-80 bg-pink-300/40 rounded-full blur-3xl pointer-events-none"></div>
   <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-sky-300/40 rounded-full blur-3xl pointer-events-none"></div>
 
-  <!-- 1. เมนูหลักเลือกบทบาท (Home Menu) -->
+  <!-- 1. หน้าจอหลักเลือกบทบาท (Home Menu) -->
   <div id="view-mode" class="bento-card p-8 w-full max-w-sm text-center z-50 m-4">
-    <div class="inline-block p-4 bg-gradient-to-tr from-pink-400 to-rose-300 rounded-3xl mb-3 shadow-lg shadow-pink-400/30 text-4xl float-anim border-3 border-white">
+    <div class="inline-block p-4 bg-gradient-to-tr from-pink-400 to-rose-300 rounded-3xl mb-3 shadow-lg shadow-pink-400/30 text-4xl float-anim border-4 border-white">
       🧁✨
     </div>
-    <h1 class="game-font text-3xl font-black text-rose-600 mb-1 pulse-glow">WORD JUMP!</h1>
+    <h1 class="game-font text-3xl font-black text-rose-600 mb-1">WORD JUMP!</h1>
     <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">Sweet Cyber Playground</p>
 
     <div class="space-y-3">
@@ -506,12 +312,12 @@
   </div>
 
   <!-- 6. หน้าจอเล่นเกมสำหรับผู้เรียน (Game View) -->
-  <div id="game-wrapper" class="hidden relative w-full h-full max-w-[1200px] max-h-[900px] overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border-4 border-white shadow-2xl bg-[#bae6fd]">
+  <div id="game-wrapper" class="hidden relative w-full h-full max-w-[1200px] max-h-[950px] overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border-4 border-white shadow-2xl bg-[#bae6fd]">
     <canvas id="gameCanvas" class="w-full h-full block"></canvas>
 
     <!-- แถบด้านบน: HUD สถานะ -->
     <div class="absolute top-3 left-3 right-3 flex justify-between items-center pointer-events-none z-20">
-      <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto">
         <div class="stat-badge text-xs sm:text-sm">🏠 <span id="hud-room-pin" class="text-rose-500 font-black">WORD1</span></div>
         <div class="stat-badge text-xs sm:text-sm text-rose-500">⏱️ <span id="hud-timer" class="font-mono font-black">03:00</span></div>
         <div class="stat-badge text-xs sm:text-sm text-amber-500">⚡ <span id="hud-energy" class="font-black">5</span></div>
@@ -522,33 +328,33 @@
       </div>
     </div>
 
-    <!-- ปุ่มตอบคำถามกลางจอ มีแอนิเมชันเด้งดึ๋ง -->
-    <button onclick="openQuizModal()" class="btn-sweet-pink !w-auto !py-3 !px-6 rounded-2xl absolute bottom-24 right-4 z-20 font-black text-xs sm:text-sm shadow-xl jelly-anim flex items-center gap-2 pointer-events-auto">
-      <span class="text-base">⚡</span> เติมพลังกระโดด!
+    <!-- ปุ่มตอบคำถามเติมพลัง (ลอยเหนือแผงควบคุม) -->
+    <button onclick="openQuizModal()" class="btn-sweet-pink !w-auto !py-2.5 !px-5 rounded-2xl absolute bottom-32 right-4 z-20 font-black text-xs sm:text-sm shadow-xl jelly-anim flex items-center gap-1.5 pointer-events-auto">
+      <span class="text-base">⚡</span> เติมพลัง!
     </button>
 
-    <!-- แผงควบคุมสัมผัสมือถือ: Responsive + Glassmorphism -->
-    <div class="mobile-controls absolute bottom-3 sm:bottom-5 left-0 right-0 z-20 pointer-events-none px-3 sm:px-6 pb-[env(safe-area-inset-bottom)]">
-      <div class="mobile-control-dock pointer-events-auto mx-auto w-full max-w-[560px]">
-        <div class="control-group">
-          <button id="btnLeft" class="game-control move-control" aria-label="เดินซ้าย">
-            <span class="control-icon">←</span>
-            <span class="control-label">ซ้าย</span>
-          </button>
-          <button id="btnRight" class="game-control move-control" aria-label="เดินขวา">
-            <span class="control-icon">→</span>
-            <span class="control-label">ขวา</span>
-          </button>
+    <!-- แผงปุ่มสัมผัสบนมือถือดีไซน์ใหม่ 2026 Joypad -->
+    <div class="absolute bottom-5 left-4 right-4 max-w-[650px] mx-auto flex justify-between items-center z-30 pointer-events-none" style="padding-bottom: env(safe-area-inset-bottom, 8px);">
+      <!-- Joypad เดินซ้าย-ขวา -->
+      <div class="touch-dpad-container pointer-events-auto">
+        <div id="btnLeft" class="touch-btn-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
         </div>
-        <button id="btnJump" class="game-control jump-control" aria-label="กระโดด">
-          <span class="jump-icon">↟</span>
-          <span class="jump-text">กระโดด</span>
-          <span class="jump-sub">JUMP</span>
-        </button>
+        <div id="btnRight" class="touch-btn-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </div>
+      </div>
+
+      <!-- ปุ่มกระโดดสไตล์แคปซูลใหญ่ สัมผัสนุ่มนวล -->
+      <div class="pointer-events-auto">
+        <div id="btnJump" class="touch-btn-jump">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-current mb-0.5" viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+          <span class="text-[10px] font-black tracking-wider uppercase leading-none">JUMP</span>
+        </div>
       </div>
     </div>
 
-    <!-- ป๊อปอัปข้อสอบ Word ง่ายๆ น่ารัก -->
+    <!-- ป๊อปอัปข้อสอบ Word -->
     <div id="quiz-modal" class="hidden absolute inset-0 bg-slate-900/45 backdrop-blur-sm flex items-center justify-center z-40 p-4">
       <div class="bento-card max-w-sm w-full p-6 text-slate-800">
         <div class="flex justify-between items-center mb-2">
@@ -572,7 +378,7 @@
   </div>
 
   <script>
-    // --- 1. คลังข้อสอบ Word ระดับง่ายมาก (พื้นฐาน เหมาะกับทุกคน) ---
+    // --- 1. คลังข้อสอบ Word พื้นฐาน ---
     const WORD_QUIZ = [
       { q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องกดปุ่มใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"], c: 0 },
       { q: "ต้องการ 'วาง' (Paste) ข้อความที่คัดลอกไว้ กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + S", "Ctrl + C"], c: 1 },
@@ -593,7 +399,7 @@
       { q: "การจัดข้อความให้อยู่ 'กึ่งกลางหน้ากระดาษ' ใช้ปุ่มใด?", a: ["Ctrl + E (Center)", "Ctrl + L", "Ctrl + R", "Ctrl + J"], c: 0 },
       { q: "โปรแกรม Microsoft Word เหมาะสำหรับงานประเภทใดมากที่สุด?", a: ["พิมพ์งานเอกสาร / รายงาน", "ตัดต่อวิดีโอ", "แต่งรูปถ่าย", "เขียนโปรแกรม"], c: 0 },
       { q: "ไอคอนสัญลักษณ์ 'แผ่นดิสก์' สีฟ้าในโปรแกรม Word ใช้ทำอะไร?", a: ["บันทึกข้อมูล (Save)", "ปิดโปรแกรม", "เปิดไฟล์ใหม่", "พิมพ์งาน"], c: 0 },
-      { q: "ถ้าต้องการซูมเข้า-ออก หน้ากระดาษ ให้ดูที่มุมใดของจอ?", a: ["มุมล่างขวา (มีแถบเปอร์เซ็นต์ + -)", "มุมบนซ้าย", "กลางหน้าจอ", "มุมบนขวา"], c: 0 }
+      { q: "ถ้าต้องการซูมเข้า-ออก หน้ากระดาษ ให้ดูที่มุมใดของจอ?", a: ["มุมล่างขวา (แถบเปอร์เซ็นต์ + -)", "มุมบนซ้าย", "กลางหน้าจอ", "มุมบนขวา"], c: 0 }
     ];
 
     const CHARACTER_COLORS = ['#ff758f', '#38bdf8', '#34d399', '#fbbf24', '#a855f7', '#fb923c', '#ec4899', '#06b6d4'];
@@ -889,7 +695,7 @@
       link.click();
     }
 
-    // --- 4. ฟิสิกส์เกม & แอนิเมชันดิ้นได้ (Living Characters & Platforms) ---
+    // --- 4. ฟิสิกส์เกม & การวาดกราฟิก ---
     const WORLD_WIDTH = 1000;
     const LEFT_WALL = 45;
     const RIGHT_WALL = WORLD_WIDTH - 45;
@@ -904,7 +710,6 @@
     let animTicks = 0;
     const particles = [];
 
-    // ประกายดาวลอยในท้องฟ้า
     const stars = Array.from({ length: 30 }, () => ({
       x: Math.random() * WORLD_WIDTH,
       y: Math.random() * 2000 - 1000,
@@ -935,9 +740,9 @@
       cssWidth = canvas.parentElement.clientWidth;
       cssHeight = canvas.parentElement.clientHeight;
       dpr = window.devicePixelRatio || 1;
-      canvas.width = Math.max(1, Math.floor(cssWidth * dpr));
-      canvas.height = Math.max(1, Math.floor(cssHeight * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      canvas.width = cssWidth * dpr;
+      canvas.height = cssHeight * dpr;
+      ctx.scale(dpr, dpr);
     }
 
     function initGameEngine() {
@@ -960,6 +765,7 @@
 
     const keys = { left: false, right: false };
     function setupControls() {
+      // คีย์บอร์ดคอมพิวเตอร์
       window.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
         if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
@@ -970,58 +776,30 @@
         if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
       });
 
+      // ปุ่มสัมผัสมือถือ รองรับ Multi-Touch พร้อมเอฟเฟกต์กด Active
       const bLeft = document.getElementById('btnLeft');
       const bRight = document.getElementById('btnRight');
       const bJump = document.getElementById('btnJump');
 
-      // Pointer Events รองรับมือถือ / แท็บเล็ต / เมาส์ / ปากกาในชุดเดียว
-      const bindMoveButton = (button, direction) => {
-        const press = (e) => {
-          e.preventDefault();
-          button.classList.add('pressed');
-          if (button.setPointerCapture) {
-            try { button.setPointerCapture(e.pointerId); } catch (_) {}
-          }
-          keys[direction] = true;
-        };
+      bLeft.addEventListener('touchstart', (e) => { e.preventDefault(); keys.left = true; bLeft.classList.add('active'); }, { passive: false });
+      bLeft.addEventListener('touchend', (e) => { e.preventDefault(); keys.left = false; bLeft.classList.remove('active'); }, { passive: false });
+      bLeft.addEventListener('touchcancel', (e) => { keys.left = false; bLeft.classList.remove('active'); });
 
-        const release = (e) => {
-          if (e) e.preventDefault();
-          button.classList.remove('pressed');
-          keys[direction] = false;
-          if (e && button.releasePointerCapture) {
-            try { button.releasePointerCapture(e.pointerId); } catch (_) {}
-          }
-        };
+      bRight.addEventListener('touchstart', (e) => { e.preventDefault(); keys.right = true; bRight.classList.add('active'); }, { passive: false });
+      bRight.addEventListener('touchend', (e) => { e.preventDefault(); keys.right = false; bRight.classList.remove('active'); }, { passive: false });
+      bRight.addEventListener('touchcancel', (e) => { keys.right = false; bRight.classList.remove('active'); });
 
-        button.addEventListener('pointerdown', press, { passive: false });
-        button.addEventListener('pointerup', release, { passive: false });
-        button.addEventListener('pointercancel', release, { passive: false });
-        button.addEventListener('pointerleave', (e) => {
-          if (e.pointerType === 'mouse') release(e);
-        }, { passive: false });
-      };
+      bJump.addEventListener('touchstart', (e) => { e.preventDefault(); doJump(); bJump.classList.add('active'); }, { passive: false });
+      bJump.addEventListener('touchend', (e) => { e.preventDefault(); bJump.classList.remove('active'); }, { passive: false });
+      bJump.addEventListener('touchcancel', (e) => { bJump.classList.remove('active'); });
 
-      bindMoveButton(bLeft, 'left');
-      bindMoveButton(bRight, 'right');
-
-      const jumpPress = (e) => {
-        e.preventDefault();
-        bJump.classList.add('pressed');
-        doJump();
-        if (bJump.setPointerCapture) {
-          try { bJump.setPointerCapture(e.pointerId); } catch (_) {}
-        }
-      };
-
-      const jumpRelease = (e) => {
-        if (e) e.preventDefault();
-        bJump.classList.remove('pressed');
-      };
-
-      bJump.addEventListener('pointerdown', jumpPress, { passive: false });
-      bJump.addEventListener('pointerup', jumpRelease, { passive: false });
-      bJump.addEventListener('pointercancel', jumpRelease, { passive: false });
+      // เมาส์คลิกสำหรับคอมพิวเตอร์
+      bLeft.onmousedown = () => { keys.left = true; bLeft.classList.add('active'); };
+      bLeft.onmouseup = () => { keys.left = false; bLeft.classList.remove('active'); };
+      bRight.onmousedown = () => { keys.right = true; bRight.classList.add('active'); };
+      bRight.onmouseup = () => { keys.right = false; bRight.classList.remove('active'); };
+      bJump.onmousedown = () => { doJump(); bJump.classList.add('active'); };
+      bJump.onmouseup = () => bJump.classList.remove('active');
     }
 
     function addSparkles(x, y) {
@@ -1069,7 +847,6 @@
         player.x += player.vx;
         player.y += player.vy;
 
-        // คืนรูปทรง Squash & Stretch สไตล์เยลลี่
         player.scaleX += (1 - player.scaleX) * 0.16;
         player.scaleY += (1 - player.scaleY) * 0.16;
 
@@ -1107,262 +884,4 @@
           player.grounded = true;
         }
 
-        const currentM = Math.max(0, Math.floor((530 - player.y) / 10));
-        currentHeightMeters = currentM;
-        document.getElementById('hud-height').innerText = `${currentHeightMeters}`;
-
-        const desiredCamY = player.y - cssHeight * 0.60;
-        cameraY += (desiredCamY - cameraY) * 0.16;
-
-        buildWorldPlatformsUpTo(cameraY);
-      }
-
-      renderScene();
-      requestAnimationFrame(gameLoop);
-    }
-
-    function renderScene() {
-      // 1. ท้องฟ้าสีฟ้าพาสเทล
-      ctx.fillStyle = '#bae6fd';
-      ctx.fillRect(0, 0, cssWidth, cssHeight);
-
-      const offsetX = (cssWidth - WORLD_WIDTH) / 2;
-
-      // 2. ดาววิบวับระยิบระยับในฉากหลัง
-      stars.forEach(st => {
-        const ry = (st.y - cameraY * 0.4) % cssHeight;
-        const actualY = ry < 0 ? ry + cssHeight : ry;
-        const starAlpha = 0.4 + Math.sin(animTicks + st.x) * 0.3;
-        ctx.fillStyle = `rgba(255, 255, 255, ${starAlpha})`;
-        ctx.beginPath();
-        ctx.arc(st.x + offsetX, actualY, st.size, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      // 3. เสากำแพงด้านข้างสีชมพูพาสเทล
-      ctx.fillStyle = '#ffccd5';
-      ctx.fillRect(offsetX + LEFT_WALL - 12, 0, 12, cssHeight);
-      ctx.fillRect(offsetX + RIGHT_WALL, 0, 12, cssHeight);
-
-      // 4. วาดแท่นลอยขนมหวาน (มีอนิเมชันลอยดึ๋งเบาๆ)
-      platforms.forEach(p => {
-        // แอนิเมชันลอยขยับเบาๆ
-        const floatY = Math.sin(animTicks + p.floatOffset) * 2;
-        const ry = (p.y + floatY) - cameraY;
-        if (ry < -60 || ry > cssHeight + 60) return;
-
-        const renderX = p.x + offsetX;
-
-        // ฐานแท่นสีขาว
-        ctx.fillStyle = '#ffffff';
-        ctx.strokeStyle = '#ff758f';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.roundRect(renderX, ry, p.w, p.h, 12);
-        ctx.fill();
-        ctx.stroke();
-
-        // แถบหน้าครีมมิ้นต์ด้านบน
-        ctx.fillStyle = '#34d399';
-        ctx.beginPath();
-        ctx.roundRect(renderX, ry, p.w, 7, [12, 12, 0, 0]);
-        ctx.fill();
-
-        // ป้ายระดับเมตร
-        const mLevel = Math.max(0, Math.floor((530 - p.y) / 10));
-        if (mLevel > 0 && mLevel % 10 === 0) {
-          ctx.font = 'bold 11px Kanit';
-          ctx.fillStyle = '#e01e37';
-          ctx.fillText(`🚩 ${mLevel}m`, renderX + p.w - 38, ry - 6);
-        }
-      });
-
-      // 5. วาดอนุภาคประกายดาวเวลาโดด
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const pt = particles[i];
-        pt.x += pt.vx;
-        pt.y += pt.vy;
-        pt.alpha -= 0.03;
-        if (pt.alpha <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-        ctx.fillStyle = pt.color;
-        ctx.globalAlpha = pt.alpha;
-        ctx.beginPath();
-        ctx.arc(pt.x + offsetX, pt.y - cameraY, pt.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-      }
-
-      // 6. วาดเพื่อนๆ ทุกคนในห้อง
-      playersInRoom.forEach((p, id) => {
-        if (id !== myPeerId) {
-          drawLivingMonster(p.x + offsetX, p.y, p.color, `${p.name} (${p.height || 0}m)`, false, 1, 1, 0);
-        }
-      });
-
-      // 7. วาดตัวเราเองแบบดิ้นได้
-      drawLivingMonster(player.x + offsetX, player.y, myColor, `${myPlayerName} (เรา)`, true, player.scaleX, player.scaleY, player.breathTick);
-    }
-
-    // ตัวการ์ตูนมีชีวิต หายใจกระเพื่อม กระพริบตา ดิ้นได้
-    function drawLivingMonster(x, y, color, label, isSelf, sx, sy, breath) {
-      const ry = y - cameraY;
-      if (ry < -90 || ry > cssHeight + 90) return;
-
-      // อนิเมชันหายใจ (Breathing Scale)
-      const bScale = 1 + Math.sin(breath) * 0.04;
-
-      // เงาตัวละคร
-      ctx.fillStyle = 'rgba(255, 117, 143, 0.25)';
-      ctx.beginPath();
-      ctx.ellipse(x, ry + 20, 18 * sx * bScale, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.save();
-      ctx.translate(x, ry);
-      ctx.scale(sx * bScale, sy * (2 - bScale));
-
-      // ลำตัวทรงเจลลี่
-      ctx.fillStyle = color;
-      ctx.strokeStyle = '#e01e37';
-      ctx.lineWidth = 3.2;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 20, 18, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // แสงสะท้อนทรงกลมบนหัวเจลลี่
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-      ctx.beginPath();
-      ctx.ellipse(-6, -8, 6, 3, -0.3, 0, Math.PI * 2);
-      ctx.fill();
-
-      // ขาขยับดุ๊กดิ๊ก
-      const legWiggle = Math.sin(breath * 2) * 1.5;
-      ctx.beginPath();
-      ctx.arc(-9 + legWiggle, 15, 5, 0, Math.PI * 2);
-      ctx.arc(9 - legWiggle, 15, 5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      // ตาโตการ์ตูน + อนิเมชันกระพริบตาเป็นระยะ
-      const isBlinking = Math.sin(breath * 0.7) > 0.94;
-      if (isBlinking) {
-        // ตาหยีตอนกระพริบ
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(-9, -2); ctx.lineTo(-3, -2);
-        ctx.moveTo(3, -2); ctx.lineTo(9, -2);
-        ctx.stroke();
-      } else {
-        // ตาโตปกติ
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(-6, -2, 5.5, 0, Math.PI * 2);
-        ctx.arc(6, -2, 5.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#0f172a';
-        ctx.beginPath();
-        ctx.arc(-5, -2, 2.6, 0, Math.PI * 2);
-        ctx.arc(7, -2, 2.6, 0, Math.PI * 2);
-        ctx.fill();
-
-        // ประกายวิ้งในตาดำ
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(-6, -3, 1, 0, Math.PI * 2);
-        ctx.arc(6, -3, 1, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      ctx.restore();
-
-      // ป้ายชื่อ
-      ctx.font = isSelf ? 'bold 13px Kanit' : 'bold 12px Kanit';
-      ctx.textAlign = 'center';
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = '#ffffff';
-      ctx.strokeText(label, x, ry + 36);
-      ctx.fillStyle = isSelf ? '#e01e37' : '#334155';
-      ctx.fillText(label, x, ry + 36);
-    }
-
-    // --- 5. จัดการข้อสอบ & หน้าสรุปผล ---
-    function openQuizModal() {
-      if (isGameOver) return;
-      const q = WORD_QUIZ[Math.floor(Math.random() * WORD_QUIZ.length)];
-      document.getElementById('quiz-question-text').innerText = q.q;
-
-      const optsBox = document.getElementById('quiz-options-box');
-      optsBox.innerHTML = '';
-      q.a.forEach((ans, idx) => {
-        const btn = document.createElement('button');
-        btn.className = "w-full text-left font-bold py-2.5 px-4 rounded-xl border border-pink-200 bg-pink-50 hover:bg-pink-100 transition-all text-slate-700 text-xs sm:text-sm";
-        btn.innerText = `${idx + 1}. ${ans}`;
-        btn.onclick = () => handleAnswer(idx === q.c);
-        optsBox.appendChild(btn);
-      });
-      document.getElementById('quiz-modal').classList.remove('hidden');
-    }
-
-    function handleAnswer(isCorrect) {
-      if (isCorrect) {
-        currentEnergy += 5;
-        correctCount++;
-        document.getElementById('hud-energy').innerText = currentEnergy;
-        alert("เก่งมาก! ตอบถูกต้อง 🎉 ได้รับ +5 Energy");
-      } else {
-        wrongCount++;
-        alert("ยังไม่ถูกต้องนะ ลองตอบใหม่อีกทีจ้า 😊");
-      }
-      document.getElementById('quiz-modal').classList.add('hidden');
-      broadcastMyState();
-    }
-
-    function endGameMatch() {
-      isGameOver = true;
-      document.getElementById('quiz-modal').classList.add('hidden');
-      if (!isHost) {
-        const board = document.getElementById('gameOverModal');
-        const rows = document.getElementById('summaryRows');
-        rows.innerHTML = '';
-
-        const all = [
-          { name: myPlayerName, height: currentHeightMeters, correct: correctCount, wrong: wrongCount, isSelf: true },
-          ...Array.from(playersInRoom.values()).map(p => ({
-            name: p.name,
-            height: p.height || 0,
-            correct: p.correct || 0,
-            wrong: p.wrong || 0,
-            isSelf: false
-          }))
-        ].sort((a, b) => b.height - a.height);
-
-        all.forEach((p, i) => {
-          const rankBadge = i === 0 ? '🥇 1' : i === 1 ? '🥈 2' : i === 2 ? '🥉 3' : `#${i + 1}`;
-          const div = document.createElement('div');
-          div.className = `flex justify-between items-center p-3 rounded-2xl text-xs sm:text-sm border transition-all ${
-            p.isSelf ? 'bg-pink-50 border-pink-400 font-bold' : 'bg-slate-50 border-slate-200'
-          }`;
-          div.innerHTML = `
-            <div class="flex items-center gap-2">
-              <span class="font-black text-rose-600">${rankBadge}</span>
-              <span class="text-slate-800">${p.name} ${p.isSelf ? '<span class="text-rose-500 text-[11px]">(คุณ)</span>' : ''}</span>
-            </div>
-            <div class="text-right">
-              <span class="font-black text-rose-600 block text-sm">${p.height} m</span>
-              <span class="text-[11px] text-slate-500">ถูก <b class="text-emerald-600">${p.correct}</b> | ผิด <b class="text-rose-500">${p.wrong}</b></span>
-            </div>
-          `;
-          rows.appendChild(div);
-        });
-        board.classList.remove('hidden');
-      }
-    }
-  </script>
-</body>
-</html>
+        const currentM = Math.max(0ส่งโค้ดเข้ามาได้เลยครับ ต้องการให้ช่วยตรวจสอบข้อผิดพลาด (Debug) อธิบายการทำงาน หรือปรับปรุงส่วนไหน แจ้งรายละเอียดพร้อมโค้ดมาได้เลย
