@@ -51,12 +51,13 @@
       box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.2);
     }
 
-    /* ปุ่มกดเมนู */
+    /* ปุ่มกดเมนู 3D */
     .btn-sweet-pink {
       background: linear-gradient(180deg, #ff758f 0%, #ff4d6d 100%);
       box-shadow: 0 6px 0 #c9184a, 0 10px 20px rgba(255, 77, 109, 0.35);
       color: white;
       transition: all 0.1s ease;
+      cursor: pointer;
     }
     .btn-sweet-pink:active {
       transform: translateY(4px);
@@ -68,6 +69,7 @@
       box-shadow: 0 6px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.35);
       color: white;
       transition: all 0.1s ease;
+      cursor: pointer;
     }
     .btn-sweet-green:active {
       transform: translateY(4px);
@@ -79,6 +81,7 @@
       box-shadow: 0 6px 0 #0369a1, 0 10px 20px rgba(2, 132, 199, 0.35);
       color: white;
       transition: all 0.1s ease;
+      cursor: pointer;
     }
     .btn-sweet-sky:active {
       transform: translateY(4px);
@@ -94,22 +97,22 @@
       font-weight: 800;
     }
 
-    /* === ดีไซน์ปุ่มควบคุมบนมือถือใหม่สุดพรีเมียม (Cyber Candy Joypad) === */
+    /* ปุ่มควบคุมบนมือถือ Cyber-Joypad */
     .touch-dpad-container {
-      background: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.65);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 2.5px solid rgba(255, 255, 255, 0.9);
+      border: 2.5px solid rgba(255, 255, 255, 0.95);
       border-radius: 36px;
       padding: 6px;
-      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.18);
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.2);
       display: flex;
       gap: 10px;
     }
     .touch-btn-arrow {
-      width: 68px;
-      height: 68px;
-      border-radius: 28px;
+      width: 66px;
+      height: 66px;
+      border-radius: 26px;
       background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
       border: 2px solid #bae6fd;
       color: #0284c7;
@@ -122,16 +125,16 @@
       transition: all 0.08s ease;
       cursor: pointer;
     }
-    .touch-btn-arrow.active, .touch-btn-arrow:active {
+    .touch-btn-arrow.active {
       transform: translateY(4px);
-      box-shadow: 0 1px 0 #7dd3fc, inset 0 2px 6px rgba(2, 132, 199, 0.2);
+      box-shadow: 0 1px 0 #7dd3fc;
       background: #e0f2fe;
       color: #0369a1;
     }
 
     .touch-btn-jump {
-      width: 86px;
-      height: 86px;
+      width: 82px;
+      height: 82px;
       border-radius: 50%;
       background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
       border: 4px solid #ffffff;
@@ -144,18 +147,17 @@
       transition: all 0.08s ease;
       cursor: pointer;
     }
-    .touch-btn-jump.active, .touch-btn-jump:active {
+    .touch-btn-jump.active {
       transform: translateY(5px);
-      box-shadow: 0 3px 0 #047857, 0 6px 14px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 3px 0 #047857;
       background: #059669;
     }
 
-    /* Animation effects */
     @keyframes jellyBounce {
       0%, 100% { transform: scale(1, 1); }
-      30% { transform: scale(1.15, 0.85); }
-      50% { transform: scale(0.9, 1.1); }
-      70% { transform: scale(1.05, 0.95); }
+      30% { transform: scale(1.12, 0.88); }
+      50% { transform: scale(0.92, 1.08); }
+      70% { transform: scale(1.04, 0.96); }
     }
     .jelly-anim { animation: jellyBounce 2.5s infinite; }
 
@@ -168,11 +170,11 @@
 </head>
 <body class="w-screen h-screen flex justify-center items-center relative overflow-hidden bg-gradient-to-b from-[#bae6fd] via-[#e0f2fe] to-[#ffe4e6]">
 
-  <!-- Ambient Glow -->
+  <!-- แสงออร่าด้านหลัง -->
   <div class="absolute -top-24 -left-24 w-80 h-80 bg-pink-300/40 rounded-full blur-3xl pointer-events-none"></div>
   <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-sky-300/40 rounded-full blur-3xl pointer-events-none"></div>
 
-  <!-- 1. หน้าจอหลักเลือกบทบาท (Home Menu) -->
+  <!-- 1. เมนูหลักเลือกบทบาท (Home Menu) -->
   <div id="view-mode" class="bento-card p-8 w-full max-w-sm text-center z-50 m-4">
     <div class="inline-block p-4 bg-gradient-to-tr from-pink-400 to-rose-300 rounded-3xl mb-3 shadow-lg shadow-pink-400/30 text-4xl float-anim border-4 border-white">
       🧁✨
@@ -204,7 +206,7 @@
     <div class="grid grid-cols-2 gap-2 text-left mb-3">
       <div class="bento-box p-2.5">
         <label class="text-[11px] font-bold text-slate-400 block mb-1">เวลาแข่งขัน</label>
-        <select id="select-duration" class="w-full bg-transparent font-bold text-xs text-rose-600 outline-none">
+        <select id="select-duration" class="w-full bg-transparent font-bold text-xs text-rose-600 outline-none cursor-pointer">
           <option value="60">1 นาที (ทดสอบ)</option>
           <option value="180" selected>3 นาที</option>
           <option value="300">5 นาที</option>
@@ -221,7 +223,7 @@
     <div id="host-player-badges" class="flex flex-wrap gap-1.5 justify-center max-h-20 overflow-y-auto mb-3"></div>
 
     <div class="flex gap-2">
-      <button onclick="location.reload()" class="w-1/3 py-3 bg-slate-100 border border-slate-200 text-slate-600 rounded-2xl font-bold text-xs">ย้อนกลับ</button>
+      <button onclick="location.reload()" class="w-1/3 py-3 bg-slate-100 border border-slate-200 text-slate-600 rounded-2xl font-bold text-xs cursor-pointer hover:bg-slate-200">ย้อนกลับ</button>
       <button id="btn-host-start" onclick="hostStartMatch()" class="btn-sweet-green w-2/3 py-3 rounded-2xl font-black text-sm">🚀 เริ่มการแข่งขัน</button>
     </div>
   </div>
@@ -239,7 +241,7 @@
         <input id="input-join-name" type="text" placeholder="ระบุชื่อ..." value="นักเรียน" maxlength="12" class="w-full bg-transparent font-bold text-slate-700 text-center text-base outline-none">
       </div>
       <button onclick="joinGameRoom()" class="btn-sweet-sky w-full py-3.5 rounded-2xl font-black text-base mt-2">เข้าห้อง 🚀</button>
-      <button onclick="location.reload()" class="w-full py-2.5 bg-slate-100 text-slate-500 rounded-xl font-bold text-xs">ย้อนกลับ</button>
+      <button onclick="location.reload()" class="w-full py-2.5 bg-slate-100 text-slate-500 rounded-xl font-bold text-xs cursor-pointer hover:bg-slate-200">ย้อนกลับ</button>
     </div>
   </div>
 
@@ -263,7 +265,7 @@
   <div id="view-host-live" class="hidden w-full h-full bg-slate-900 text-white flex flex-col p-4 sm:p-6 overflow-hidden z-40">
     <div class="bento-card !bg-slate-800/95 !border-slate-700 p-4 rounded-3xl flex flex-wrap justify-between items-center gap-3 shadow-xl">
       <div class="flex items-center gap-3">
-        <button onclick="location.reload()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold text-xs transition-all">🔙 ออกจากห้อง</button>
+        <button onclick="location.reload()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold text-xs transition-all cursor-pointer">🔙 ออกจากห้อง</button>
         <div>
           <h2 class="text-lg font-black text-rose-400 mb-0">👑 HOST MONITOR</h2>
           <p class="text-xs text-slate-400">ห้อง: <span id="live-room-pin" class="font-bold text-rose-300">------</span> | ออนไลน์: <span id="live-player-count" class="font-bold text-emerald-400">0</span> คน</p>
@@ -328,7 +330,7 @@
       </div>
     </div>
 
-    <!-- ปุ่มตอบคำถามเติมพลัง (ลอยเหนือแผงควบคุม) -->
+    <!-- ปุ่มตอบคำถามเติมพลัง -->
     <button onclick="openQuizModal()" class="btn-sweet-pink !w-auto !py-2.5 !px-5 rounded-2xl absolute bottom-32 right-4 z-20 font-black text-xs sm:text-sm shadow-xl jelly-anim flex items-center gap-1.5 pointer-events-auto">
       <span class="text-base">⚡</span> เติมพลัง!
     </button>
@@ -345,7 +347,7 @@
         </div>
       </div>
 
-      <!-- ปุ่มกระโดดสไตล์แคปซูลใหญ่ สัมผัสนุ่มนวล -->
+      <!-- ปุ่มกระโดดกลมโต -->
       <div class="pointer-events-auto">
         <div id="btnJump" class="touch-btn-jump">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-current mb-0.5" viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
@@ -426,7 +428,8 @@
     // --- 2. การสลับหน้าจอ (Navigation) ---
     function hideAllViews() {
       ['view-mode', 'view-host', 'view-join', 'view-waiting', 'view-host-live', 'game-wrapper'].forEach(id => {
-        document.getElementById(id).classList.add('hidden');
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
       });
     }
 
@@ -713,8 +716,7 @@
     const stars = Array.from({ length: 30 }, () => ({
       x: Math.random() * WORLD_WIDTH,
       y: Math.random() * 2000 - 1000,
-      size: Math.random() * 3 + 1,
-      speed: Math.random() * 0.05 + 0.02
+      size: Math.random() * 3 + 1
     }));
 
     function createRoomRandom(seedStr) {
@@ -765,35 +767,35 @@
 
     const keys = { left: false, right: false };
     function setupControls() {
-      // คีย์บอร์ดคอมพิวเตอร์
+      // คีย์บอร์ด
       window.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
-        if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
-        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') doJump();
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') doJump();
       });
       window.addEventListener('keyup', (e) => {
-        if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
-        if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
       });
 
-      // ปุ่มสัมผัสมือถือ รองรับ Multi-Touch พร้อมเอฟเฟกต์กด Active
+      // ปุ่มสัมผัส
       const bLeft = document.getElementById('btnLeft');
       const bRight = document.getElementById('btnRight');
       const bJump = document.getElementById('btnJump');
 
       bLeft.addEventListener('touchstart', (e) => { e.preventDefault(); keys.left = true; bLeft.classList.add('active'); }, { passive: false });
       bLeft.addEventListener('touchend', (e) => { e.preventDefault(); keys.left = false; bLeft.classList.remove('active'); }, { passive: false });
-      bLeft.addEventListener('touchcancel', (e) => { keys.left = false; bLeft.classList.remove('active'); });
+      bLeft.addEventListener('touchcancel', () => { keys.left = false; bLeft.classList.remove('active'); });
 
       bRight.addEventListener('touchstart', (e) => { e.preventDefault(); keys.right = true; bRight.classList.add('active'); }, { passive: false });
       bRight.addEventListener('touchend', (e) => { e.preventDefault(); keys.right = false; bRight.classList.remove('active'); }, { passive: false });
-      bRight.addEventListener('touchcancel', (e) => { keys.right = false; bRight.classList.remove('active'); });
+      bRight.addEventListener('touchcancel', () => { keys.right = false; bRight.classList.remove('active'); });
 
       bJump.addEventListener('touchstart', (e) => { e.preventDefault(); doJump(); bJump.classList.add('active'); }, { passive: false });
       bJump.addEventListener('touchend', (e) => { e.preventDefault(); bJump.classList.remove('active'); }, { passive: false });
-      bJump.addEventListener('touchcancel', (e) => { bJump.classList.remove('active'); });
+      bJump.addEventListener('touchcancel', () => { bJump.classList.remove('active'); });
 
-      // เมาส์คลิกสำหรับคอมพิวเตอร์
+      // เมาส์คลิกบน PC
       bLeft.onmousedown = () => { keys.left = true; bLeft.classList.add('active'); };
       bLeft.onmouseup = () => { keys.left = false; bLeft.classList.remove('active'); };
       bRight.onmousedown = () => { keys.right = true; bRight.classList.add('active'); };
@@ -884,4 +886,246 @@
           player.grounded = true;
         }
 
-        const currentM = Math.max(0ส่งโค้ดเข้ามาได้เลยครับ ต้องการให้ช่วยตรวจสอบข้อผิดพลาด (Debug) อธิบายการทำงาน หรือปรับปรุงส่วนไหน แจ้งรายละเอียดพร้อมโค้ดมาได้เลย
+        const currentM = Math.max(0, Math.floor((530 - player.y) / 10));
+        currentHeightMeters = currentM;
+        document.getElementById('hud-height').innerText = `${currentHeightMeters}`;
+
+        const desiredCamY = player.y - cssHeight * 0.60;
+        cameraY += (desiredCamY - cameraY) * 0.16;
+
+        buildWorldPlatformsUpTo(cameraY);
+      }
+
+      renderScene();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function renderScene() {
+      ctx.fillStyle = '#bae6fd';
+      ctx.fillRect(0, 0, cssWidth, cssHeight);
+
+      const offsetX = (cssWidth - WORLD_WIDTH) / 2;
+
+      // ดาวลอย
+      stars.forEach(st => {
+        const ry = (st.y - cameraY * 0.4) % cssHeight;
+        const actualY = ry < 0 ? ry + cssHeight : ry;
+        const starAlpha = 0.4 + Math.sin(animTicks + st.x) * 0.3;
+        ctx.fillStyle = `rgba(255, 255, 255, ${starAlpha})`;
+        ctx.beginPath();
+        ctx.arc(st.x + offsetX, actualY, st.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // เสากำแพงข้าง
+      ctx.fillStyle = '#ffccd5';
+      ctx.fillRect(offsetX + LEFT_WALL - 12, 0, 12, cssHeight);
+      ctx.fillRect(offsetX + RIGHT_WALL, 0, 12, cssHeight);
+
+      // แท่นลอย
+      platforms.forEach(p => {
+        const floatY = Math.sin(animTicks + p.floatOffset) * 2;
+        const ry = (p.y + floatY) - cameraY;
+        if (ry < -60 || ry > cssHeight + 60) return;
+
+        const renderX = p.x + offsetX;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#ff758f';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(renderX, ry, p.w, p.h, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#34d399';
+        ctx.beginPath();
+        ctx.roundRect(renderX, ry, p.w, 7, [12, 12, 0, 0]);
+        ctx.fill();
+
+        const mLevel = Math.max(0, Math.floor((530 - p.y) / 10));
+        if (mLevel > 0 && mLevel % 10 === 0) {
+          ctx.font = 'bold 11px Kanit';
+          ctx.fillStyle = '#e01e37';
+          ctx.fillText(`🚩 ${mLevel}m`, renderX + p.w - 38, ry - 6);
+        }
+      });
+
+      // ละอองดาว
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const pt = particles[i];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= 0.03;
+        if (pt.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+        ctx.fillStyle = pt.color;
+        ctx.globalAlpha = pt.alpha;
+        ctx.beginPath();
+        ctx.arc(pt.x + offsetX, pt.y - cameraY, pt.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      }
+
+      // วาดเพื่อนๆ
+      playersInRoom.forEach((p, id) => {
+        if (id !== myPeerId) {
+          drawLivingMonster(p.x + offsetX, p.y, p.color, `${p.name} (${p.height || 0}m)`, false, 1, 1, 0);
+        }
+      });
+
+      // วาดตัวเอง
+      drawLivingMonster(player.x + offsetX, player.y, myColor, `${myPlayerName} (เรา)`, true, player.scaleX, player.scaleY, player.breathTick);
+    }
+
+    function drawLivingMonster(x, y, color, label, isSelf, sx, sy, breath) {
+      const ry = y - cameraY;
+      if (ry < -90 || ry > cssHeight + 90) return;
+
+      const bScale = 1 + Math.sin(breath) * 0.04;
+
+      ctx.fillStyle = 'rgba(255, 117, 143, 0.25)';
+      ctx.beginPath();
+      ctx.ellipse(x, ry + 20, 18 * sx * bScale, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(x, ry);
+      ctx.scale(sx * bScale, sy * (2 - bScale));
+
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#e01e37';
+      ctx.lineWidth = 3.2;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 20, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.beginPath();
+      ctx.ellipse(-6, -8, 6, 3, -0.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      const legWiggle = Math.sin(breath * 2) * 1.5;
+      ctx.beginPath();
+      ctx.arc(-9 + legWiggle, 15, 5, 0, Math.PI * 2);
+      ctx.arc(9 - legWiggle, 15, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      const isBlinking = Math.sin(breath * 0.7) > 0.94;
+      if (isBlinking) {
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(-9, -2); ctx.lineTo(-3, -2);
+        ctx.moveTo(3, -2); ctx.lineTo(9, -2);
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-6, -2, 5.5, 0, Math.PI * 2);
+        ctx.arc(6, -2, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(-5, -2, 2.6, 0, Math.PI * 2);
+        ctx.arc(7, -2, 2.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-6, -3, 1, 0, Math.PI * 2);
+        ctx.arc(6, -3, 1, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+
+      ctx.font = isSelf ? 'bold 13px Kanit' : 'bold 12px Kanit';
+      ctx.textAlign = 'center';
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#ffffff';
+      ctx.strokeText(label, x, ry + 36);
+      ctx.fillStyle = isSelf ? '#e01e37' : '#334155';
+      ctx.fillText(label, x, ry + 36);
+    }
+
+    // --- 5. จัดการข้อสอบ & หน้าสรุปผล ---
+    function openQuizModal() {
+      if (isGameOver) return;
+      const q = WORD_QUIZ[Math.floor(Math.random() * WORD_QUIZ.length)];
+      document.getElementById('quiz-question-text').innerText = q.q;
+
+      const optsBox = document.getElementById('quiz-options-box');
+      optsBox.innerHTML = '';
+      q.a.forEach((ans, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left font-bold py-2.5 px-4 rounded-xl border border-pink-200 bg-pink-50 hover:bg-pink-100 transition-all text-slate-700 text-xs sm:text-sm cursor-pointer";
+        btn.innerText = `${idx + 1}. ${ans}`;
+        btn.onclick = () => handleAnswer(idx === q.c);
+        optsBox.appendChild(btn);
+      });
+      document.getElementById('quiz-modal').classList.remove('hidden');
+    }
+
+    function handleAnswer(isCorrect) {
+      if (isCorrect) {
+        currentEnergy += 5;
+        correctCount++;
+        document.getElementById('hud-energy').innerText = currentEnergy;
+        alert("เก่งมาก! ตอบถูกต้อง 🎉 ได้รับ +5 Energy");
+      } else {
+        wrongCount++;
+        alert("ยังไม่ถูกต้องนะ ลองตอบใหม่อีกทีจ้า 😊");
+      }
+      document.getElementById('quiz-modal').classList.add('hidden');
+      broadcastMyState();
+    }
+
+    function endGameMatch() {
+      isGameOver = true;
+      document.getElementById('quiz-modal').classList.add('hidden');
+      if (!isHost) {
+        const board = document.getElementById('gameOverModal');
+        const rows = document.getElementById('summaryRows');
+        rows.innerHTML = '';
+
+        const all = [
+          { name: myPlayerName, height: currentHeightMeters, correct: correctCount, wrong: wrongCount, isSelf: true },
+          ...Array.from(playersInRoom.values()).map(p => ({
+            name: p.name,
+            height: p.height || 0,
+            correct: p.correct || 0,
+            wrong: p.wrong || 0,
+            isSelf: false
+          }))
+        ].sort((a, b) => b.height - a.height);
+
+        all.forEach((p, i) => {
+          const rankBadge = i === 0 ? '🥇 1' : i === 1 ? '🥈 2' : i === 2 ? '🥉 3' : `#${i + 1}`;
+          const div = document.createElement('div');
+          div.className = `flex justify-between items-center p-3 rounded-2xl text-xs sm:text-sm border transition-all ${
+            p.isSelf ? 'bg-pink-50 border-pink-400 font-bold' : 'bg-slate-50 border-slate-200'
+          }`;
+          div.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="font-black text-rose-600">${rankBadge}</span>
+              <span class="text-slate-800">${p.name} ${p.isSelf ? '<span class="text-rose-500 text-[11px]">(คุณ)</span>' : ''}</span>
+            </div>
+            <div class="text-right">
+              <span class="font-black text-rose-600 block text-sm">${p.height} m</span>
+              <span class="text-[11px] text-slate-500">ถูก <b class="text-emerald-600">${p.correct}</b> | ผิด <b class="text-rose-500">${p.wrong}</b></span>
+            </div>
+          `;
+          rows.appendChild(div);
+        });
+        board.classList.remove('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
