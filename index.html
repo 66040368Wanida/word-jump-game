@@ -276,11 +276,14 @@
           <p class="text-xs text-slate-400">ห้อง: <span id="live-room-pin" class="font-bold text-rose-300">------</span> | ออนไลน์: <span id="live-player-count" class="font-bold text-emerald-400">0</span> คน</p>
         </div>
       </div>
-      <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-2">
+        <button onclick="openQuestionBankModal()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-2xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1">
+          📖 ดูคลังคำถาม (20 ข้อ)
+        </button>
         <div class="bg-black/50 border border-white/20 px-4 py-1.5 rounded-2xl font-mono text-xl text-yellow-300 font-black">
           ⏱️ <span id="host-timer-text">03:00</span>
         </div>
-        <button onclick="exportDataCSV()" class="btn-sweet-green !w-auto !py-2 !px-4 !my-0 text-xs font-black">📥 Export CSV</button>
+        <button onclick="exportDataCSV()" class="btn-sweet-green !w-auto !py-2 !px-4 !my-0 text-xs font-black">📥 Export รายงาน Excel</button>
       </div>
     </div>
 
@@ -318,6 +321,20 @@
     </div>
   </div>
 
+  <!-- Modal สำหรับดูคลังคำถาม 20 ข้อ (สำหรับแอดมิน) -->
+  <div id="questionBankModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div class="bento-card max-w-2xl w-full p-6 text-slate-800 max-h-[85vh] flex flex-col">
+      <div class="flex justify-between items-center border-b pb-3 mb-3">
+        <div>
+          <h2 class="text-lg font-black text-rose-600">📖 คลังข้อสอบ Microsoft Word (ทั้งหมด 20 ข้อ)</h2>
+          <p class="text-xs text-slate-500">ข้อสอบวนลูปสุ่มตลอดการแข่งขัน พร้อมเฉลยคำตอบ</p>
+        </div>
+        <button onclick="closeQuestionBankModal()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-xl text-xs font-bold">✕ ปิด</button>
+      </div>
+      <div id="questionBankList" class="flex-1 overflow-y-auto space-y-2.5 pr-2 text-xs sm:text-sm"></div>
+    </div>
+  </div>
+
   <!-- 6. หน้าจอเล่นเกมสำหรับผู้เรียน (Game View) -->
   <div id="game-wrapper" class="hidden relative w-full h-full max-w-[1200px] max-h-[950px] overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border-4 border-white shadow-2xl bg-[#bae6fd]">
     <canvas id="gameCanvas" class="w-full h-full block"></canvas>
@@ -342,7 +359,6 @@
 
     <!-- แผงปุ่มสัมผัสบนมือถือดีไซน์ใหม่ 2026 Joypad -->
     <div class="absolute bottom-5 left-4 right-4 max-w-[650px] mx-auto flex justify-between items-center z-30 pointer-events-none" style="padding-bottom: env(safe-area-inset-bottom, 8px);">
-      <!-- Joypad เดินซ้าย-ขวา -->
       <div class="touch-dpad-container pointer-events-auto">
         <div id="btnLeft" class="touch-btn-arrow">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
@@ -352,7 +368,6 @@
         </div>
       </div>
 
-      <!-- ปุ่มกระโดดกลมโต -->
       <div class="pointer-events-auto">
         <div id="btnJump" class="touch-btn-jump">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-current mb-0.5" viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
@@ -385,7 +400,7 @@
   </div>
 
   <script>
-    // ================= SOUND & BGM SYNTHESIZER (WEB AUDIO API) =================
+    // ================= SOUND & BGM SYNTHESIZER =================
     let audioCtx = null;
     let isAudioMuted = false;
     let bgmInterval = null;
@@ -404,14 +419,10 @@
       initAudio();
       isAudioMuted = !isAudioMuted;
       document.getElementById('btn-audio-toggle').innerText = isAudioMuted ? '🔇' : '🔊';
-      if (isAudioMuted) {
-        stopBGM();
-      } else {
-        startBGM();
-      }
+      if (isAudioMuted) stopBGM();
+      else startBGM();
     }
 
-    // เสียงกระโดดแบบสปริงน่ารัก (Spring Jump SFX)
     function playJumpSound() {
       if (isAudioMuted) return;
       initAudio();
@@ -420,31 +431,26 @@
       osc.type = 'sine';
       osc.frequency.setValueAtTime(260, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.15);
-
       gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
       gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.15);
-
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
       osc.stop(audioCtx.currentTime + 0.15);
     }
 
-    // เสียงตอบถูก (Sweet Success Chime)
     function playCorrectSound() {
       if (isAudioMuted) return;
       initAudio();
-      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      const notes = [523.25, 659.25, 783.99, 1046.50];
       notes.forEach((freq, idx) => {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'triangle';
         osc.frequency.value = freq;
-
         const startTime = audioCtx.currentTime + idx * 0.08;
         gain.gain.setValueAtTime(0.2, startTime);
         gain.gain.linearRampToValueAtTime(0, startTime + 0.25);
-
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start(startTime);
@@ -452,7 +458,6 @@
       });
     }
 
-    // เสียงตอบผิด (Soft Thud)
     function playWrongSound() {
       if (isAudioMuted) return;
       initAudio();
@@ -461,22 +466,19 @@
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(220, audioCtx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.25);
-
       gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
       gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.25);
-
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
       osc.stop(audioCtx.currentTime + 0.25);
     }
 
-    // เสียงดนตรีบรรเลง Sweet Pop Chiptune BGM
     const bgmNotes = [
-      261.63, 329.63, 392.00, 329.63, // C4, E4, G4, E4
-      293.66, 369.99, 440.00, 369.99, // D4, F#4, A4, F#4
-      329.63, 392.00, 493.88, 392.00, // E4, G4, B4, G4
-      349.23, 440.00, 523.25, 392.00  // F4, A4, C5, G4
+      261.63, 329.63, 392.00, 329.63,
+      293.66, 369.99, 440.00, 369.99,
+      329.63, 392.00, 493.88, 392.00,
+      349.23, 440.00, 523.25, 392.00
     ];
     let bgmStep = 0;
 
@@ -489,15 +491,12 @@
         const gain = audioCtx.createGain();
         osc.type = 'sine';
         osc.frequency.value = bgmNotes[bgmStep % bgmNotes.length];
-
         gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
-
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.22);
-
         bgmStep++;
       }, 240);
     }
@@ -509,7 +508,6 @@
       }
     }
 
-    // เปิดเพลงเมื่อเริ่มคลิกครั้งแรก (ตามนโยบาย Autoplay ของเบราว์เซอร์)
     window.addEventListener('click', () => {
       initAudio();
       if (!isAudioMuted && !bgmInterval) startBGM();
@@ -519,28 +517,28 @@
       if (!isAudioMuted && !bgmInterval) startBGM();
     }, { once: true });
 
-    // --- 1. คลังข้อสอบ Word พื้นฐาน ---
+    // ================= 1. คลังข้อสอบ Word 20 ข้อ =================
     const WORD_QUIZ = [
-      { q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องกดปุ่มใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"], c: 0 },
-      { q: "ต้องการ 'วาง' (Paste) ข้อความที่คัดลอกไว้ กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + S", "Ctrl + C"], c: 1 },
-      { q: "ต้องการ 'บันทึกเอกสาร' (Save) กดปุ่มใด?", a: ["Ctrl + S", "Ctrl + O", "Ctrl + N", "Ctrl + A"], c: 0 },
-      { q: "ต้องการทำตัวอักษรเป็น 'ตัวหนา' ต้องกดไอคอนสัญลักษณ์ใด?", a: ["ตัว B", "ตัว I", "ตัว U", "ตัว A"], c: 0 },
-      { q: "ต้องการทำตัวอักษรเป็น 'ตัวเอียง' ต้องกดไอคอนใด?", a: ["ตัว B", "ตัว I (Italic)", "ตัว U", "รูปถังสี"], c: 1 },
-      { q: "ต้องการ 'ขีดเส้นใต้' ข้อความ ต้องกดไอคอนใด?", a: ["ตัว U (Underline)", "ตัว B", "ตัว I", "รูปกรรไกร"], c: 0 },
-      { q: "หากพิมพ์ผิด แล้วต้องการ 'ยกเลิกคำสั่งล่าสุด' (Undo) กดปุ่มใด?", a: ["Ctrl + Z", "Ctrl + Y", "Ctrl + X", "Ctrl + F"], c: 0 },
-      { q: "ปุ่มใดบนแป้นพิมพ์ ใช้สำหรับ 'ขึ้นบรรทัดใหม่'?", a: ["Enter", "Spacebar", "Shift", "Backspace"], c: 0 },
-      { q: "ปุ่มยาวๆ บนแป้นพิมพ์ ใช้สำหรับ 'เคาะเว้นวรรค' คือปุ่มใด?", a: ["Spacebar", "Enter", "Tab", "Delete"], c: 0 },
-      { q: "ต้องการ 'ลบตัวอักษร' ที่อยู่ข้างหน้าเคอร์เซอร์ ต้องกดปุ่มใด?", a: ["Backspace", "Enter", "Shift", "Alt"], c: 0 },
-      { q: "ต้องการ 'พิมพ์เอกสารออกทางเครื่องพิมพ์' (Print) กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + S", "Ctrl + C", "Ctrl + E"], c: 0 },
-      { q: "ต้องการเลือกคลุมข้อความ 'ทั้งหมดทั้งหน้า' (Select All) กดปุ่มใด?", a: ["Ctrl + A", "Ctrl + S", "Ctrl + D", "Ctrl + W"], c: 0 },
-      { q: "ไอคอนรูป 'กรรไกร' ใน Microsoft Word ใช้ทำอะไร?", a: ["ตัดข้อความ (Cut)", "คัดลอก (Copy)", "วาง (Paste)", "พิมพ์เอกสาร"], c: 0 },
-      { q: "ต้องการเปลี่ยน 'สีตัวอักษร' ต้องมองหาไอคอนรูปใด?", a: ["รูปตัว A มีแถบสีข้างล่าง", "รูปตัว B", "รูปยางลบ", "รูปดินสอ"], c: 0 },
-      { q: "การใส่ 'รูปภาพ' ลงในเอกสาร ต้องไปที่เมนูใด?", a: ["แทรก (Insert)", "หน้าแรก (Home)", "มุมมอง (View)", "แฟ้ม (File)"], c: 0 },
-      { q: "ต้องการสร้าง 'เอกสารเปล่าแผ่นใหม่' ทันที กดปุ่มใด?", a: ["Ctrl + N (New)", "Ctrl + O", "Ctrl + S", "Ctrl + P"], c: 0 },
-      { q: "การจัดข้อความให้อยู่ 'กึ่งกลางหน้ากระดาษ' ใช้ปุ่มใด?", a: ["Ctrl + E (Center)", "Ctrl + L", "Ctrl + R", "Ctrl + J"], c: 0 },
-      { q: "โปรแกรม Microsoft Word เหมาะสำหรับงานประเภทใดมากที่สุด?", a: ["พิมพ์งานเอกสาร / รายงาน", "ตัดต่อวิดีโอ", "แต่งรูปถ่าย", "เขียนโปรแกรม"], c: 0 },
-      { q: "ไอคอนสัญลักษณ์ 'แผ่นดิสก์' สีฟ้าในโปรแกรม Word ใช้ทำอะไร?", a: ["บันทึกข้อมูล (Save)", "ปิดโปรแกรม", "เปิดไฟล์ใหม่", "พิมพ์งาน"], c: 0 },
-      { q: "ถ้าต้องการซูมเข้า-ออก หน้ากระดาษ ให้ดูที่มุมใดของจอ?", a: ["มุมล่างขวา (แถบเปอร์เซ็นต์ + -)", "มุมบนซ้าย", "กลางหน้าจอ", "มุมบนขวา"], c: 0 }
+      { id: 1, q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องกดปุ่มใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"], c: 0 },
+      { id: 2, q: "ต้องการ 'วาง' (Paste) ข้อความที่คัดลอกไว้ กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + S", "Ctrl + C"], c: 1 },
+      { id: 3, q: "ต้องการ 'บันทึกเอกสาร' (Save) กดปุ่มใด?", a: ["Ctrl + S", "Ctrl + O", "Ctrl + N", "Ctrl + A"], c: 0 },
+      { id: 4, q: "ต้องการทำตัวอักษรเป็น 'ตัวหนา' ต้องกดไอคอนสัญลักษณ์ใด?", a: ["ตัว B", "ตัว I", "ตัว U", "ตัว A"], c: 0 },
+      { id: 5, q: "ต้องการทำตัวอักษรเป็น 'ตัวเอียง' ต้องกดไอคอนใด?", a: ["ตัว B", "ตัว I (Italic)", "ตัว U", "รูปถังสี"], c: 1 },
+      { id: 6, q: "ต้องการ 'ขีดเส้นใต้' ข้อความ ต้องกดไอคอนใด?", a: ["ตัว U (Underline)", "ตัว B", "ตัว I", "รูปกรรไกร"], c: 0 },
+      { id: 7, q: "หากพิมพ์ผิด แล้วต้องการ 'ยกเลิกคำสั่งล่าสุด' (Undo) กดปุ่มใด?", a: ["Ctrl + Z", "Ctrl + Y", "Ctrl + X", "Ctrl + F"], c: 0 },
+      { id: 8, q: "ปุ่มใดบนแป้นพิมพ์ ใช้สำหรับ 'ขึ้นบรรทัดใหม่'?", a: ["Enter", "Spacebar", "Shift", "Backspace"], c: 0 },
+      { id: 9, q: "ปุ่มยาวๆ บนแป้นพิมพ์ ใช้สำหรับ 'เคาะเว้นวรรค' คือปุ่มใด?", a: ["Spacebar", "Enter", "Tab", "Delete"], c: 0 },
+      { id: 10, q: "ต้องการ 'ลบตัวอักษร' ที่อยู่ข้างหน้าเคอร์เซอร์ ต้องกดปุ่มใด?", a: ["Backspace", "Enter", "Shift", "Alt"], c: 0 },
+      { id: 11, q: "ต้องการ 'พิมพ์เอกสารออกทางเครื่องพิมพ์' (Print) กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + S", "Ctrl + C", "Ctrl + E"], c: 0 },
+      { id: 12, q: "ต้องการเลือกคลุมข้อความ 'ทั้งหมดทั้งหน้า' (Select All) กดปุ่มใด?", a: ["Ctrl + A", "Ctrl + S", "Ctrl + D", "Ctrl + W"], c: 0 },
+      { id: 13, q: "ไอคอนรูป 'กรรไกร' ใน Microsoft Word ใช้ทำอะไร?", a: ["ตัดข้อความ (Cut)", "คัดลอก (Copy)", "วาง (Paste)", "พิมพ์เอกสาร"], c: 0 },
+      { id: 14, q: "ต้องการเปลี่ยน 'สีตัวอักษร' ต้องมองหาไอคอนรูปใด?", a: ["รูปตัว A มีแถบสีข้างล่าง", "รูปตัว B", "รูปยางลบ", "รูปดินสอ"], c: 0 },
+      { id: 15, q: "การใส่ 'รูปภาพ' ลงในเอกสาร ต้องไปที่เมนูใด?", a: ["แทรก (Insert)", "หน้าแรก (Home)", "มุมมอง (View)", "แฟ้ม (File)"], c: 0 },
+      { id: 16, q: "ต้องการสร้าง 'เอกสารเปล่าแผ่นใหม่' ทันที กดปุ่มใด?", a: ["Ctrl + N (New)", "Ctrl + O", "Ctrl + S", "Ctrl + P"], c: 0 },
+      { id: 17, q: "การจัดข้อความให้อยู่ 'กึ่งกลางหน้ากระดาษ' ใช้ปุ่มใด?", a: ["Ctrl + E (Center)", "Ctrl + L", "Ctrl + R", "Ctrl + J"], c: 0 },
+      { id: 18, q: "โปรแกรม Microsoft Word เหมาะสำหรับงานประเภทใดมากที่สุด?", a: ["พิมพ์งานเอกสาร / รายงาน", "ตัดต่อวิดีโอ", "แต่งรูปถ่าย", "เขียนโปรแกรม"], c: 0 },
+      { id: 19, q: "ไอคอนสัญลักษณ์ 'แผ่นดิสก์' สีฟ้าในโปรแกรม Word ใช้ทำอะไร?", a: ["บันทึกข้อมูล (Save)", "ปิดโปรแกรม", "เปิดไฟล์ใหม่", "พิมพ์งาน"], c: 0 },
+      { id: 20, q: "ถ้าต้องการซูมเข้า-ออก หน้ากระดาษ ให้ดูที่มุมใดของจอ?", a: ["มุมล่างขวา (แถบเปอร์เซ็นต์ + -)", "มุมบนซ้าย", "กลางหน้าจอ", "มุมบนขวา"], c: 0 }
     ];
 
     const CHARACTER_COLORS = ['#ff758f', '#38bdf8', '#34d399', '#fbbf24', '#a855f7', '#fb923c', '#ec4899', '#06b6d4'];
@@ -557,6 +555,13 @@
     let wrongCount = 0;
     let isGameOver = false;
     let gameTimer = null;
+    let currentQuestionItem = null;
+
+    // ประวัติการตอบคำถาม 20 ข้อของตัวผู้เล่น { qId: { correct: 0, wrong: 0 } }
+    let questionAnswersHistory = {};
+    for (let i = 1; i <= 20; i++) {
+      questionAnswersHistory[i] = { correct: 0, wrong: 0 };
+    }
 
     let peer = null;
     let myPeerId = "";
@@ -618,7 +623,6 @@
       document.getElementById('wait-pin-label').innerText = roomPin;
       document.getElementById('wait-name-label').innerText = myPlayerName;
       document.getElementById('view-waiting').classList.remove('hidden');
-
       initPeerNetwork(false);
     }
 
@@ -629,6 +633,32 @@
       document.getElementById('game-wrapper').classList.remove('hidden');
       initGameEngine();
       startCountdown(false);
+    }
+
+    // --- ฟังก์ชัน Modal คลังข้อสอบสำหรับแอดมิน ---
+    function openQuestionBankModal() {
+      const box = document.getElementById('questionBankList');
+      box.innerHTML = '';
+      WORD_QUIZ.forEach((q) => {
+        const item = document.createElement('div');
+        item.className = 'p-3 bg-pink-50/70 border border-pink-200 rounded-2xl';
+        item.innerHTML = `
+          <div class="font-black text-rose-600 mb-1.5">ข้อที่ ${q.id}: ${q.q}</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-slate-600">
+            ${q.a.map((ans, idx) => `
+              <div class="px-2.5 py-1.5 rounded-lg border ${idx === q.c ? 'bg-emerald-100 border-emerald-400 font-bold text-emerald-800' : 'bg-white border-slate-200'}">
+                ${idx === q.c ? '✅ ' : ''}${idx + 1}. ${ans}
+              </div>
+            `).join('')}
+          </div>
+        `;
+        box.appendChild(item);
+      });
+      document.getElementById('questionBankModal').classList.remove('hidden');
+    }
+
+    function closeQuestionBankModal() {
+      document.getElementById('questionBankModal').classList.add('hidden');
     }
 
     // --- 3. ระบบเชื่อมต่อ PeerJS Mesh ---
@@ -748,7 +778,8 @@
         height: currentHeightMeters,
         correct: correctCount,
         wrong: wrongCount,
-        energy: currentEnergy
+        energy: currentEnergy,
+        history: questionAnswersHistory // ส่งประวัติการตอบทั้ง 20 ข้อ
       };
       connections.forEach(conn => { if (conn.open) conn.send(payload); });
       if (hostConn && hostConn.open) hostConn.send(payload);
@@ -821,19 +852,34 @@
       });
     }
 
+    // Export รายงานเป็น Excel/CSV ละเอียดรายข้อ 1-20
     function exportDataCSV() {
-      let csv = "อันดับ,ชื่อผู้เรียน,ความสูง (เมตร),ตอบถูก,ตอบผิด,ความแม่นยำ (%),พลังงาน\n";
+      let csv = "อันดับ,ชื่อผู้เรียน,ความสูง (เมตร),ตอบถูกรวม,ตอบผิดรวม,ความแม่นยำ (%),พลังงานคงเหลือ";
+      for (let i = 1; i <= 20; i++) {
+        csv += `,ข้อที่ ${i} (ถูก/ผิด)`;
+      }
+      csv += "\n";
+
       const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
       list.forEach((p, idx) => {
         const total = (p.correct || 0) + (p.wrong || 0);
         const acc = total > 0 ? Math.round((p.correct / total) * 100) : 0;
-        csv += `${idx + 1},"${p.name}",${p.height || 0},${p.correct || 0},${p.wrong || 0},${acc}%,${p.energy || 0}\n`;
+        let row = `${idx + 1},"${p.name}",${p.height || 0},${p.correct || 0},${p.wrong || 0},${acc}%,${p.energy || 0}`;
+        
+        // บันทึกรายละเอียดการตอบข้อ 1-20
+        const hist = p.history || {};
+        for (let i = 1; i <= 20; i++) {
+          const item = hist[i] || { correct: 0, wrong: 0 };
+          row += `,"ถูก ${item.correct} / ผิด ${item.wrong}"`;
+        }
+        csv += row + "\n";
       });
+
       const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `ผลคะแนน_${roomPin}.csv`;
+      link.download = `รายงานผลการตอบคำถาม_WordJump_${roomPin}.csv`;
       link.click();
     }
 
@@ -1188,30 +1234,35 @@
     // --- 5. จัดการข้อสอบ & หน้าสรุปผล ---
     function openQuizModal() {
       if (isGameOver) return;
-      const q = WORD_QUIZ[Math.floor(Math.random() * WORD_QUIZ.length)];
-      document.getElementById('quiz-question-text').innerText = q.q;
+      currentQuestionItem = WORD_QUIZ[Math.floor(Math.random() * WORD_QUIZ.length)];
+      document.getElementById('quiz-question-text').innerText = `ข้อที่ ${currentQuestionItem.id}: ${currentQuestionItem.q}`;
 
       const optsBox = document.getElementById('quiz-options-box');
       optsBox.innerHTML = '';
-      q.a.forEach((ans, idx) => {
+      currentQuestionItem.a.forEach((ans, idx) => {
         const btn = document.createElement('button');
         btn.className = "w-full text-left font-bold py-2.5 px-4 rounded-xl border border-pink-200 bg-pink-50 hover:bg-pink-100 transition-all text-slate-700 text-xs sm:text-sm cursor-pointer";
         btn.innerText = `${idx + 1}. ${ans}`;
-        btn.onclick = () => handleAnswer(idx === q.c);
+        btn.onclick = () => handleAnswer(idx === currentQuestionItem.c);
         optsBox.appendChild(btn);
       });
       document.getElementById('quiz-modal').classList.remove('hidden');
     }
 
     function handleAnswer(isCorrect) {
+      if (!currentQuestionItem) return;
+      const qId = currentQuestionItem.id;
+
       if (isCorrect) {
         currentEnergy += 5;
         correctCount++;
+        questionAnswersHistory[qId].correct++;
         document.getElementById('hud-energy').innerText = currentEnergy;
         playCorrectSound();
         alert("เก่งมาก! ตอบถูกต้อง 🎉 ได้รับ +5 Energy");
       } else {
         wrongCount++;
+        questionAnswersHistory[qId].wrong++;
         playWrongSound();
         alert("ยังไม่ถูกต้องนะ ลองตอบใหม่อีกทีจ้า 😊");
       }
