@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Hunter Cyber Mission - Word Master Edition</title>
+  <title>Word Jump Mission - Cyber Candy 2026</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- PeerJS เชื่อมต่อห้องสดแบบ Peer-to-Peer เสถียร ไม่หลุดง่าย -->
+  <!-- PeerJS WebRTC P2P System -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700;800&family=Kanit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Kanit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -17,180 +17,129 @@
       touch-action: manipulation;
       margin: 0;
       padding: 0;
-      font-family: 'Kanit', system-ui, sans-serif;
+      font-family: 'Kanit', sans-serif;
     }
     html, body {
       width: 100vw;
       height: 100vh;
       height: 100dvh;
       overflow: hidden;
-      background: #bae6fd;
+      background: #0284c7;
       color: #0f172a;
     }
     .game-font { font-family: 'Fredoka', 'Kanit', sans-serif; }
-    
-    /* สไตล์กล่อง Container ธีมฟ้าขาวของคุณ */
-    .theme-card {
-      background: rgba(255, 255, 255, 0.96);
-      border: 3px solid #7dd3fc;
-      border-radius: 28px;
-      padding: 24px;
-      max-width: 440px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 16px 35px rgba(2, 132, 199, 0.18);
-      backdrop-filter: blur(12px);
-      z-index: 50;
-    }
-    .btn-sky {
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: white;
-      border: none;
-      padding: 13px;
-      border-radius: 18px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      margin: 6px 0;
-      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
-      transition: transform 0.1s;
-    }
-    .btn-sky:active { transform: scale(0.97); }
-    .btn-green {
-      background: linear-gradient(135deg, #34d399, #10b981);
-      color: white;
-      border: none;
-      padding: 13px;
-      border-radius: 18px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      margin: 6px 0;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
-      transition: transform 0.1s;
-    }
-    .btn-green:active { transform: scale(0.97); }
-    .btn-rose {
-      background: linear-gradient(135deg, #fb7185, #f43f5e);
-      color: white;
-      border: none;
-      padding: 13px;
-      border-radius: 18px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(244, 63, 94, 0.3);
-      transition: transform 0.1s;
-    }
-    .btn-rose:active { transform: scale(0.97); }
-    .btn-gray {
-      background: #f1f5f9;
-      color: #475569;
-      border: 2px solid #cbd5e1;
-      padding: 8px 16px;
-      border-radius: 16px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .btn-gray:active { transform: scale(0.97); }
 
-    input, select {
-      width: 100%;
-      padding: 12px 16px;
-      margin: 6px 0;
-      border-radius: 16px;
-      border: 2px solid #bae6fd;
-      background: #f0f9ff;
-      color: #0369a1;
-      text-align: center;
-      font-size: 15px;
-      font-weight: 600;
-      outline: none;
-    }
-    input:focus, select:focus {
-      border-color: #0284c7;
-      background: #ffffff;
+    /* เทรนด์ 2026: Bento Glassmorphism พร้อมขอบนีออนสะท้อนแสง */
+    .bento-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 25px 50px -12px rgba(2, 132, 199, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      border-radius: 32px;
     }
 
-    /* สไตล์ HUD และปุ่มกดบนมือถือ */
-    .stat-pill {
-      background: rgba(255, 255, 255, 0.94);
-      border: 2px solid #ffffff;
-      backdrop-filter: blur(8px);
-      padding: 6px 14px;
+    .bento-box {
+      background: rgba(240, 249, 255, 0.8);
+      border: 1.5px solid rgba(186, 230, 253, 0.8);
       border-radius: 20px;
-      font-weight: 800;
-      font-size: 13px;
-      color: #0f172a;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .ctrl-btn {
-      flex: 1;
-      padding: 16px 0;
-      background: rgba(255, 255, 255, 0.94);
-      border: 3px solid #ffffff;
-      color: #0284c7;
-      font-size: 18px;
-      font-weight: 800;
-      border-radius: 22px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      cursor: pointer;
+    .bento-box:focus-within {
+      background: #ffffff;
+      border-color: #0284c7;
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
     }
-    .ctrl-btn:active {
-      background: #e0f2fe;
-      transform: scale(0.95);
+
+    /* ปุ่มกดสัมผัส 3D Tactile Buttons */
+    .btn-3d-primary {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      box-shadow: 0 6px 0 #0369a1, 0 12px 20px rgba(2, 132, 199, 0.4);
+      transition: all 0.1s ease;
     }
-    .btn-jump-action {
-      flex: 1.2;
-      padding: 16px 0;
-      background: linear-gradient(135deg, #fb7185, #f43f5e);
-      border: 3px solid #ffffff;
-      color: white;
-      font-size: 18px;
-      font-weight: 800;
-      border-radius: 22px;
-      box-shadow: 0 5px 15px rgba(244, 63, 94, 0.35);
-      cursor: pointer;
+    .btn-3d-primary:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #0369a1, 0 6px 12px rgba(2, 132, 199, 0.3);
     }
-    .btn-jump-action:active {
-      transform: scale(0.95);
-      background: #e11d48;
+
+    .btn-3d-green {
+      background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+      box-shadow: 0 6px 0 #15803d, 0 12px 20px rgba(22, 163, 74, 0.35);
+      transition: all 0.1s ease;
     }
+    .btn-3d-green:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #15803d;
+    }
+
+    .btn-3d-rose {
+      background: linear-gradient(180deg, #fb7185 0%, #e11d48 100%);
+      box-shadow: 0 6px 0 #be123c, 0 12px 20px rgba(225, 29, 72, 0.35);
+      transition: all 0.1s ease;
+    }
+    .btn-3d-rose:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #be123c;
+    }
+
+    /* ลอยละล่อง Ambient Glow */
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1.5deg); }
+    }
+    .animate-float { animation: floaty 4s ease-in-out infinite; }
   </style>
 </head>
-<body class="w-screen h-screen flex justify-center items-center">
+<body class="w-screen h-screen flex justify-center items-center relative overflow-hidden bg-gradient-to-b from-[#7dd3fc] via-[#bae6fd] to-[#e0f2fe]">
 
-  <!-- 1. ล็อบบี้สร้างห้อง / เข้าเล่น -->
-  <div id="lobbyScreen" class="absolute inset-0 bg-[#bae6fd] flex justify-center items-center z-50 p-4">
-    <div class="theme-card">
-      <h1 class="text-2xl font-black text-[#0284c7] mb-1">HUNTER CYBER MISSION</h1>
-      <p class="text-xs font-semibold text-slate-500 mb-4">Microsoft Word Jump Arena</p>
+  <!-- ฉากหลังเรืองแสง Ambient Cyber Bulbs -->
+  <div class="absolute -top-32 -left-32 w-96 h-96 bg-sky-400/40 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-400/30 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div class="space-y-2.5 text-left">
-        <div>
-          <label class="text-[11px] font-bold text-slate-500 uppercase">ชื่อผู้เล่น / แอดมิน</label>
-          <input id="inputPlayerName" type="text" placeholder="ระบุชื่อของคุณ..." value="ผู้เล่น">
+  <!-- 1. ล็อบบี้เข้าสู่ระบบสุดจึ้ง (2026 Bento Grid Glassmorphism) -->
+  <div id="lobbyScreen" class="absolute inset-0 flex justify-center items-center z-50 p-4 sm:p-6 overflow-y-auto">
+    <div class="bento-card p-7 sm:p-9 w-full max-w-md text-center relative shadow-2xl">
+      
+      <!-- โลโก้หัวข้อแบบ Floating Cyber-Candy -->
+      <div class="inline-flex items-center justify-center p-4 bg-gradient-to-tr from-sky-400 via-sky-200 to-white rounded-3xl shadow-lg shadow-sky-500/30 mb-3 animate-float border-2 border-white">
+        <span class="text-4xl filter drop-shadow">🚀✨</span>
+      </div>
+      <h1 class="game-font text-3xl sm:text-4xl font-black tracking-tight text-slate-900 leading-none mb-1">WORD JUMP</h1>
+      <p class="text-xs sm:text-sm font-bold tracking-wider text-sky-600 uppercase mb-6">Ultra Edition 2026</p>
+
+      <div class="space-y-3.5 text-left">
+        <!-- กล่องใส่ชื่อแบบ Bento -->
+        <div class="bento-box p-3.5">
+          <label class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">ชื่อตัวละครของคุณ</label>
+          <div class="flex items-center gap-2">
+            <span class="text-lg">👾</span>
+            <input id="inputPlayerName" type="text" placeholder="พิมพ์ชื่อตัวละคร..." value="ผู้เล่น" 
+                   class="w-full bg-transparent font-bold text-slate-800 text-base outline-none placeholder-slate-400">
+          </div>
         </div>
 
-        <div>
-          <label class="text-[11px] font-bold text-slate-500 uppercase">รหัสห้อง (Room Code)</label>
-          <input id="inputRoomCode" type="text" placeholder="เช่น WORD1" value="WORD1" class="uppercase">
+        <!-- กล่องใส่ Room Code แบบ Bento -->
+        <div class="bento-box p-3.5">
+          <label class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider block mb-1">รหัสห้องแข่งขัน (Room PIN)</label>
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🔑</span>
+            <input id="inputRoomCode" type="text" placeholder="เช่น WORD1" value="WORD1" 
+                   class="w-full bg-transparent font-black uppercase text-sky-600 text-base tracking-widest outline-none placeholder-slate-400">
+          </div>
         </div>
 
-        <div class="pt-2 border-t border-sky-100">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" id="isAdminCheck" class="w-4 h-4 text-sky-600 rounded">
-            <span class="text-xs sm:text-sm font-bold text-slate-700">เข้าสู่ระบบในฐานะ Admin (ผู้คุมเวลา / สถิติ)</span>
+        <!-- กล่องเลือกสถานะ Admin -->
+        <div class="bento-box p-3.5">
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" id="isAdminCheck" class="w-5 h-5 text-sky-600 rounded-lg accent-sky-600 cursor-pointer">
+            <span class="text-xs sm:text-sm font-extrabold text-slate-700">เข้าห้องในฐานะ Admin (ผู้คุมเวลา / จอมอนิเตอร์)</span>
           </label>
-          <div id="adminPanelConfig" class="hidden mt-2.5 p-3 bg-sky-50 border border-sky-200 rounded-2xl space-y-2">
+          
+          <div id="adminPanelConfig" class="hidden mt-3 pt-3 border-t border-sky-200/60 space-y-2.5">
             <div class="flex justify-between items-center">
               <span class="text-xs font-bold text-slate-600">เวลาการแข่งขัน:</span>
-              <select id="selectDuration" class="w-28 !py-1 !my-0 text-xs">
-                <option value="60">1 นาที (ทดสอบ)</option>
+              <select id="selectDuration" class="px-3 py-1 bg-white border border-sky-300 rounded-xl font-bold text-xs text-sky-700 outline-none">
+                <option value="60">1 นาที (ทดสอบด่วน)</option>
                 <option value="180">3 นาที</option>
                 <option value="300" selected>5 นาที</option>
                 <option value="600">10 นาที</option>
@@ -198,119 +147,130 @@
             </div>
             <div class="flex justify-between items-center">
               <span class="text-xs font-bold text-slate-600">พลังงานเริ่มต้น (⚡):</span>
-              <input id="inputStartEnergy" type="number" min="1" max="100" value="5" class="w-20 !py-1 !my-0 text-xs">
+              <input id="inputStartEnergy" type="number" min="1" max="100" value="5" 
+                     class="w-20 px-2.5 py-1 bg-white border border-sky-300 rounded-xl font-black text-center text-xs text-amber-600 outline-none">
             </div>
+            <p class="text-[11px] font-semibold text-slate-400 leading-snug">*แอดมินไม่ต้องกระโดด แต่จะเห็นสถิติสดของผู้เรียนทุกคนแบบละเอียด</p>
           </div>
         </div>
 
-        <button id="btnJoinArena" onclick="enterArena()" class="btn-sky mt-2">
-          เข้าสู่สนามแข่งขัน 🚀
+        <!-- ปุ่มกดเข้าเกม 3D Cyber-Tactile -->
+        <button id="btnJoinArena" onclick="enterArena()" class="btn-3d-primary w-full py-4 rounded-2xl text-white font-black text-lg sm:text-xl tracking-wider mt-3">
+          เข้าสู่สมรภูมิ 🚀
         </button>
-        <p id="connectingText" class="hidden text-center text-xs font-bold text-sky-600 animate-pulse mt-2">กำลังเชื่อมต่อเครือข่ายห้อง...</p>
+        <p id="connectingText" class="hidden text-center text-xs font-bold text-sky-700 animate-pulse mt-2">กำลังเชื่อมต่อเครือข่ายห้องแข่งขัน...</p>
       </div>
     </div>
   </div>
 
-  <!-- 2. หน้าจอสำหรับ Admin (Spectator Dashboard ธีมคลีน) -->
-  <div id="adminDashboard" class="hidden w-full h-full bg-slate-50 flex flex-col p-4 sm:p-6 overflow-hidden">
-    <div class="bg-white border-2 border-sky-200 p-4 rounded-3xl flex flex-wrap justify-between items-center gap-3 shadow-md">
+  <!-- 2. หน้าจอสำหรับ Admin (Live Spectator Dashboard) -->
+  <div id="adminDashboard" class="hidden w-full h-full bg-slate-900 text-white flex flex-col p-4 sm:p-6 overflow-hidden">
+    <div class="bento-card !bg-slate-800/90 !border-slate-700 p-4 rounded-3xl flex flex-wrap justify-between items-center gap-3 shadow-xl">
       <div class="flex items-center gap-3">
-        <button type="button" onclick="adminExitRoom()" class="btn-gray">
-          🔙 ย้อนกลับหน้าแรก
+        <button type="button" onclick="adminExitRoom()" class="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-md transition-all active:scale-95">
+          <span>🔙</span> ย้อนกลับหน้าแรก
         </button>
         <div>
-          <h2 class="text-lg sm:text-xl font-black text-sky-700">👑 ADMIN MONITOR HUB</h2>
-          <p class="text-xs text-slate-500">ห้อง: <span id="adminRoomDisplay" class="text-sky-600 font-bold">WORD1</span> | ผู้เล่นออนไลน์: <span id="playerCountDisplay" class="text-emerald-600 font-bold">0</span> คน</p>
+          <h2 class="text-lg sm:text-xl font-black text-amber-400">👑 ADMIN LIVE MONITOR</h2>
+          <p class="text-xs text-slate-300">ห้อง: <span id="adminRoomDisplay" class="text-sky-300 font-bold">WORD1</span> | ออนไลน์: <span id="playerCountDisplay" class="text-emerald-400 font-bold">0</span> คน</p>
         </div>
       </div>
       <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-        <div class="bg-sky-50 border border-sky-200 px-4 py-2 rounded-2xl font-mono text-xl text-sky-700 font-black">
+        <div class="bg-black/50 px-4 py-2 rounded-2xl border border-white/20 font-mono text-xl text-yellow-300 font-black">
           ⏱️ <span id="adminTimerDisplay">05:00</span>
         </div>
-        <button id="btnAdminStart" onclick="adminStartGame()" class="btn-green !w-auto !py-2 !px-4 !my-0 text-sm">
-          ▶ เริ่มเกม
+        <button id="btnAdminStart" onclick="adminStartGame()" class="btn-3d-green text-white px-4 py-2 rounded-2xl font-bold text-xs sm:text-sm">
+          ▶ สั่งเริ่มเกม
         </button>
-        <button onclick="adminStopGame()" class="btn-rose !w-auto !py-2 !px-4 !my-0 text-sm">
+        <button onclick="adminStopGame()" class="btn-3d-rose text-white px-4 py-2 rounded-2xl font-bold text-xs sm:text-sm">
           ⏹ จบเกม
         </button>
-        <button onclick="exportDataCSV()" class="btn-sky !w-auto !py-2 !px-4 !my-0 text-sm">
+        <button onclick="exportDataCSV()" class="btn-3d-primary text-white px-4 py-2 rounded-2xl font-black text-xs sm:text-sm">
           📥 Export CSV
         </button>
       </div>
     </div>
 
     <!-- แถบคนนำอันดับ 1 -->
-    <div class="mt-3.5 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl flex items-center justify-between shadow-sm">
+    <div class="mt-3.5 bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-transparent border border-amber-500/40 p-3.5 rounded-2xl flex items-center justify-between shadow-lg">
       <div class="flex items-center gap-3">
         <span class="text-3xl animate-bounce">👑</span>
         <div>
-          <div class="text-[11px] text-amber-700 font-bold uppercase tracking-wider">ผู้นำอันดับ 1 ตอนนี้</div>
-          <div id="leaderName" class="text-base font-bold text-slate-800">รอผู้เล่นเริ่มกระโดด...</div>
+          <div class="text-[11px] text-amber-300 font-bold uppercase tracking-wider">ผู้นำอันดับ 1 ตอนนี้</div>
+          <div id="leaderName" class="text-base font-bold text-white">รอผู้เล่นเริ่มกระโดด...</div>
         </div>
       </div>
       <div class="text-right">
-        <div class="text-[11px] text-amber-700 font-bold uppercase tracking-wider">ระยะทางนำ</div>
-        <div id="leaderMeters" class="text-xl font-black text-amber-600 font-mono">0 เมตร</div>
+        <div class="text-[11px] text-amber-300 font-bold uppercase tracking-wider">ระยะทางนำ</div>
+        <div id="leaderMeters" class="text-xl font-black text-yellow-400 font-mono">0 เมตร</div>
       </div>
     </div>
 
-    <!-- ตารางผู้เล่นสด -->
-    <div class="mt-3.5 flex-1 overflow-auto bg-white border-2 border-sky-100 rounded-3xl p-3 sm:p-5 shadow-sm">
+    <!-- ตารางรายชื่อผู้เล่นสด -->
+    <div class="mt-3.5 flex-1 overflow-auto bg-slate-800/80 border border-slate-700 rounded-3xl p-3 sm:p-5 shadow-inner">
       <table class="w-full text-left border-collapse">
         <thead>
-          <tr class="border-b border-slate-200 text-slate-500 text-xs sm:text-sm">
+          <tr class="border-b border-slate-700 text-slate-400 text-xs sm:text-sm">
             <th class="p-3">อันดับ</th>
             <th class="p-3">ชื่อผู้เรียน</th>
-            <th class="p-3 text-center">ระยะทาง (เมตร)</th>
+            <th class="p-3 text-center">ระยะทางความสูง</th>
             <th class="p-3 text-center">ตอบถูก</th>
             <th class="p-3 text-center">ตอบผิด</th>
             <th class="p-3 text-center">ความแม่นยำ</th>
             <th class="p-3 text-center">พลังงาน</th>
           </tr>
         </thead>
-        <tbody id="adminPlayerTable" class="text-xs sm:text-sm divide-y divide-slate-100"></tbody>
+        <tbody id="adminPlayerTable" class="text-xs sm:text-sm divide-y divide-slate-700/60"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- 3. หน้าต่างเล่นเกมหลักของผู้เล่น (ธีมฟ้าละมุน + ตัวการ์ตูน) -->
-  <div id="playerGameContainer" class="hidden relative w-full h-full max-w-[1200px] max-h-[880px] overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border-4 border-white shadow-2xl bg-[#bae6fd]">
+  <!-- 3. หน้าจอเล่นเกมสำหรับผู้เล่น (ล็อกเฟรม ไม่หลุดจอ) -->
+  <div id="playerGameContainer" class="hidden relative w-full h-full max-w-[1200px] max-h-[900px] overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border-4 border-white shadow-2xl bg-[#bae6fd]">
     <canvas id="gameCanvas" class="w-full h-full block"></canvas>
 
-    <!-- แถบสถานะด้านบน (Top Bar) -->
+    <!-- แถบด้านบน: HUD สถานะ -->
     <div class="absolute top-3.5 left-3 right-3 flex justify-between items-center pointer-events-none z-20">
       <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
-        <div class="stat-pill">🏠 <span id="playerRoomDisplay" class="text-sky-600 font-bold">WORD1</span></div>
-        <div class="stat-pill" style="color:#ef4444;">⏱️ <span id="playerTimerDisplay" class="font-mono">05:00</span></div>
-        <div class="stat-pill">⚡ <span id="playerEnergyDisplay" style="color:#d97706;">5</span></div>
-        <div class="stat-pill">🎯 <span id="playerHeightDisplay" style="color:#0284c7;">0</span> m</div>
+        <div class="bg-white/95 border-2 border-white backdrop-blur-md px-3.5 py-1.5 rounded-2xl font-bold text-xs sm:text-sm shadow-sm">
+          🏠 <span id="playerRoomDisplay" class="text-sky-600 font-black">WORD1</span>
+        </div>
+        <div class="bg-white/95 border-2 border-white backdrop-blur-md px-3.5 py-1.5 rounded-2xl font-bold text-xs sm:text-sm text-rose-500 shadow-sm">
+          ⏱️ <span id="playerTimerDisplay" class="font-mono font-black">05:00</span>
+        </div>
+        <div class="bg-white/95 border-2 border-white backdrop-blur-md px-3.5 py-1.5 rounded-2xl font-bold text-xs sm:text-sm text-amber-500 shadow-sm">
+          ⚡ พลัง: <span id="playerEnergyDisplay" class="font-black">5</span>
+        </div>
+        <div class="bg-white/95 border-2 border-white backdrop-blur-md px-3.5 py-1.5 rounded-2xl font-bold text-xs sm:text-sm text-sky-600 shadow-sm">
+          🎯 สูง: <span id="playerHeightDisplay" class="font-black font-mono">0</span> m
+        </div>
       </div>
-      <div class="stat-pill pointer-events-auto">
-        👥 <span id="inGamePlayerCount" class="text-sky-600 font-bold">1</span> คน
+      <div class="bg-white/95 border-2 border-white backdrop-blur-md px-3.5 py-1.5 rounded-2xl font-bold text-xs sm:text-sm text-sky-700 shadow-sm pointer-events-auto">
+        👥 ในห้อง: <span id="inGamePlayerCount" class="font-black">1</span> คน
       </div>
     </div>
 
-    <!-- ปุ่มทำข้อสอบเติมพลัง -->
+    <!-- ปุ่มตอบคำถามเติมพลัง -->
     <div class="absolute right-4 bottom-24 z-20">
-      <button onclick="openQuizModal()" class="btn-sky !w-auto !py-2.5 !px-4 !my-0 shadow-lg animate-bounce flex items-center gap-1.5 text-xs sm:text-sm">
-        <span>⚡</span> ตอบคำถามเติมพลัง
+      <button onclick="openQuizModal()" class="btn-3d-primary px-4 py-3 rounded-2xl text-white font-black text-xs sm:text-sm tracking-wide flex items-center gap-1.5 shadow-xl animate-bounce">
+        <span class="text-base">⚡</span> ตอบคำถามเติมพลัง
       </button>
     </div>
 
-    <!-- แผงควบคุมบนมือถือ -->
+    <!-- แผงปุ่มสัมผัสบนมือถือ -->
     <div class="absolute bottom-4 left-4 right-4 max-w-[500px] mx-auto flex justify-between items-center gap-3 z-20 pointer-events-none">
-      <div class="flex gap-2 flex-1 pointer-events-auto">
-        <button class="ctrl-btn" id="btnLeft">◀ ซ้าย</button>
-        <button class="ctrl-btn" id="btnRight">ขวา ▶</button>
+      <div class="flex gap-2.5 flex-1 pointer-events-auto">
+        <button id="btnLeft" class="flex-1 py-4 bg-white/95 border-2 border-sky-300 text-sky-600 font-black text-2xl rounded-2xl shadow-md active:bg-sky-100 active:scale-95 transition-all">◀</button>
+        <button id="btnRight" class="flex-1 py-4 bg-white/95 border-2 border-sky-300 text-sky-600 font-black text-2xl rounded-2xl shadow-md active:bg-sky-100 active:scale-95 transition-all">▶</button>
       </div>
-      <button class="btn-jump-action pointer-events-auto" id="btnJump">กระโดด 🚀</button>
+      <button id="btnJump" class="btn-3d-rose pointer-events-auto flex-1.2 py-4 px-6 rounded-2xl text-white font-black text-lg shadow-lg">กระโดด 🚀</button>
     </div>
 
-    <!-- หน้าต่างคำถามแบบทดสอบ (Quiz Modal) -->
+    <!-- ป๊อปอัปคำถาม Word -->
     <div id="quizModal" class="hidden absolute inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-40 p-4">
-      <div class="theme-card max-w-sm">
+      <div class="bento-card max-w-sm w-full p-6 text-slate-800">
         <div class="flex justify-between items-center mb-2">
-          <span id="quizDifficulty" class="text-xs font-bold px-3 py-0.5 rounded-full border">ง่าย</span>
+          <span id="quizDifficulty" class="text-xs font-bold px-3 py-0.5 rounded-full border border-sky-300 bg-sky-50 text-sky-700">ระดับง่าย</span>
           <span class="text-xs font-bold text-emerald-600">+5 Energy ต่อข้อ</span>
         </div>
         <h2 id="quizQuestion" class="text-base font-bold text-slate-800 mb-3 leading-snug">คำถาม...</h2>
@@ -318,23 +278,21 @@
       </div>
     </div>
 
-    <!-- กระดานสรุปผลตอนสิ้นสุดเกม -->
-    <div id="gameOverModal" class="hidden absolute inset-0 bg-slate-900/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div class="theme-card max-w-md">
+    <!-- สรุปผลการแข่งขันเมื่อหมดเวลา -->
+    <div id="gameOverModal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <div class="bento-card max-w-md w-full p-6 text-slate-800">
         <h2 class="game-font font-black text-2xl text-sky-700 mb-1">🏁 สรุปผลการแข่งขัน</h2>
         <p class="text-xs font-semibold text-slate-500 mb-4">จัดอันดับตามระยะทางความสูงจริงที่ทำได้</p>
         <div id="summaryRows" class="space-y-2 mb-4 max-h-60 overflow-y-auto px-1"></div>
-        <button onclick="location.reload()" class="btn-sky">ออกจากห้อง / เล่นใหม่</button>
+        <button onclick="location.reload()" class="btn-3d-primary w-full py-3.5 rounded-2xl text-white font-black">ออกจากห้อง / เล่นใหม่</button>
       </div>
     </div>
   </div>
 
   <script>
-    // พาเลทสีมอนสเตอร์การ์ตูนสดใส
     const CHARACTER_COLORS = ['#38bdf8', '#f43f5e', '#10b981', '#fbbf24', '#a855f7', '#fb923c', '#ec4899', '#06b6d4'];
     const myColor = CHARACTER_COLORS[Math.floor(Math.random() * CHARACTER_COLORS.length)];
 
-    // คลังข้อสอบ Word 20 ข้อ
     const WORD_QUIZ = [
       { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'บันทึกเอกสาร' (Save)?", a: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + V"], c: 0, level: "ง่าย" },
       { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'ทำตัวอักษรหนา' (Bold)?", a: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + H"], c: 1, level: "ง่าย" },
@@ -572,18 +530,18 @@
         const totalAnswers = (p.correct || 0) + (p.wrong || 0);
         const acc = totalAnswers > 0 ? Math.round((p.correct / totalAnswers) * 100) : 0;
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-sky-50/60 transition-colors";
+        tr.className = "hover:bg-slate-700/40 transition-colors";
         tr.innerHTML = `
           <td class="p-3 font-bold">${idx === 0 ? '🥇 1' : idx === 1 ? '🥈 2' : idx === 2 ? '🥉 3' : idx + 1}</td>
-          <td class="p-3 font-bold text-sky-700 flex items-center gap-2">
-            <span class="w-3.5 h-3.5 rounded-full inline-block shadow-sm" style="background:${p.color}"></span>
+          <td class="p-3 font-bold text-sky-300 flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded-full inline-block border border-black/40" style="background:${p.color}"></span>
             ${p.name}
           </td>
-          <td class="p-3 text-center font-black text-sky-600 font-mono text-base">${p.height || 0} m</td>
-          <td class="p-3 text-center font-bold text-emerald-600">${p.correct || 0}</td>
-          <td class="p-3 text-center font-bold text-rose-500">${p.wrong || 0}</td>
-          <td class="p-3 text-center font-bold text-amber-600">${acc}%</td>
-          <td class="p-3 text-center font-bold text-amber-500">${p.energy || 0} ⚡</td>
+          <td class="p-3 text-center font-black text-emerald-400 font-mono text-base">${p.height || 0} m</td>
+          <td class="p-3 text-center font-bold text-green-400">${p.correct || 0}</td>
+          <td class="p-3 text-center font-bold text-rose-400">${p.wrong || 0}</td>
+          <td class="p-3 text-center font-bold text-amber-300">${acc}%</td>
+          <td class="p-3 text-center font-bold text-yellow-400">${p.energy || 0} ⚡</td>
         `;
         tbody.appendChild(tr);
       });
@@ -607,10 +565,11 @@
       document.body.removeChild(link);
     }
 
-    // ================= ULTRA-SMOOTH GAME ENGINE =================
+    // ================= ล็อกเฟรมตัวละคร + ฟิสิกส์เนียนตา =================
     const WORLD_WIDTH = 1000;
-    const LEFT_BOUNDARY = 40;
-    const RIGHT_BOUNDARY = WORLD_WIDTH - 40;
+    const LEFT_WALL = 45;
+    const RIGHT_WALL = WORLD_WIDTH - 45;
+
     let canvas, ctx;
     let cssWidth = 0, cssHeight = 0;
     let dpr = window.devicePixelRatio || 1;
@@ -631,8 +590,8 @@
 
     function buildWorldPlatformsUpTo(targetY) {
       while (highestGeneratedY > targetY - 1400) {
-        highestGeneratedY -= Math.floor(roomRandom() * 18 + 50);
-        const pWidth = Math.floor(roomRandom() * 40 + 150);
+        highestGeneratedY -= Math.floor(roomRandom() * 16 + 50);
+        const pWidth = Math.floor(roomRandom() * 40 + 155);
         const pX = Math.floor(roomRandom() * (WORLD_WIDTH - pWidth - 120) + 60);
         platforms.push({ x: pX, y: highestGeneratedY, w: pWidth, h: 26 });
       }
@@ -696,7 +655,7 @@
         return;
       }
       if (player.grounded) {
-        player.vy = -14.6;
+        player.vy = -14.2; // ความแรงกระโดดสมดุลพอดี ลอยนุ่มนวล
         player.grounded = false;
         player.scaleX = 0.85;
         player.scaleY = 1.25;
@@ -708,27 +667,29 @@
 
     function gameLoop() {
       if (!isGameOver) {
-        if (keys.left) player.vx = -5.4;
-        else if (keys.right) player.vx = 5.4;
-        else player.vx *= 0.82;
+        // ความเร่ง/หน่วงแนวนอนแบบ Balanced Inertia (ไม่ลื่น ไม่ช้าเกินไป)
+        if (keys.left) player.vx = -5.0;
+        else if (keys.right) player.vx = 5.0;
+        else player.vx *= 0.80;
 
-        player.vy += 0.52;
+        player.vy += 0.50; // แรงโน้มถ่วงนุ่มนวล
         player.x += player.vx;
         player.y += player.vy;
 
         player.scaleX += (1 - player.scaleX) * 0.15;
         player.scaleY += (1 - player.scaleY) * 0.15;
 
-        // กำแพงกั้นด้านข้าง ไม่ให้ตกออกนอกเฟรม
-        if (player.x < LEFT_BOUNDARY) {
-          player.x = LEFT_BOUNDARY;
+        // กำแพงทึบซ้าย-ขวา ล็อกตัวละครไม่ให้หลุดเฟรมเด็ดขาด
+        if (player.x < LEFT_WALL) {
+          player.x = LEFT_WALL;
           player.vx = 0;
         }
-        if (player.x > RIGHT_BOUNDARY) {
-          player.x = RIGHT_BOUNDARY;
+        if (player.x > RIGHT_WALL) {
+          player.x = RIGHT_WALL;
           player.vx = 0;
         }
 
+        // การตกกระทบแท่น
         player.grounded = false;
         platforms.forEach(p => {
           if (
@@ -748,6 +709,7 @@
           }
         });
 
+        // ล็อกพื้นด้านล่างสุด ไม่ให้ตกทะลุโลก
         if (player.y > 530) {
           player.y = 530;
           player.vy = 0;
@@ -758,9 +720,9 @@
         currentHeightMeters = currentM;
         document.getElementById('playerHeightDisplay').innerText = `${currentHeightMeters}`;
 
-        // กล้องตามตัวเรา Smooth Damping
+        // ล็อกกล้องตรงกลางจอแบบ Rigid-Lerp ไม่หลุดเฟรมบน/ล่าง
         const desiredCamY = player.y - cssHeight * 0.60;
-        cameraY += (desiredCamY - cameraY) * 0.15;
+        cameraY += (desiredCamY - cameraY) * 0.16;
 
         buildWorldPlatformsUpTo(cameraY);
       }
@@ -770,25 +732,24 @@
     }
 
     function renderScene() {
-      // พื้นหลังสีฟ้าสดใสคุมโทน minimal ของคุณ
+      // ธีมท้องฟ้าคลีนสว่างสดใส
       ctx.fillStyle = '#bae6fd';
       ctx.fillRect(0, 0, cssWidth, cssHeight);
 
       const offsetX = (cssWidth - WORLD_WIDTH) / 2;
 
-      // กำแพงขอบฟ้าด้านข้าง
+      // เสากำแพงด้านข้างสีขาวขอบฟ้า ล็อกเขตแดนชัดเจน
       ctx.fillStyle = '#7dd3fc';
-      ctx.fillRect(offsetX + LEFT_BOUNDARY - 14, 0, 14, cssHeight);
-      ctx.fillRect(offsetX + RIGHT_BOUNDARY, 0, 14, cssHeight);
+      ctx.fillRect(offsetX + LEFT_WALL - 12, 0, 12, cssHeight);
+      ctx.fillRect(offsetX + RIGHT_WALL, 0, 12, cssHeight);
 
-      // วาดแท่นกระโดดขอบมนโทนขาว-ฟ้า
+      // แท่นกระโดดขอบมน ขอบขาว-เขียวสดชื่น
       platforms.forEach(p => {
         const ry = p.y - cameraY;
         if (ry < -60 || ry > cssHeight + 60) return;
 
         const renderX = p.x + offsetX;
 
-        // แท่นหินสีขาว ขอบฟ้าสดใส
         ctx.fillStyle = '#ffffff';
         ctx.strokeStyle = '#7dd3fc';
         ctx.lineWidth = 3;
@@ -797,13 +758,11 @@
         ctx.fill();
         ctx.stroke();
 
-        // พื้นหญ้า/แถบด้านบนแท่นสีเขียวสดชื่น
         ctx.fillStyle = '#34d399';
         ctx.beginPath();
         ctx.roundRect(renderX, ry, p.w, 6, [12, 12, 0, 0]);
         ctx.fill();
 
-        // ป้ายระดับเมตรทุกๆ 10m
         const mLevel = Math.max(0, Math.floor((530 - p.y) / 10));
         if (mLevel > 0 && mLevel % 10 === 0) {
           ctx.font = 'bold 11px Kanit';
@@ -823,13 +782,12 @@
       drawMonster(player.x + offsetX, player.y, myColor, `${playerName} (เรา)`, true, player.scaleX, player.scaleY);
     }
 
-    // วาดตัวละครสไตล์การ์ตูนตาโต
     function drawMonster(x, y, color, label, isSelf, sx, sy) {
       const ry = y - cameraY;
       if (ry < -90 || ry > cssHeight + 90) return;
 
-      // เงา
-      ctx.fillStyle = 'rgba(2, 132, 199, 0.15)';
+      // เงาตัวละคร
+      ctx.fillStyle = 'rgba(2, 132, 199, 0.18)';
       ctx.beginPath();
       ctx.ellipse(x, ry + 20, 18 * sx, 5, 0, 0, Math.PI * 2);
       ctx.fill();
@@ -838,7 +796,7 @@
       ctx.translate(x, ry);
       ctx.scale(sx, sy);
 
-      // ลำตัว
+      // ลำตัวตัวการ์ตูนตาโต
       ctx.fillStyle = color;
       ctx.strokeStyle = '#0369a1';
       ctx.lineWidth = 3;
@@ -847,14 +805,14 @@
       ctx.fill();
       ctx.stroke();
 
-      // ขา
+      // ขาซ้าย-ขวา
       ctx.beginPath();
       ctx.arc(-9, 15, 5, 0, Math.PI * 2);
       ctx.arc(9, 15, 5, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // ตาการ์ตูนกลมโต
+      // ตาการ์ตูน
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.arc(-6, -2, 5, 0, Math.PI * 2);
@@ -882,14 +840,14 @@
     function openQuizModal() {
       if (isGameOver) return;
       const q = WORD_QUIZ[Math.floor(Math.random() * WORD_QUIZ.length)];
-      document.getElementById('quizDifficulty').innerText = q.level;
+      document.getElementById('quizDifficulty').innerText = `ระดับ: ${q.level}`;
       document.getElementById('quizQuestion').innerText = q.q;
 
       const opts = document.getElementById('quizOptions');
       opts.innerHTML = '';
       q.a.forEach((ans, idx) => {
         const btn = document.createElement('button');
-        btn.className = "w-full text-left font-semibold py-2.5 px-4 rounded-xl border border-sky-200 bg-sky-50/50 hover:bg-sky-100/70 transition-all text-slate-700 text-xs sm:text-sm";
+        btn.className = "w-full text-left font-bold py-2.5 px-4 rounded-2xl border border-sky-200 bg-sky-50/60 hover:bg-sky-100 transition-all text-slate-700 text-xs sm:text-sm";
         btn.innerText = `${idx + 1}. ${ans}`;
         btn.onclick = () => onAnswer(idx === q.c);
         opts.appendChild(btn);
