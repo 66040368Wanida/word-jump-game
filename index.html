@@ -170,7 +170,7 @@
 </head>
 <body class="w-screen h-screen flex justify-center items-center relative overflow-hidden bg-gradient-to-b from-[#bae6fd] via-[#e0f2fe] to-[#ffe4e6]">
 
-  <!-- ปุ่มเปิด/ปิดเสียง BGM มุมขวาบน -->
+  <!-- ปุ่มเปิด/ปิดเสียง BGM -->
   <button id="btn-audio-toggle" onclick="toggleAudio()" class="fixed top-3 right-3 z-50 p-2.5 bg-white/90 border-2 border-pink-300 rounded-2xl shadow-md text-lg cursor-pointer active:scale-95 transition-all">
     🔊
   </button>
@@ -276,9 +276,9 @@
           <p class="text-xs text-slate-400">ห้อง: <span id="live-room-pin" class="font-bold text-rose-300">------</span> | ออนไลน์: <span id="live-player-count" class="font-bold text-emerald-400">0</span> คน</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="openQuestionBankModal()" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-white rounded-2xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1">
-          📖 ดูคลังคำถาม (20 ข้อ)
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="openQuestionBankModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 shadow-md">
+          <span>📝</span> จัดการคำถาม (<span id="total-q-count">20</span> ข้อ)
         </button>
         <div class="bg-black/50 border border-white/20 px-4 py-1.5 rounded-2xl font-mono text-xl text-yellow-300 font-black">
           ⏱️ <span id="host-timer-text">03:00</span>
@@ -321,17 +321,52 @@
     </div>
   </div>
 
-  <!-- Modal สำหรับดูคลังคำถาม 20 ข้อ (สำหรับแอดมิน) -->
+  <!-- Modal สำหรับแอดมิน: ดูคลังคำถาม + พิมพ์เพิ่มคำถามใหม่ -->
   <div id="questionBankModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center z-50 p-4">
-    <div class="bento-card max-w-2xl w-full p-6 text-slate-800 max-h-[85vh] flex flex-col">
+    <div class="bento-card max-w-3xl w-full p-6 text-slate-800 max-h-[90vh] flex flex-col shadow-2xl">
       <div class="flex justify-between items-center border-b pb-3 mb-3">
         <div>
-          <h2 class="text-lg font-black text-rose-600">📖 คลังข้อสอบ Microsoft Word (ทั้งหมด 20 ข้อ)</h2>
-          <p class="text-xs text-slate-500">ข้อสอบวนลูปสุ่มตลอดการแข่งขัน พร้อมเฉลยคำตอบ</p>
+          <h2 class="text-lg font-black text-rose-600 flex items-center gap-2">
+            <span>📝</span> คลังข้อสอบ & เพิ่มคำถามใหม่
+          </h2>
+          <p class="text-xs text-slate-500">คุณครูสามารถตรวจสอบคำถาม หรือพิมพ์เพิ่มข้อใหม่ได้ทันที</p>
         </div>
-        <button onclick="closeQuestionBankModal()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-xl text-xs font-bold">✕ ปิด</button>
+        <button onclick="closeQuestionBankModal()" class="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-xl text-xs font-bold transition-all">✕ ปิด</button>
       </div>
-      <div id="questionBankList" class="flex-1 overflow-y-auto space-y-2.5 pr-2 text-xs sm:text-sm"></div>
+
+      <!-- ฟอร์มพิมพ์เพิ่มคำถามใหม่ -->
+      <div class="bg-pink-50/90 border-2 border-pink-200 p-3.5 rounded-2xl mb-4 text-xs">
+        <div class="font-bold text-rose-600 mb-2 flex items-center gap-1.5">
+          <span>➕</span> เพิ่มคำถามใหม่เข้าไปในเกม:
+        </div>
+        <div class="space-y-2">
+          <input id="new-q-text" type="text" placeholder="พิมพ์โจทย์คำถาม..." class="w-full p-2 rounded-xl border border-pink-300 bg-white font-semibold text-slate-800 outline-none">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <input id="new-q-a1" type="text" placeholder="ตัวเลือก 1" class="p-2 rounded-xl border border-pink-200 bg-white outline-none">
+            <input id="new-q-a2" type="text" placeholder="ตัวเลือก 2" class="p-2 rounded-xl border border-pink-200 bg-white outline-none">
+            <input id="new-q-a3" type="text" placeholder="ตัวเลือก 3" class="p-2 rounded-xl border border-pink-200 bg-white outline-none">
+            <input id="new-q-a4" type="text" placeholder="ตัวเลือก 4" class="p-2 rounded-xl border border-pink-200 bg-white outline-none">
+          </div>
+          <div class="flex items-center justify-between pt-1 gap-2">
+            <div class="flex items-center gap-1.5 font-bold text-slate-600">
+              <span>เฉลยข้อที่ถูก:</span>
+              <select id="new-q-correct" class="p-1.5 rounded-lg border border-pink-300 bg-white font-bold text-rose-600">
+                <option value="0">ตัวเลือก 1</option>
+                <option value="1">ตัวเลือก 2</option>
+                <option value="2">ตัวเลือก 3</option>
+                <option value="3">ตัวเลือก 4</option>
+              </select>
+            </div>
+            <button onclick="addNewCustomQuestion()" class="btn-sweet-green !w-auto !py-2 !px-5 rounded-xl font-bold text-xs shadow-md">
+              บันทึกข้อสอบ ➕
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- รายการคำถามที่มีอยู่ -->
+      <div class="font-bold text-slate-700 text-xs mb-1.5">รายการคำถามทั้งหมดในเกม:</div>
+      <div id="questionBankList" class="flex-1 overflow-y-auto space-y-2.5 pr-1.5 text-xs"></div>
     </div>
   </div>
 
@@ -517,8 +552,8 @@
       if (!isAudioMuted && !bgmInterval) startBGM();
     }, { once: true });
 
-    // ================= 1. คลังข้อสอบ Word 20 ข้อ =================
-    const WORD_QUIZ = [
+    // ================= 1. คลังข้อสอบเริ่มต้น 20 ข้อ =================
+    let WORD_QUIZ = [
       { id: 1, q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องกดปุ่มใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"], c: 0 },
       { id: 2, q: "ต้องการ 'วาง' (Paste) ข้อความที่คัดลอกไว้ กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + S", "Ctrl + C"], c: 1 },
       { id: 3, q: "ต้องการ 'บันทึกเอกสาร' (Save) กดปุ่มใด?", a: ["Ctrl + S", "Ctrl + O", "Ctrl + N", "Ctrl + A"], c: 0 },
@@ -557,11 +592,16 @@
     let gameTimer = null;
     let currentQuestionItem = null;
 
-    // ประวัติการตอบคำถาม 20 ข้อของตัวผู้เล่น { qId: { correct: 0, wrong: 0 } }
+    // ประวัติการตอบคำถามรายข้อ { qId: { correct: 0, wrong: 0 } }
     let questionAnswersHistory = {};
-    for (let i = 1; i <= 20; i++) {
-      questionAnswersHistory[i] = { correct: 0, wrong: 0 };
+    function initHistoryObj() {
+      WORD_QUIZ.forEach(q => {
+        if (!questionAnswersHistory[q.id]) {
+          questionAnswersHistory[q.id] = { correct: 0, wrong: 0 };
+        }
+      });
     }
+    initHistoryObj();
 
     let peer = null;
     let myPeerId = "";
@@ -635,15 +675,27 @@
       startCountdown(false);
     }
 
-    // --- ฟังก์ชัน Modal คลังข้อสอบสำหรับแอดมิน ---
+    // --- ฟังก์ชัน Modal คลังข้อสอบสำหรับแอดมิน + เพิ่มคำถามใหม่ ---
     function openQuestionBankModal() {
+      renderQuestionBankList();
+      document.getElementById('questionBankModal').classList.remove('hidden');
+    }
+
+    function closeQuestionBankModal() {
+      document.getElementById('questionBankModal').classList.add('hidden');
+    }
+
+    function renderQuestionBankList() {
+      document.getElementById('total-q-count').innerText = WORD_QUIZ.length;
       const box = document.getElementById('questionBankList');
       box.innerHTML = '';
       WORD_QUIZ.forEach((q) => {
         const item = document.createElement('div');
         item.className = 'p-3 bg-pink-50/70 border border-pink-200 rounded-2xl';
         item.innerHTML = `
-          <div class="font-black text-rose-600 mb-1.5">ข้อที่ ${q.id}: ${q.q}</div>
+          <div class="font-black text-rose-600 mb-1.5 flex justify-between">
+            <span>ข้อที่ ${q.id}: ${q.q}</span>
+          </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-slate-600">
             ${q.a.map((ans, idx) => `
               <div class="px-2.5 py-1.5 rounded-lg border ${idx === q.c ? 'bg-emerald-100 border-emerald-400 font-bold text-emerald-800' : 'bg-white border-slate-200'}">
@@ -654,11 +706,48 @@
         `;
         box.appendChild(item);
       });
-      document.getElementById('questionBankModal').classList.remove('hidden');
     }
 
-    function closeQuestionBankModal() {
-      document.getElementById('questionBankModal').classList.add('hidden');
+    // แอดมินพิมพ์เพิ่มคำถามใหม่
+    function addNewCustomQuestion() {
+      const qText = document.getElementById('new-q-text').value.trim();
+      const a1 = document.getElementById('new-q-a1').value.trim();
+      const a2 = document.getElementById('new-q-a2').value.trim();
+      const a3 = document.getElementById('new-q-a3').value.trim();
+      const a4 = document.getElementById('new-q-a4').value.trim();
+      const correctIdx = parseInt(document.getElementById('new-q-correct').value);
+
+      if (!qText || !a1 || !a2 || !a3 || !a4) {
+        alert("กรุณากรอกโจทย์และตัวเลือกให้ครบทั้ง 4 ข้อ");
+        return;
+      }
+
+      const newId = WORD_QUIZ.length + 1;
+      const newQuestion = {
+        id: newId,
+        q: qText,
+        a: [a1, a2, a3, a4],
+        c: correctIdx
+      };
+
+      WORD_QUIZ.push(newQuestion);
+      initHistoryObj();
+
+      // ล้างช่องกรอก
+      document.getElementById('new-q-text').value = '';
+      document.getElementById('new-q-a1').value = '';
+      document.getElementById('new-q-a2').value = '';
+      document.getElementById('new-q-a3').value = '';
+      document.getElementById('new-q-a4').value = '';
+
+      renderQuestionBankList();
+
+      // ส่งคำถามชุดใหม่ไปอัปเดตให้นักเรียนทุกคนในห้อง
+      connections.forEach(conn => {
+        if (conn.open) conn.send({ type: 'sync_questions', questions: WORD_QUIZ });
+      });
+
+      alert(`เพิ่มข้อสอบข้อที่ ${newId} เรียบร้อยแล้ว! ✨`);
     }
 
     // --- 3. ระบบเชื่อมต่อ PeerJS Mesh ---
@@ -693,6 +782,7 @@
         initialEnergy = parseInt(document.getElementById('input-host-energy').value) || 5;
 
         conn.send({ type: 'sync_config', time: totalGameTime, energy: initialEnergy });
+        conn.send({ type: 'sync_questions', questions: WORD_QUIZ }); // ส่งคำถามให้ผู้เรียน
         conn.send({ type: 'peer_list', peers: Array.from(connections.keys()) });
       });
 
@@ -720,6 +810,9 @@
           currentEnergy = data.energy;
           document.getElementById('hud-energy').innerText = currentEnergy;
           updateTimerUI(totalGameTime, false);
+        } else if (data.type === 'sync_questions') {
+          WORD_QUIZ = data.questions;
+          initHistoryObj();
         } else if (data.type === 'start_game') {
           totalGameTime = data.time;
           currentEnergy = data.energy;
@@ -779,7 +872,7 @@
         correct: correctCount,
         wrong: wrongCount,
         energy: currentEnergy,
-        history: questionAnswersHistory // ส่งประวัติการตอบทั้ง 20 ข้อ
+        history: questionAnswersHistory // ส่งประวัติการตอบรายข้อ
       };
       connections.forEach(conn => { if (conn.open) conn.send(payload); });
       if (hostConn && hostConn.open) hostConn.send(payload);
@@ -852,12 +945,14 @@
       });
     }
 
-    // Export รายงานเป็น Excel/CSV ละเอียดรายข้อ 1-20
+    // Export รายงานเป็น Excel/CSV ละเอียดทุกข้อ (เห็นชัดเจนว่าใครตอบข้อไหนไปแล้วบ้าง)
     function exportDataCSV() {
       let csv = "อันดับ,ชื่อผู้เรียน,ความสูง (เมตร),ตอบถูกรวม,ตอบผิดรวม,ความแม่นยำ (%),พลังงานคงเหลือ";
-      for (let i = 1; i <= 20; i++) {
-        csv += `,ข้อที่ ${i} (ถูก/ผิด)`;
-      }
+      
+      // สร้างหัวตารางข้อคำถามทั้งหมด
+      WORD_QUIZ.forEach((q) => {
+        csv += `,ข้อที่ ${q.id} ("${q.q.replace(/"/g, '""')}")`;
+      });
       csv += "\n";
 
       const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
@@ -866,12 +961,16 @@
         const acc = total > 0 ? Math.round((p.correct / total) * 100) : 0;
         let row = `${idx + 1},"${p.name}",${p.height || 0},${p.correct || 0},${p.wrong || 0},${acc}%,${p.energy || 0}`;
         
-        // บันทึกรายละเอียดการตอบข้อ 1-20
+        // เช็กประวัติการตอบรายข้อ
         const hist = p.history || {};
-        for (let i = 1; i <= 20; i++) {
-          const item = hist[i] || { correct: 0, wrong: 0 };
-          row += `,"ถูก ${item.correct} / ผิด ${item.wrong}"`;
-        }
+        WORD_QUIZ.forEach((q) => {
+          const item = hist[q.id];
+          if (item && (item.correct > 0 || item.wrong > 0)) {
+            row += `,"ตอบแล้ว (ถูก ${item.correct} / ผิด ${item.wrong})"`;
+          } else {
+            row += `,"ยังไม่ได้ตอบข้อนี้"`;
+          }
+        });
         csv += row + "\n";
       });
 
@@ -955,7 +1054,7 @@
       window.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
         if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
-        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') doJump();
+        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') doJump();
       });
       window.addEventListener('keyup', (e) => {
         if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
