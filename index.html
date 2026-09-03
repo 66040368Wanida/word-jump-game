@@ -114,6 +114,250 @@
       50% { filter: drop-shadow(0 0 22px rgba(255, 77, 109, 0.8)); }
     }
     .pulse-glow { animation: pulseGlow 2s infinite; }
+
+    /* ===== Responsive game controls ===== */
+    .mobile-controls {
+      display: block;
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+    }
+
+    .mobile-control-dock {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(120px, 0.95fr);
+      align-items: stretch;
+      gap: 0.7rem;
+      padding: 0.55rem;
+      border: 2px solid rgba(255,255,255,.82);
+      border-radius: 26px;
+      background: rgba(255,255,255,.58);
+      backdrop-filter: blur(18px) saturate(1.25);
+      -webkit-backdrop-filter: blur(18px) saturate(1.25);
+      box-shadow: 0 12px 30px rgba(15,23,42,.16), inset 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    .control-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.55rem;
+    }
+
+    .game-control {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      position: relative;
+      min-height: 68px;
+      border-radius: 21px;
+      border: 2px solid rgba(255,255,255,.92);
+      font-family: 'Kanit', sans-serif;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform .1s ease, filter .1s ease, box-shadow .1s ease;
+      overflow: hidden;
+    }
+
+    .game-control::before {
+      content: "";
+      position: absolute;
+      inset: 2px 2px 52% 2px;
+      border-radius: 18px 18px 12px 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0));
+      pointer-events: none;
+    }
+
+    .game-control:active,
+    .game-control.pressed {
+      transform: translateY(3px) scale(.97);
+      filter: brightness(.98);
+    }
+
+    .move-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .35rem;
+      flex-direction: column;
+      color: #e11d48;
+      background: linear-gradient(180deg, #fff 0%, #fff1f4 100%);
+      border-color: #fbcfe8;
+      box-shadow: 0 5px 0 #f9a8d4, 0 9px 18px rgba(244,114,182,.20);
+    }
+
+    .move-control:active,
+    .move-control.pressed {
+      box-shadow: 0 2px 0 #f9a8d4, 0 5px 12px rgba(244,114,182,.15);
+    }
+
+    .control-icon {
+      font-family: Arial, sans-serif;
+      font-size: 2rem;
+      line-height: .8;
+      font-weight: 900;
+      position: relative;
+      z-index: 1;
+    }
+
+    .control-label {
+      font-size: .68rem;
+      line-height: 1;
+      letter-spacing: .08em;
+      opacity: .78;
+      position: relative;
+      z-index: 1;
+    }
+
+    .jump-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0;
+      color: white;
+      background: linear-gradient(180deg, #6ee7b7 0%, #10b981 55%, #059669 100%);
+      border-color: rgba(255,255,255,.9);
+      box-shadow: 0 6px 0 #047857, 0 12px 24px rgba(16,185,129,.30);
+    }
+
+    .jump-control:active,
+    .jump-control.pressed {
+      box-shadow: 0 2px 0 #047857, 0 6px 14px rgba(16,185,129,.22);
+    }
+
+    .jump-icon {
+      font-family: Arial, sans-serif;
+      font-size: 2rem;
+      line-height: .72;
+      font-weight: 900;
+      text-shadow: 0 2px 0 rgba(4,120,87,.28);
+      position: relative;
+      z-index: 1;
+    }
+
+    .jump-text {
+      font-size: 1rem;
+      line-height: 1.05;
+      letter-spacing: .03em;
+      position: relative;
+      z-index: 1;
+    }
+
+    .jump-sub {
+      font-family: 'Fredoka', sans-serif;
+      font-size: .53rem;
+      letter-spacing: .18em;
+      opacity: .82;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* จอมือถือแนวตั้ง */
+    @media (max-width: 640px) {
+      #game-wrapper {
+        width: 100vw;
+        height: 100dvh;
+        max-width: none;
+        max-height: none;
+      }
+
+      #gameCanvas {
+        min-width: 100%;
+        min-height: 100%;
+      }
+
+      .mobile-control-dock {
+        max-width: 520px;
+        grid-template-columns: minmax(0, 1.15fr) minmax(116px, .85fr);
+      }
+
+      .game-control {
+        min-height: 64px;
+      }
+
+      .control-icon,
+      .jump-icon {
+        font-size: 1.85rem;
+      }
+
+      .jump-text {
+        font-size: .95rem;
+      }
+    }
+
+    /* โทรศัพท์จอแคบมาก */
+    @media (max-width: 380px) {
+      .mobile-controls {
+        padding-left: .15rem;
+        padding-right: .15rem;
+      }
+
+      .mobile-control-dock {
+        gap: .45rem;
+        padding: .4rem;
+        border-radius: 22px;
+      }
+
+      .control-group {
+        gap: .4rem;
+      }
+
+      .game-control {
+        min-height: 58px;
+        border-radius: 18px;
+      }
+
+      .control-icon,
+      .jump-icon {
+        font-size: 1.55rem;
+      }
+
+      .control-label {
+        font-size: .58rem;
+      }
+
+      .jump-text {
+        font-size: .82rem;
+      }
+
+      .jump-sub {
+        font-size: .45rem;
+      }
+    }
+
+    /* มือถือแนวนอน: ลดพื้นที่ปุ่มให้ไม่บังเกม */
+    @media (orientation: landscape) and (max-height: 520px) {
+      .mobile-control-dock {
+        max-width: 430px;
+        padding: .35rem;
+      }
+
+      .game-control {
+        min-height: 50px;
+        border-radius: 17px;
+      }
+
+      .control-icon,
+      .jump-icon {
+        font-size: 1.35rem;
+      }
+
+      .control-label,
+      .jump-sub {
+        display: none;
+      }
+
+      .jump-text {
+        font-size: .82rem;
+      }
+    }
+
+    /* Desktop: ยังรองรับคีย์บอร์ด แต่ซ่อนปุ่มสัมผัสเพื่อไม่บังพื้นที่ */
+    @media (min-width: 768px) and (pointer: fine) {
+      .mobile-controls {
+        opacity: .88;
+      }
+    }
+
   </style>
 </head>
 <body class="w-screen h-screen flex justify-center items-center relative overflow-hidden bg-gradient-to-b from-[#bae6fd] via-[#e0f2fe] to-[#ffe4e6]">
@@ -283,13 +527,25 @@
       <span class="text-base">⚡</span> เติมพลังกระโดด!
     </button>
 
-    <!-- แผงปุ่มสัมผัสบนมือถือ -->
-    <div class="absolute bottom-4 left-4 right-4 max-w-[500px] mx-auto flex justify-between items-center gap-3 z-20 pointer-events-none">
-      <div class="flex gap-2.5 flex-1 pointer-events-auto">
-        <button id="btnLeft" class="flex-1 py-3.5 bg-white/95 border-3 border-pink-300 text-rose-500 font-black text-2xl rounded-2xl shadow-md active:bg-pink-100 active:scale-95 transition-all">◀</button>
-        <button id="btnRight" class="flex-1 py-3.5 bg-white/95 border-3 border-pink-300 text-rose-500 font-black text-2xl rounded-2xl shadow-md active:bg-pink-100 active:scale-95 transition-all">▶</button>
+    <!-- แผงควบคุมสัมผัสมือถือ: Responsive + Glassmorphism -->
+    <div class="mobile-controls absolute bottom-3 sm:bottom-5 left-0 right-0 z-20 pointer-events-none px-3 sm:px-6 pb-[env(safe-area-inset-bottom)]">
+      <div class="mobile-control-dock pointer-events-auto mx-auto w-full max-w-[560px]">
+        <div class="control-group">
+          <button id="btnLeft" class="game-control move-control" aria-label="เดินซ้าย">
+            <span class="control-icon">←</span>
+            <span class="control-label">ซ้าย</span>
+          </button>
+          <button id="btnRight" class="game-control move-control" aria-label="เดินขวา">
+            <span class="control-icon">→</span>
+            <span class="control-label">ขวา</span>
+          </button>
+        </div>
+        <button id="btnJump" class="game-control jump-control" aria-label="กระโดด">
+          <span class="jump-icon">↟</span>
+          <span class="jump-text">กระโดด</span>
+          <span class="jump-sub">JUMP</span>
+        </button>
       </div>
-      <button id="btnJump" class="btn-sweet-green pointer-events-auto flex-1.2 py-3.5 px-6 rounded-2xl font-black text-lg shadow-lg">กระโดด 🚀</button>
     </div>
 
     <!-- ป๊อปอัปข้อสอบ Word ง่ายๆ น่ารัก -->
@@ -679,9 +935,9 @@
       cssWidth = canvas.parentElement.clientWidth;
       cssHeight = canvas.parentElement.clientHeight;
       dpr = window.devicePixelRatio || 1;
-      canvas.width = cssWidth * dpr;
-      canvas.height = cssHeight * dpr;
-      ctx.scale(dpr, dpr);
+      canvas.width = Math.max(1, Math.floor(cssWidth * dpr));
+      canvas.height = Math.max(1, Math.floor(cssHeight * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     function initGameEngine() {
@@ -718,17 +974,54 @@
       const bRight = document.getElementById('btnRight');
       const bJump = document.getElementById('btnJump');
 
-      bLeft.ontouchstart = (e) => { e.preventDefault(); keys.left = true; };
-      bLeft.ontouchend = () => keys.left = false;
-      bRight.ontouchstart = (e) => { e.preventDefault(); keys.right = true; };
-      bRight.ontouchend = () => keys.right = false;
-      bJump.ontouchstart = (e) => { e.preventDefault(); doJump(); };
+      // Pointer Events รองรับมือถือ / แท็บเล็ต / เมาส์ / ปากกาในชุดเดียว
+      const bindMoveButton = (button, direction) => {
+        const press = (e) => {
+          e.preventDefault();
+          button.classList.add('pressed');
+          if (button.setPointerCapture) {
+            try { button.setPointerCapture(e.pointerId); } catch (_) {}
+          }
+          keys[direction] = true;
+        };
 
-      bLeft.onmousedown = () => keys.left = true;
-      bLeft.onmouseup = () => keys.left = false;
-      bRight.onmousedown = () => keys.right = true;
-      bRight.onmouseup = () => keys.right = false;
-      bJump.onclick = () => doJump();
+        const release = (e) => {
+          if (e) e.preventDefault();
+          button.classList.remove('pressed');
+          keys[direction] = false;
+          if (e && button.releasePointerCapture) {
+            try { button.releasePointerCapture(e.pointerId); } catch (_) {}
+          }
+        };
+
+        button.addEventListener('pointerdown', press, { passive: false });
+        button.addEventListener('pointerup', release, { passive: false });
+        button.addEventListener('pointercancel', release, { passive: false });
+        button.addEventListener('pointerleave', (e) => {
+          if (e.pointerType === 'mouse') release(e);
+        }, { passive: false });
+      };
+
+      bindMoveButton(bLeft, 'left');
+      bindMoveButton(bRight, 'right');
+
+      const jumpPress = (e) => {
+        e.preventDefault();
+        bJump.classList.add('pressed');
+        doJump();
+        if (bJump.setPointerCapture) {
+          try { bJump.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+      };
+
+      const jumpRelease = (e) => {
+        if (e) e.preventDefault();
+        bJump.classList.remove('pressed');
+      };
+
+      bJump.addEventListener('pointerdown', jumpPress, { passive: false });
+      bJump.addEventListener('pointerup', jumpRelease, { passive: false });
+      bJump.addEventListener('pointercancel', jumpRelease, { passive: false });
     }
 
     function addSparkles(x, y) {
