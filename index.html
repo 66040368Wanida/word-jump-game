@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Hunter Cyber Mission - Endless Sweet Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <!-- PeerJS เชื่อมต่อห้องสดแบบ P2P เสถียร ไม่ต้องรัน Backend ในเครื่อง -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Kanit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Kanit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -17,462 +17,291 @@
       touch-action: manipulation;
       margin: 0;
       padding: 0;
-      font-family: 'Kanit', system-ui, -apple-system, sans-serif;
+      font-family: 'Kanit', sans-serif;
     }
     html, body {
       width: 100vw;
       height: 100vh;
       height: 100dvh;
       overflow: hidden;
-      background: #e0f2fe;
+      background: #bae6fd;
       color: #0f172a;
     }
     .game-font { font-family: 'Fredoka', 'Kanit', sans-serif; }
 
-    /* การ์ดคอนเทนเนอร์ธีม Sweet Candy */
-    .container {
-      background: rgba(255, 255, 255, 0.96);
-      border: 2.5px solid #ff758f;
-      border-radius: 28px;
-      padding: 24px;
-      max-width: 460px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 16px 40px rgba(255, 117, 143, 0.22);
-      backdrop-filter: blur(12px);
-      max-height: 94vh;
-      overflow-y: auto;
-      z-index: 50;
+    /* Bento Grid Glassmorphism สไตล์ปี 2026 */
+    .bento-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2.5px solid rgba(255, 255, 255, 0.95);
+      border-radius: 32px;
+      box-shadow: 0 20px 45px rgba(255, 77, 109, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
-    h1 {
-      color: #e01e37;
-      margin: 0 0 6px 0;
-      font-size: 24px;
-      font-weight: 900;
-      letter-spacing: 0.5px;
+    .bento-box {
+      background: rgba(255, 245, 247, 0.85);
+      border: 1.5px solid #ffccd5;
+      border-radius: 20px;
+      transition: all 0.2s ease;
     }
-    h2 {
-      color: #e01e37;
-      margin-bottom: 12px;
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    /* ปุ่มกดสไตล์ Sweet Tactile */
-    .btn {
-      background: linear-gradient(135deg, #ff758f, #ff4d6d);
-      color: white;
-      border: none;
-      padding: 13px;
-      border-radius: 16px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      width: 100%;
-      margin: 6px 0;
-      box-shadow: 0 4px 14px rgba(255, 77, 109, 0.3);
-      transition: transform 0.1s;
-    }
-    .btn:active { transform: scale(0.97); }
-    .btn-green {
-      background: linear-gradient(135deg, #34d399, #10b981);
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
-    }
-    .btn-sky {
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
-    }
-    .btn-gray {
-      background: #f1f5f9;
-      color: #475569;
-      border: 2px solid #cbd5e1;
-      padding: 8px 16px;
-      border-radius: 14px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      width: auto;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 12px 14px;
-      margin: 6px 0;
-      border-radius: 14px;
-      border: 1.5px solid #ff758f;
-      background: #fff5f7;
-      color: #e01e37;
-      text-align: center;
-      font-size: 16px;
-      font-weight: 700;
-      outline: none;
-    }
-    input:focus, select:focus {
+    .bento-box:focus-within {
       background: #ffffff;
-      border-color: #e01e37;
+      border-color: #ff4d6d;
+      box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.18);
     }
 
-    .pin-display {
-      font-size: 34px;
-      letter-spacing: 5px;
-      font-weight: 900;
-      color: #e01e37;
-      background: #ffe4e6;
-      padding: 8px;
-      border-radius: 16px;
-      margin: 8px 0;
-      border: 2px dashed #ff758f;
-    }
-
-    .qr-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #fff;
-      padding: 10px;
-      border-radius: 16px;
-      width: fit-content;
-      margin: 8px auto;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    }
-
-    .badge-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      justify-content: center;
-      margin: 10px 0;
-      max-height: 100px;
-      overflow-y: auto;
-    }
-    .badge {
-      background: #ffe4e6;
-      border: 1px solid #ff758f;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      color: #e01e37;
-      font-weight: bold;
-    }
-
-    .hidden { display: none !important; }
-
-    /* หน้าจอเกมหลัก */
-    #game-wrapper {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: #e0f2fe;
-      overflow: hidden;
-    }
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-
-    .game-top-bar {
-      position: absolute;
-      top: env(safe-area-inset-top, 12px);
-      left: 12px;
-      right: 12px;
-      display: flex;
-      justify-content: space-between;
-      pointer-events: none;
-      z-index: 10;
-    }
-    .stat-pill {
-      background: rgba(255, 255, 255, 0.94);
-      border: 2px solid rgba(255, 117, 143, 0.5);
-      backdrop-filter: blur(8px);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-weight: 800;
-      font-size: 14px;
-      color: #0f172a;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
-
-    /* ปุ่มควบคุมสัมผัสบนมือถือ */
-    .controls-bar {
-      position: absolute;
-      bottom: env(safe-area-inset-bottom, 16px);
-      left: 16px;
-      right: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      z-index: 15;
-      pointer-events: none;
-    }
-    .d-pad {
-      display: flex;
-      gap: 12px;
-      pointer-events: auto;
-    }
-    .ctrl-btn {
-      width: 70px;
-      height: 70px;
-      background: rgba(255, 255, 255, 0.96);
-      border: 3px solid #ff758f;
-      color: #e01e37;
-      font-size: 28px;
-      font-weight: 900;
-      border-radius: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 16px rgba(255, 117, 143, 0.25);
-      cursor: pointer;
-    }
-    .ctrl-btn:active {
-      background: #ffe4e6;
-      transform: scale(0.92);
-    }
-    .btn-jump-action {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #10b981, #059669);
-      border: 3px solid #ffffff;
+    /* ปุ่มกด 3D Tactile แบบนูนเด้ง */
+    .btn-sweet-pink {
+      background: linear-gradient(180deg, #ff758f 0%, #ff4d6d 100%);
+      box-shadow: 0 6px 0 #c9184a, 0 10px 20px rgba(255, 77, 109, 0.35);
       color: white;
-      font-size: 32px;
-      font-weight: 900;
-      border-radius: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
-      pointer-events: auto;
-      cursor: pointer;
+      transition: all 0.1s ease;
     }
-    .btn-jump-action:active {
-      background: #047857;
-      transform: scale(0.92);
+    .btn-sweet-pink:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #c9184a;
     }
 
-    .btn-answer-quiz {
-      position: absolute;
-      bottom: env(safe-area-inset-bottom, 22px);
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(180deg, #ff758f, #ff4d6d);
+    .btn-sweet-green {
+      background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+      box-shadow: 0 6px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.35);
+      color: white;
+      transition: all 0.1s ease;
+    }
+    .btn-sweet-green:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #047857;
+    }
+
+    .btn-sweet-sky {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      box-shadow: 0 6px 0 #0369a1, 0 10px 20px rgba(2, 132, 199, 0.35);
+      color: white;
+      transition: all 0.1s ease;
+    }
+    .btn-sweet-sky:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #0369a1;
+    }
+
+    .stat-badge {
+      background: rgba(255, 255, 255, 0.95);
       border: 2px solid #ffffff;
-      color: white;
-      padding: 12px 22px;
-      border-radius: 22px;
-      font-weight: 900;
-      font-size: 14px;
-      pointer-events: auto;
-      white-space: nowrap;
-      box-shadow: 0 6px 18px rgba(255, 77, 109, 0.35);
-      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.12);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-weight: 800;
     }
-    .btn-answer-quiz:active { transform: translateX(-50%) scale(0.95); }
 
-    /* ป๊อปอัปคำถาม */
-    #quiz-modal {
-      position: absolute;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 30;
-      padding: 16px;
+    @keyframes softFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
     }
-    .quiz-card {
-      background: #ffffff;
-      padding: 24px;
-      border-radius: 26px;
-      width: 100%;
-      max-width: 420px;
-      border: 3px solid #ff758f;
-      text-align: center;
-      box-shadow: 0 16px 36px rgba(0,0,0,0.15);
-    }
-    .quiz-option {
-      background: #fff5f7;
-      border: 2px solid #ffccd5;
-      color: #e01e37;
-      padding: 12px 16px;
-      border-radius: 14px;
-      width: 100%;
-      margin: 8px 0;
-      cursor: pointer;
-      text-align: left;
-      font-size: 15px;
-      font-weight: 700;
-      transition: background 0.15s;
-    }
-    .quiz-option:active { background: #ff758f; color: white; border-color: #ff758f; }
+    .float-anim { animation: softFloat 3.5s ease-in-out infinite; }
   </style>
 </head>
-<body class="w-screen h-screen flex justify-center items-center">
+<body class="w-screen h-screen flex justify-center items-center relative overflow-hidden bg-gradient-to-b from-[#bae6fd] via-[#e0f2fe] to-[#ffe4e6]">
 
-  <!-- 1. เมนูหลักเลือกโหมด -->
-  <div id="view-mode" class="container">
-    <h1>HUNTER CYBER MISSION</h1>
-    <p style="color: #64748b; font-size:14px; margin-bottom: 16px;">เกมกระโดดตอบคำถาม Microsoft Word (Endless Sweet Edition)</p>
-    <button class="btn" id="btn-mode-host">👑 ผู้สอน (Host สร้างห้อง)</button>
-    <button class="btn btn-sky" id="btn-mode-join">🎮 ผู้เรียน (Join เข้าเล่น)</button>
+  <!-- ลูกบอลแสงนีออนฟุ้งด้านหลัง -->
+  <div class="absolute -top-24 -left-24 w-80 h-80 bg-pink-300/40 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-sky-300/40 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- 1. เมนูหลักเลือกบทบาท (Home Menu) -->
+  <div id="view-mode" class="bento-card p-8 w-full max-w-sm text-center z-50 m-4">
+    <div class="inline-block p-4 bg-gradient-to-tr from-pink-400 to-rose-300 rounded-3xl mb-3 shadow-lg shadow-pink-400/30 text-3xl float-anim border-2 border-white">
+      🧁✨
+    </div>
+    <h1 class="game-font text-2xl font-black text-rose-600 mb-1">HUNTER CYBER</h1>
+    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">Word Jump Sweet Edition</p>
+
+    <div class="space-y-3">
+      <button onclick="goToHostSetup()" class="btn-sweet-pink w-full py-3.5 rounded-2xl font-black text-base tracking-wide flex items-center justify-center gap-2">
+        <span>👑</span> ผู้สอน (สร้างห้องแข่งขัน)
+      </button>
+      <button onclick="goToJoinScreen()" class="btn-sweet-sky w-full py-3.5 rounded-2xl font-black text-base tracking-wide flex items-center justify-center gap-2">
+        <span>🎮</span> ผู้เรียน (เข้าเล่นเกม)
+      </button>
+    </div>
   </div>
 
-  <!-- 2. หน้า Host ตั้งห้องและแชร์ QR Code -->
-  <div id="view-host" class="container hidden">
-    <h2>ห้องควบคุมโฮสต์</h2>
-    <p style="margin-bottom:2px; font-size:13px; color:#64748b;">รหัสเข้าห้อง (Room PIN):</p>
-    <div id="host-pin" class="pin-display">------</div>
-    
-    <div class="qr-container">
-      <div id="qrcode"></div>
-      <span style="color:#e01e37; font-size:11px; font-weight:bold; margin-top:4px;">สแกนเพื่อเข้าห้อง</span>
-    </div>
-    
-    <button class="btn btn-sky" id="btn-copy-link" style="padding:10px; font-size:13px;">📋 คัดลอกลิงก์ส่งให้นักเรียน</button>
+  <!-- 2. หน้า Host ตั้งค่าห้อง & QR Code -->
+  <div id="view-host" class="bento-card p-6 w-full max-w-md text-center z-50 m-4 hidden">
+    <h2 class="text-xl font-black text-rose-600 mb-1">ห้องควบคุมการแข่งขัน</h2>
+    <p class="text-xs font-bold text-slate-400 mb-2">รหัสห้องสำหรับผู้เรียน (PIN Code):</p>
+    <div id="host-pin-display" class="game-font text-3xl tracking-widest font-black text-rose-600 bg-pink-100/80 border-2 border-dashed border-pink-400 py-2 rounded-2xl mb-3">------</div>
 
-    <div style="display: flex; gap: 8px; margin-top: 6px;">
-      <div style="flex: 1;">
-        <label style="color:#64748b; font-size:12px; font-weight:bold;">เวลาแข่งขัน:</label>
-        <select id="select-duration">
+    <div class="flex flex-col items-center bg-white p-3 rounded-2xl border border-pink-200 shadow-sm w-fit mx-auto mb-3">
+      <div id="qrcode-box"></div>
+      <span class="text-[11px] font-bold text-rose-500 mt-1">สแกน QR เพื่อเข้าเล่นทันที</span>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2 text-left mb-3">
+      <div class="bento-box p-2.5">
+        <label class="text-[11px] font-bold text-slate-400 block mb-1">เวลาแข่งขัน</label>
+        <select id="select-duration" class="w-full bg-transparent font-bold text-xs text-rose-600 outline-none">
           <option value="60">1 นาที (ทดสอบ)</option>
           <option value="180" selected>3 นาที</option>
           <option value="300">5 นาที</option>
           <option value="600">10 นาที</option>
         </select>
       </div>
-      <div style="flex: 1;">
-        <label style="color:#64748b; font-size:12px; font-weight:bold;">พลังงานเริ่มต้น:</label>
-        <input id="host-start-energy" type="number" min="1" max="50" value="5">
+      <div class="bento-box p-2.5">
+        <label class="text-[11px] font-bold text-slate-400 block mb-1">พลังงานเริ่มต้น</label>
+        <input id="input-host-energy" type="number" min="1" max="50" value="5" class="w-full bg-transparent font-black text-xs text-amber-500 outline-none text-center">
       </div>
     </div>
 
-    <p style="margin: 8px 0 4px 0; font-size:13px; color:#64748b;">ผู้เล่นในห้อง (<span id="player-count">0</span> คน):</p>
-    <div id="host-players" class="badge-list"></div>
-    <button id="btn-start" class="btn btn-green">🚀 เริ่มการแข่งขันทันที</button>
+    <p class="text-xs font-bold text-slate-500 mb-2">ผู้เรียนในห้อง: <span id="player-count" class="text-emerald-500 font-black">0</span> คน</p>
+    <div id="host-player-badges" class="flex flex-wrap gap-1.5 justify-center max-h-20 overflow-y-auto mb-3"></div>
+
+    <div class="flex gap-2">
+      <button onclick="location.reload()" class="w-1/3 py-3 bg-slate-100 border border-slate-200 text-slate-600 rounded-2xl font-bold text-xs">ย้อนกลับ</button>
+      <button id="btn-host-start" onclick="hostStartMatch()" class="btn-sweet-green w-2/3 py-3 rounded-2xl font-black text-sm">🚀 เริ่มการแข่งขัน</button>
+    </div>
   </div>
 
-  <!-- 3. หน้า Host มอนิเตอร์สถิติสดแบบ Real-time -->
-  <div id="view-host-live" class="hidden w-full h-full bg-slate-50 flex flex-col p-4 sm:p-6 overflow-hidden">
-    <div class="bg-white border-2 border-pink-200 p-4 rounded-3xl flex flex-wrap justify-between items-center gap-3 shadow-md">
+  <!-- 3. หน้า Join เข้าห้องของผู้เรียน -->
+  <div id="view-join" class="bento-card p-7 w-full max-w-sm text-center z-50 m-4 hidden">
+    <h2 class="text-xl font-black text-sky-600 mb-4">เข้าสู่ห้องแข่งขัน</h2>
+    <div class="space-y-3 text-left">
+      <div class="bento-box p-3">
+        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">รหัสห้อง 6 หลัก</label>
+        <input id="input-join-pin" type="text" placeholder="เช่น 123456" maxlength="6" inputmode="numeric" class="w-full bg-transparent font-black tracking-widest text-sky-600 text-center text-lg outline-none">
+      </div>
+      <div class="bento-box p-3">
+        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">ชื่อเล่นของคุณ</label>
+        <input id="input-join-name" type="text" placeholder="ระบุชื่อ..." value="นักเรียน" maxlength="12" class="w-full bg-transparent font-bold text-slate-700 text-center text-base outline-none">
+      </div>
+      <button onclick="joinGameRoom()" class="btn-sweet-sky w-full py-3.5 rounded-2xl font-black text-base mt-2">เข้าห้อง 🚀</button>
+      <button onclick="location.reload()" class="w-full py-2.5 bg-slate-100 text-slate-500 rounded-xl font-bold text-xs">ย้อนกลับ</button>
+    </div>
+  </div>
+
+  <!-- 4. หน้าต่างรอเริ่มแข่งขัน (Waiting Lounge) -->
+  <div id="view-waiting" class="bento-card p-8 w-full max-w-sm text-center z-50 m-4 hidden">
+    <div class="text-4xl float-anim mb-3">⏳</div>
+    <h2 class="text-xl font-black text-rose-600 mb-1">เตรียมพร้อมแล้ว!</h2>
+    <p class="text-xs font-bold text-slate-400">ห้อง PIN: <span id="wait-pin-label" class="text-rose-600 font-black">------</span></p>
+    <p class="text-xs font-bold text-slate-400 mb-5">ผู้เล่น: <span id="wait-name-label" class="text-emerald-500 font-black">นักเรียน</span></p>
+
+    <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs font-bold text-amber-700 mb-4">
+      รอผู้สอนกดปล่อยตัว... หรือกดเริ่มเล่นซ้อมกระโดดได้ทันทีด้านล่าง
+    </div>
+
+    <button onclick="forceStartSinglePlay()" class="btn-sweet-green w-full py-3.5 rounded-2xl font-black text-sm">
+      ▶ เริ่มกระโดดซ้อมทันที
+    </button>
+  </div>
+
+  <!-- 5. หน้าต่าง Host Live Monitor สดๆ -->
+  <div id="view-host-live" class="hidden w-full h-full bg-slate-900 text-white flex flex-col p-4 sm:p-6 overflow-hidden z-40">
+    <div class="bento-card !bg-slate-800/95 !border-slate-700 p-4 rounded-3xl flex flex-wrap justify-between items-center gap-3 shadow-xl">
       <div class="flex items-center gap-3">
-        <button type="button" onclick="adminExitRoom()" class="btn-gray">
-          🔙 กลับหน้าแรก
-        </button>
+        <button onclick="location.reload()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold text-xs transition-all">🔙 ออกจากห้อง</button>
         <div>
-          <h2 class="text-lg sm:text-xl font-black text-rose-600 mb-0">👑 HOST LIVE DASHBOARD</h2>
-          <p class="text-xs text-slate-500">ห้อง: <span id="admin-room-display" class="font-bold text-rose-500">------</span> | ออนไลน์: <span id="admin-player-count" class="font-bold text-emerald-600">0</span> คน</p>
+          <h2 class="text-lg font-black text-rose-400 mb-0">👑 HOST MONITOR</h2>
+          <p class="text-xs text-slate-400">ห้อง: <span id="live-room-pin" class="font-bold text-rose-300">------</span> | ออนไลน์: <span id="live-player-count" class="font-bold text-emerald-400">0</span> คน</p>
         </div>
       </div>
-      <div class="flex items-center gap-3">
-        <div class="bg-rose-50 border border-rose-200 px-4 py-1.5 rounded-2xl font-mono text-xl text-rose-600 font-black">
-          ⏱️ <span id="host-timer">00:00</span>
+      <div class="flex items-center gap-2.5">
+        <div class="bg-black/50 border border-white/20 px-4 py-1.5 rounded-2xl font-mono text-xl text-yellow-300 font-black">
+          ⏱️ <span id="host-timer-text">03:00</span>
         </div>
-        <button onclick="adminStopGame()" class="btn !bg-rose-600 !w-auto !py-2 !px-4 !my-0 text-sm">
-          ⏹ สั่งจบเกม
-        </button>
-        <button onclick="exportDataCSV()" class="btn btn-green !w-auto !py-2 !px-4 !my-0 text-sm">
-          📥 Export CSV
-        </button>
+        <button onclick="exportDataCSV()" class="btn-sweet-green !w-auto !py-2 !px-4 !my-0 text-xs font-black">📥 Export CSV</button>
       </div>
     </div>
 
     <!-- แถบคนนำอันดับ 1 -->
-    <div class="mt-3.5 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl flex items-center justify-between shadow-sm">
-      <div class="flex items-center gap-3">
-        <span class="text-3xl">👑</span>
+    <div class="mt-3 bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-transparent border border-amber-500/40 p-3 rounded-2xl flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-2.5">
+        <span class="text-2xl animate-bounce">👑</span>
         <div>
-          <div class="text-[11px] text-amber-700 font-bold uppercase">ผู้นำอันดับ 1 ตอนนี้</div>
-          <div id="leaderName" class="text-base font-bold text-slate-800">รอผู้เล่นกระโดด...</div>
+          <div class="text-[11px] text-amber-300 font-bold uppercase">ผู้นำอันดับ 1 ตอนนี้</div>
+          <div id="leader-name" class="text-sm sm:text-base font-bold text-white">รอเริ่มกระโดด...</div>
         </div>
       </div>
       <div class="text-right">
-        <div class="text-[11px] text-amber-700 font-bold uppercase">ระยะทางนำ</div>
-        <div id="leaderMeters" class="text-xl font-black text-amber-600 font-mono">0 m</div>
+        <div class="text-[11px] text-amber-300 font-bold uppercase">ระยะทางนำ</div>
+        <div id="leader-meters" class="text-lg sm:text-xl font-black text-yellow-400 font-mono">0 m</div>
       </div>
     </div>
 
-    <!-- ตารางผู้เล่นทุกคนแบบสดๆ -->
-    <div class="mt-3.5 flex-1 overflow-auto bg-white border-2 border-pink-100 rounded-3xl p-3 sm:p-5 shadow-sm">
+    <!-- ตารางรายชื่อสด -->
+    <div class="mt-3 flex-1 overflow-auto bg-slate-800/80 border border-slate-700 rounded-3xl p-3 sm:p-4">
       <table class="w-full text-left border-collapse text-xs sm:text-sm">
         <thead>
-          <tr class="border-b border-slate-200 text-slate-400">
-            <th class="p-3">อันดับ</th>
-            <th class="p-3">ชื่อผู้เรียน</th>
-            <th class="p-3 text-center">ความสูง (เมตร)</th>
-            <th class="p-3 text-center">ตอบถูก</th>
-            <th class="p-3 text-center">ตอบผิด</th>
-            <th class="p-3 text-center">ความแม่นยำ</th>
-            <th class="p-3 text-center">พลังงาน</th>
+          <tr class="border-b border-slate-700 text-slate-400">
+            <th class="p-2.5">อันดับ</th>
+            <th class="p-2.5">ชื่อผู้เรียน</th>
+            <th class="p-2.5 text-center">ความสูง (m)</th>
+            <th class="p-2.5 text-center">ตอบถูก</th>
+            <th class="p-2.5 text-center">ตอบผิด</th>
+            <th class="p-2.5 text-center">ความแม่นยำ</th>
+            <th class="p-2.5 text-center">พลังงาน</th>
           </tr>
         </thead>
-        <tbody id="adminPlayerTable" class="divide-y divide-slate-100"></tbody>
+        <tbody id="host-live-table" class="divide-y divide-slate-700/50"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- 4. หน้า Join กรอกรหัส -->
-  <div id="view-join" class="container hidden">
-    <h2>เข้าสู่สมรภูมิขนมหวาน</h2>
-    <input type="text" id="input-pin" placeholder="รหัสห้อง 6 หลัก" maxlength="6" inputmode="numeric">
-    <input type="text" id="input-name" placeholder="ชื่อเล่นของคุณ" maxlength="12" value="นักเรียน">
-    <button class="btn btn-green" id="btn-do-join">เข้าสู่ห้องแข่งขัน 🚀</button>
-  </div>
+  <!-- 6. หน้าจอเล่นเกมสำหรับผู้เรียน (Game View) -->
+  <div id="game-wrapper" class="hidden relative w-full h-full max-w-[1200px] max-h-[900px] overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border-4 border-white shadow-2xl bg-[#bae6fd]">
+    <canvas id="gameCanvas" class="w-full h-full block"></canvas>
 
-  <!-- 5. หน้าต่างรอการแข่งขัน (Waiting Room) -->
-  <div id="view-waiting" class="container hidden">
-    <h2>ห้องเตรียมพร้อม</h2>
-    <p style="font-size:14px; color:#64748b; margin:6px 0;">รหัสห้อง: <b id="wait-pin" style="color:#e01e37; font-size:18px;"></b></p>
-    <p style="font-size:14px; color:#64748b;">ผู้เล่น: <b id="wait-name" style="color:#10b981; font-size:16px;"></b></p>
-    <div style="display:inline-block; margin:20px 0; font-size:40px;" class="animate-bounce">⏳</div>
-    <p style="color: #f59e0b; font-size:15px; font-weight:800;">รอสัญญาณปล่อยตัวจากผู้สอน...</p>
-  </div>
-
-  <!-- 6. สนามเล่นเกมจริง (Player Game Wrapper) -->
-  <div id="game-wrapper" class="hidden">
-    <canvas id="gameCanvas"></canvas>
-
-    <div class="game-top-bar">
-      <div class="stat-pill">⚡ <span id="ui-energy" style="color:#d97706;">5</span></div>
-      <div class="stat-pill" style="color:#ef4444;">⏱️ <span id="ui-timer">00:00</span></div>
-      <div class="stat-pill">🎯 <span id="ui-height" style="color:#0284c7;">0</span> m</div>
+    <!-- แถบด้านบน: HUD สถานะ -->
+    <div class="absolute top-3 left-3 right-3 flex justify-between items-center pointer-events-none z-20">
+      <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
+        <div class="stat-badge text-xs sm:text-sm">🏠 <span id="hud-room-pin" class="text-rose-500 font-black">WORD1</span></div>
+        <div class="stat-badge text-xs sm:text-sm text-rose-500">⏱️ <span id="hud-timer" class="font-mono font-black">03:00</span></div>
+        <div class="stat-badge text-xs sm:text-sm text-amber-500">⚡ <span id="hud-energy" class="font-black">5</span></div>
+        <div class="stat-badge text-xs sm:text-sm text-sky-600">🎯 <span id="hud-height" class="font-black font-mono">0</span> m</div>
+      </div>
+      <div class="stat-badge text-xs sm:text-sm text-slate-600 pointer-events-auto">
+        👥 <span id="hud-player-count" class="font-black text-rose-500">1</span> คน
+      </div>
     </div>
 
     <!-- ปุ่มตอบคำถามกลางจอ -->
-    <button class="btn-answer-quiz" id="btn-open-quiz">⚡ ตอบคำถามรับพลังงาน</button>
+    <button onclick="openQuizModal()" class="btn-sweet-pink !w-auto !py-2.5 !px-5 rounded-2xl absolute bottom-24 right-4 z-20 font-black text-xs sm:text-sm shadow-xl animate-bounce flex items-center gap-1.5 pointer-events-auto">
+      <span>⚡</span> ตอบคำถามรับพลังงาน
+    </button>
 
-    <!-- ปุ่มควบคุมมือถือ -->
-    <div class="controls-bar">
-      <div class="d-pad">
-        <button class="ctrl-btn" id="btn-left">◀</button>
-        <button class="ctrl-btn" id="btn-right">▶</button>
+    <!-- แผงปุ่มสัมผัสบนมือถือ -->
+    <div class="absolute bottom-4 left-4 right-4 max-w-[500px] mx-auto flex justify-between items-center gap-3 z-20 pointer-events-none">
+      <div class="flex gap-2.5 flex-1 pointer-events-auto">
+        <button id="btnLeft" class="flex-1 py-3.5 bg-white/95 border-2 border-pink-300 text-rose-500 font-black text-2xl rounded-2xl shadow-md active:bg-pink-100 active:scale-95 transition-all">◀</button>
+        <button id="btnRight" class="flex-1 py-3.5 bg-white/95 border-2 border-pink-300 text-rose-500 font-black text-2xl rounded-2xl shadow-md active:bg-pink-100 active:scale-95 transition-all">▶</button>
       </div>
-      <button class="btn-jump-action" id="btn-jump">🚀</button>
+      <button id="btnJump" class="btn-sweet-green pointer-events-auto flex-1.2 py-3.5 px-6 rounded-2xl font-black text-lg shadow-lg">กระโดด 🚀</button>
     </div>
 
-    <!-- หน้าต่างป๊อปอัปข้อสอบ -->
-    <div id="quiz-modal" class="hidden">
-      <div class="quiz-card">
-        <div style="font-size:12px; font-weight:bold; color:#10b981; margin-bottom:4px;">+5 Energy ต่อข้อ</div>
-        <div id="quiz-question" style="font-size:16px; font-weight:800; color:#0f172a; margin-bottom:12px; line-height:1.4;">คำถาม...</div>
-        <div id="quiz-options"></div>
+    <!-- ป๊อปอัปข้อสอบ Word -->
+    <div id="quiz-modal" class="hidden absolute inset-0 bg-slate-900/45 backdrop-blur-sm flex items-center justify-center z-40 p-4">
+      <div class="bento-card max-w-sm w-full p-6 text-slate-800">
+        <div class="flex justify-between items-center mb-2">
+          <span id="quiz-badge" class="text-xs font-bold px-3 py-0.5 rounded-full border border-pink-200 bg-pink-50 text-rose-600">ข้อสอบ Word</span>
+          <span class="text-xs font-bold text-emerald-600">+5 Energy</span>
+        </div>
+        <h2 id="quiz-question-text" class="text-base font-bold text-slate-800 mb-3 leading-snug">คำถาม...</h2>
+        <div id="quiz-options-box" class="space-y-2"></div>
       </div>
     </div>
 
-    <!-- กระดานสรุปผลตอนสิ้นสุดเกม -->
-    <div id="gameOverModal" class="hidden absolute inset-0 bg-slate-900/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div class="container max-w-md">
+    <!-- กระดานสรุปผลเมื่อหมดเวลา -->
+    <div id="gameOverModal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <div class="bento-card max-w-md w-full p-6 text-slate-800 text-center">
         <h2 class="game-font font-black text-2xl text-rose-600 mb-1">🏁 สรุปผลการแข่งขัน</h2>
-        <p class="text-xs font-semibold text-slate-500 mb-4">จัดอันดับตามระยะทางความสูงจริงที่ทำได้</p>
+        <p class="text-xs font-semibold text-slate-400 mb-4">จัดอันดับตามระยะทางความสูงจริงที่ทำได้</p>
         <div id="summaryRows" class="space-y-2 mb-4 max-h-60 overflow-y-auto px-1"></div>
-        <button onclick="location.reload()" class="btn">ออกจากห้อง / เล่นใหม่</button>
+        <button onclick="location.reload()" class="btn-sweet-pink w-full py-3.5 rounded-2xl font-black">ออกจากห้อง / เล่นใหม่</button>
       </div>
     </div>
   </div>
 
   <script>
-    // --- 1. คลังข้อสอบ Microsoft Word ---
-    const quizDatabase = [
+    // --- 1. คลังข้อสอบ Word 20 ข้อ ---
+    const WORD_QUIZ = [
       { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'บันทึกเอกสาร' (Save)?", a: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + V"], c: 0 },
       { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'ทำตัวอักษรหนา' (Bold)?", a: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + H"], c: 1 },
       { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'ยกเลิกคำสั่งล่าสุด' (Undo)?", a: ["Ctrl + Y", "Ctrl + Z", "Ctrl + X", "Ctrl + A"], c: 1 },
@@ -495,12 +324,11 @@
       { q: "การสั่งอัปเดตฟิลด์หรือเลขหน้าสารบัญแบบด่วน กดปุ่มฟังก์ชันใด?", a: ["F5", "F7", "F9", "F11"], c: 2 }
     ];
 
-    // สีตัวละครสไตล์ขนมหวานสดใส
     const CHARACTER_COLORS = ['#ff758f', '#38bdf8', '#34d399', '#fbbf24', '#a855f7', '#fb923c', '#ec4899', '#06b6d4'];
     const myColor = CHARACTER_COLORS[Math.floor(Math.random() * CHARACTER_COLORS.length)];
 
     let isHost = false;
-    let roomPin = "";
+    let roomPin = "123456";
     let myPlayerName = "ผู้เล่น";
     let totalGameTime = 180;
     let initialEnergy = 5;
@@ -509,114 +337,112 @@
     let correctCount = 0;
     let wrongCount = 0;
     let isGameOver = false;
-    let gameInterval = null;
+    let gameTimer = null;
 
     let peer = null;
     let myPeerId = "";
-    let hostConnection = null;
+    let hostConn = null;
     let connections = new Map();
     let playersInRoom = new Map();
 
-    // --- 2. การสลับหน้าจอ (UI Navigation) ---
-    function showView(viewId) {
-      ['view-mode', 'view-host', 'view-host-live', 'view-join', 'view-waiting', 'game-wrapper'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.classList.add('hidden');
+    // --- 2. การสลับหน้าจอ (Navigation) ---
+    function hideAllViews() {
+      ['view-mode', 'view-host', 'view-join', 'view-waiting', 'view-host-live', 'game-wrapper'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
       });
-      const target = document.getElementById(viewId);
-      if (target) target.classList.remove('hidden');
     }
 
-    // เมื่อเปิดลิงก์แบบมี ?pin=123456 ให้สลับไปหน้า Join ทันที
+    function goToHostSetup() {
+      isHost = true;
+      hideAllViews();
+      roomPin = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById('host-pin-display').innerText = roomPin;
+
+      // สร้าง QR Code อิง URL ปัจจุบัน
+      const joinUrl = `${window.location.origin}${window.location.pathname}?pin=${roomPin}`;
+      document.getElementById('qrcode-box').innerHTML = "";
+      new QRCode(document.getElementById('qrcode-box'), {
+        text: joinUrl,
+        width: 120,
+        height: 120,
+        colorDark : "#e11d48",
+        colorLight : "#ffffff"
+      });
+
+      initPeerNetwork(true);
+      document.getElementById('view-host').classList.remove('hidden');
+    }
+
+    function goToJoinScreen() {
+      isHost = false;
+      hideAllViews();
+      document.getElementById('view-join').classList.remove('hidden');
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const pinParam = urlParams.get('pin');
       if (pinParam) {
-        document.getElementById('input-pin').value = pinParam;
-        showView('view-join');
+        document.getElementById('input-join-pin').value = pinParam;
+        goToJoinScreen();
       }
     });
 
-    document.getElementById('btn-mode-host').onclick = () => {
-      isHost = true;
-      roomPin = Math.floor(100000 + Math.random() * 900000).toString();
-      document.getElementById('host-pin').innerText = roomPin;
-      
-      // สร้าง QR Code จาก URL เว็บไซต์จริงบน GitHub Pages
-      const joinUrl = `${window.location.origin}${window.location.pathname}?pin=${roomPin}`;
-      document.getElementById('qrcode').innerHTML = "";
-      new QRCode(document.getElementById("qrcode"), {
-        text: joinUrl,
-        width: 130,
-        height: 130,
-        colorDark : "#e01e37",
-        colorLight : "#ffffff"
-      });
-
-      document.getElementById('btn-copy-link').onclick = () => {
-        navigator.clipboard.writeText(joinUrl);
-        alert("คัดลอกลิงก์ห้องเรียบร้อยแล้ว: " + joinUrl);
-      };
-
-      initPeer(true);
-      showView('view-host');
-    };
-
-    document.getElementById('btn-mode-join').onclick = () => {
-      isHost = false;
-      showView('view-join');
-    };
-
-    document.getElementById('btn-do-join').onclick = () => {
-      roomPin = document.getElementById('input-pin').value.trim();
-      myPlayerName = document.getElementById('input-name').value.trim() || "นักเรียน";
+    function joinGameRoom() {
+      roomPin = document.getElementById('input-join-pin').value.trim();
+      myPlayerName = document.getElementById('input-join-name').value.trim() || "นักเรียน";
       if (roomPin.length !== 6) {
-        alert("กรุณาระบุรหัสห้อง 6 หลักให้ถูกต้อง");
+        alert("กรุณากรอกรหัสห้อง 6 หลักให้ถูกต้อง");
         return;
       }
-      document.getElementById('wait-pin').innerText = roomPin;
-      document.getElementById('wait-name').innerText = myPlayerName;
-      initPeer(false);
-      showView('view-waiting');
-    };
+      hideAllViews();
+      document.getElementById('wait-pin-label').innerText = roomPin;
+      document.getElementById('wait-name-label').innerText = myPlayerName;
+      document.getElementById('view-waiting').classList.remove('hidden');
 
-    // --- 3. ระบบเชื่อมต่อ PeerJS P2P ---
-    function initPeer(asHost) {
+      initPeerNetwork(false);
+    }
+
+    function forceStartSinglePlay() {
+      hideAllViews();
+      document.getElementById('hud-room-pin').innerText = roomPin;
+      document.getElementById('hud-energy').innerText = currentEnergy;
+      document.getElementById('game-wrapper').classList.remove('hidden');
+      initGameEngine();
+      startCountdown(false);
+    }
+
+    // --- 3. ระบบเชื่อมต่อ PeerJS Mesh ---
+    function initPeerNetwork(asHost) {
       myPeerId = asHost ? `sweet_host_${roomPin}` : `sweet_plr_${roomPin}_${Math.random().toString(36).substring(2, 7)}`;
       peer = new Peer(myPeerId, { debug: 1 });
 
       peer.on('open', () => {
         if (!asHost) {
-          // ถ้าเป็นนักเรียน ให้เชื่อมต่อไปหา Host
-          const hostPeerId = `sweet_host_${roomPin}`;
-          hostConnection = peer.connect(hostPeerId);
-          setupClientConnection(hostConnection);
+          hostConn = peer.connect(`sweet_host_${roomPin}`);
+          setupClientConn(hostConn);
         }
       });
 
       peer.on('connection', (conn) => {
-        if (asHost) {
-          setupHostConnection(conn);
-        } else {
-          setupMeshConnection(conn);
-        }
+        if (asHost) setupHostConn(conn);
+        else setupMeshConn(conn);
       });
 
       peer.on('error', (err) => {
         if (err.type === 'unavailable-id' && asHost) {
-          alert("รหัสห้องนี้มีผู้ใช้งานอยู่แล้ว กรุณาลองใหม่อีกครั้ง");
+          alert("รหัสห้องซ้ำ กรุณาลองใหม่อีกครั้ง");
           location.reload();
         }
       });
     }
 
-    function setupHostConnection(conn) {
+    function setupHostConn(conn) {
       conn.on('open', () => {
         connections.set(conn.peer, conn);
         totalGameTime = parseInt(document.getElementById('select-duration').value);
-        initialEnergy = parseInt(document.getElementById('host-start-energy').value) || 5;
+        initialEnergy = parseInt(document.getElementById('input-host-energy').value) || 5;
 
-        // ส่งข้อมูลตั้งต้นและรายชื่อ Peer ให้เครื่องนักเรียนเชื่อมถึงกัน (Mesh)
         conn.send({ type: 'sync_config', time: totalGameTime, energy: initialEnergy });
         conn.send({ type: 'peer_list', peers: Array.from(connections.keys()) });
       });
@@ -624,51 +450,47 @@
       conn.on('data', (data) => {
         if (data.type === 'state') {
           playersInRoom.set(data.id, data);
-          updateHostLobby();
-          renderAdminTable();
+          updateHostLobbyBadges();
+          renderHostTable();
         }
       });
 
       conn.on('close', () => {
         connections.delete(conn.peer);
         playersInRoom.delete(conn.peer);
-        updateHostLobby();
-        renderAdminTable();
+        updateHostLobbyBadges();
+        renderHostTable();
       });
     }
 
-    function setupClientConnection(conn) {
-      conn.on('open', () => {
-        broadcastMyState();
-      });
-
+    function setupClientConn(conn) {
+      conn.on('open', () => broadcastMyState());
       conn.on('data', (data) => {
         if (data.type === 'sync_config') {
           totalGameTime = data.time;
           currentEnergy = data.energy;
-          document.getElementById('ui-energy').innerText = currentEnergy;
-          updateTimerUI(totalGameTime);
+          document.getElementById('hud-energy').innerText = currentEnergy;
+          updateTimerUI(totalGameTime, false);
         } else if (data.type === 'start_game') {
           totalGameTime = data.time;
           currentEnergy = data.energy;
-          document.getElementById('ui-energy').innerText = currentEnergy;
-          showView('game-wrapper');
+          document.getElementById('hud-energy').innerText = currentEnergy;
+          hideAllViews();
+          document.getElementById('hud-room-pin').innerText = roomPin;
+          document.getElementById('game-wrapper').classList.remove('hidden');
           initGameEngine();
-          startTimerCountdown(false);
-        } else if (data.type === 'stop_game') {
-          endMatch();
+          startCountdown(false);
         } else if (data.type === 'peer_list') {
-          data.peers.forEach((pId) => {
+          data.peers.forEach(pId => {
             if (pId !== myPeerId && !connections.has(pId)) {
-              const meshConn = peer.connect(pId);
-              setupMeshConnection(meshConn);
+              setupMeshConn(peer.connect(pId));
             }
           });
         }
       });
     }
 
-    function setupMeshConnection(conn) {
+    function setupMeshConn(conn) {
       conn.on('open', () => {
         connections.set(conn.peer, conn);
         broadcastMyState();
@@ -684,17 +506,16 @@
       });
     }
 
-    function updateHostLobby() {
+    function updateHostLobbyBadges() {
       document.getElementById('player-count').innerText = playersInRoom.size;
-      const listEl = document.getElementById('host-players');
-      listEl.innerHTML = "";
+      const box = document.getElementById('host-player-badges');
+      box.innerHTML = '';
       playersInRoom.forEach(p => {
-        const badge = document.createElement('span');
-        badge.className = "badge";
-        badge.innerText = p.name;
-        listEl.appendChild(badge);
+        const span = document.createElement('span');
+        span.className = "px-2.5 py-1 bg-pink-100 text-rose-600 rounded-full text-xs font-bold border border-pink-300";
+        span.innerText = p.name;
+        box.appendChild(span);
       });
-      document.getElementById('btn-start').disabled = (playersInRoom.size === 0);
     }
 
     function broadcastMyState() {
@@ -710,74 +531,55 @@
         wrong: wrongCount,
         energy: currentEnergy
       };
-      connections.forEach(conn => {
-        if (conn.open) conn.send(payload);
-      });
-      if (hostConnection && hostConnection.open) {
-        hostConnection.send(payload);
-      }
+      connections.forEach(conn => { if (conn.open) conn.send(payload); });
+      if (hostConn && hostConn.open) hostConn.send(payload);
     }
 
-    // แอดมินกดเริ่มเกม
-    document.getElementById('btn-start').onclick = () => {
+    function hostStartMatch() {
       totalGameTime = parseInt(document.getElementById('select-duration').value);
-      initialEnergy = parseInt(document.getElementById('host-start-energy').value) || 5;
+      initialEnergy = parseInt(document.getElementById('input-host-energy').value) || 5;
 
       connections.forEach(conn => {
         if (conn.open) conn.send({ type: 'start_game', time: totalGameTime, energy: initialEnergy });
       });
 
-      document.getElementById('admin-room-display').innerText = roomPin;
-      showView('view-host-live');
-      startTimerCountdown(true);
-    };
-
-    function adminStopGame() {
-      connections.forEach(conn => {
-        if (conn.open) conn.send({ type: 'stop_game' });
-      });
-      endMatch();
+      hideAllViews();
+      document.getElementById('live-room-pin').innerText = roomPin;
+      document.getElementById('view-host-live').classList.remove('hidden');
+      startCountdown(true);
     }
 
-    function adminExitRoom() {
-      if (confirm("ต้องการกลับไปหน้าแรกหรือไม่?")) {
-        if (gameInterval) clearInterval(gameInterval);
-        if (peer) peer.destroy();
-        location.reload();
-      }
-    }
-
-    function startTimerCountdown(forHost) {
-      if (gameInterval) clearInterval(gameInterval);
-      gameInterval = setInterval(() => {
+    function startCountdown(forHost) {
+      if (gameTimer) clearInterval(gameTimer);
+      gameTimer = setInterval(() => {
         totalGameTime--;
-        updateTimerUI(totalGameTime);
+        updateTimerUI(totalGameTime, forHost);
         if (totalGameTime <= 0) {
-          clearInterval(gameInterval);
-          endMatch();
+          clearInterval(gameTimer);
+          endGameMatch();
         }
       }, 1000);
     }
 
-    function updateTimerUI(sec) {
+    function updateTimerUI(sec, forHost) {
       const m = Math.floor(sec / 60).toString().padStart(2, '0');
       const s = (sec % 60).toString().padStart(2, '0');
-      if (isHost) {
-        document.getElementById('host-timer').innerText = `${m}:${s}`;
+      if (forHost) {
+        document.getElementById('host-timer-text').innerText = `${m}:${s}`;
       } else {
-        document.getElementById('ui-timer').innerText = `${m}:${s}`;
+        document.getElementById('hud-timer').innerText = `${m}:${s}`;
       }
     }
 
-    function renderAdminTable() {
-      document.getElementById('admin-player-count').innerText = playersInRoom.size;
-      const tbody = document.getElementById('adminPlayerTable');
+    function renderHostTable() {
+      document.getElementById('live-player-count').innerText = playersInRoom.size;
+      const tbody = document.getElementById('host-live-table');
       tbody.innerHTML = '';
       const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
-      
+
       if (list.length > 0) {
-        document.getElementById('leaderName').innerText = list[0].name;
-        document.getElementById('leaderMeters').innerText = `${list[0].height} m`;
+        document.getElementById('leader-name').innerText = list[0].name;
+        document.getElementById('leader-meters').innerText = `${list[0].height} m`;
       }
 
       list.forEach((p, idx) => {
@@ -785,23 +587,23 @@
         const acc = total > 0 ? Math.round((p.correct / total) * 100) : 0;
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="p-3 font-bold">${idx === 0 ? '🥇 1' : idx === 1 ? '🥈 2' : idx === 2 ? '🥉 3' : idx + 1}</td>
-          <td class="p-3 font-bold text-rose-600 flex items-center gap-2">
-            <span class="w-3.5 h-3.5 rounded-full inline-block shadow-sm" style="background:${p.color}"></span>
+          <td class="p-2.5 font-bold">${idx === 0 ? '🥇 1' : idx === 1 ? '🥈 2' : idx === 2 ? '🥉 3' : idx + 1}</td>
+          <td class="p-2.5 font-bold text-rose-400 flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-full" style="background:${p.color}"></span>
             ${p.name}
           </td>
-          <td class="p-3 text-center font-black text-sky-600 font-mono text-base">${p.height || 0} m</td>
-          <td class="p-3 text-center font-bold text-emerald-600">${p.correct || 0}</td>
-          <td class="p-3 text-center font-bold text-rose-500">${p.wrong || 0}</td>
-          <td class="p-3 text-center font-bold text-amber-600">${acc}%</td>
-          <td class="p-3 text-center font-bold text-amber-500">${p.energy || 0} ⚡</td>
+          <td class="p-2.5 text-center font-black text-sky-400 font-mono">${p.height || 0} m</td>
+          <td class="p-2.5 text-center font-bold text-emerald-400">${p.correct || 0}</td>
+          <td class="p-2.5 text-center font-bold text-rose-400">${p.wrong || 0}</td>
+          <td class="p-2.5 text-center font-bold text-amber-300">${acc}%</td>
+          <td class="p-2.5 text-center font-bold text-amber-400">${p.energy || 0} ⚡</td>
         `;
         tbody.appendChild(tr);
       });
     }
 
     function exportDataCSV() {
-      let csv = "อันดับ,ชื่อผู้เรียน,ระยะทาง (เมตร),ตอบถูก,ตอบผิด,ความแม่นยำ (%),พลังงานคงเหลือ\n";
+      let csv = "อันดับ,ชื่อผู้เรียน,ความสูง (เมตร),ตอบถูก,ตอบผิด,ความแม่นยำ (%),พลังงาน\n";
       const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
       list.forEach((p, idx) => {
         const total = (p.correct || 0) + (p.wrong || 0);
@@ -811,14 +613,12 @@
       const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `ผลคะแนน_${roomPin}.csv`);
-      document.body.appendChild(link);
+      link.href = url;
+      link.download = `ผลคะแนน_${roomPin}.csv`;
       link.click();
-      document.body.removeChild(link);
     }
 
-    // --- 4. ฟิสิกส์เกม & การวาดกราฟิก (Fixed Virtual World 1000px) ---
+    // --- 4. ฟิสิกส์เกม & แอนิเมชันล็อกตัวละคร ไม่หลุดเฟรม ---
     const WORLD_WIDTH = 1000;
     const LEFT_WALL = 45;
     const RIGHT_WALL = WORLD_WIDTH - 45;
@@ -889,10 +689,9 @@
         if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
       });
 
-      const bLeft = document.getElementById('btn-left');
-      const bRight = document.getElementById('btn-right');
-      const bJump = document.getElementById('btn-jump');
-      const bQuiz = document.getElementById('btn-open-quiz');
+      const bLeft = document.getElementById('btnLeft');
+      const bRight = document.getElementById('btnRight');
+      const bJump = document.getElementById('btnJump');
 
       bLeft.ontouchstart = (e) => { e.preventDefault(); keys.left = true; };
       bLeft.ontouchend = () => keys.left = false;
@@ -905,7 +704,6 @@
       bRight.onmousedown = () => keys.right = true;
       bRight.onmouseup = () => keys.right = false;
       bJump.onclick = () => doJump();
-      bQuiz.onclick = () => openQuizModal();
     }
 
     function doJump() {
@@ -920,14 +718,13 @@
         player.scaleX = 0.85;
         player.scaleY = 1.25;
         currentEnergy--;
-        document.getElementById('ui-energy').innerText = currentEnergy;
+        document.getElementById('hud-energy').innerText = currentEnergy;
         if (currentEnergy === 0) openQuizModal();
       }
     }
 
     function gameLoop() {
       if (!isGameOver) {
-        // ฟิสิกส์แนวนอน Smooth
         if (keys.left) player.vx = -5.2;
         else if (keys.right) player.vx = 5.2;
         else player.vx *= 0.80;
@@ -939,7 +736,7 @@
         player.scaleX += (1 - player.scaleX) * 0.15;
         player.scaleY += (1 - player.scaleY) * 0.15;
 
-        // ขอบกำแพงกั้นไม่ให้ตกแมพด้านข้าง
+        // กำแพงทึบซ้าย-ขวา ล็อกตัวละครไม่ให้ตกแมพ
         if (player.x < LEFT_WALL) {
           player.x = LEFT_WALL;
           player.vx = 0;
@@ -949,7 +746,6 @@
           player.vx = 0;
         }
 
-        // การตกกระทบแท่น
         player.grounded = false;
         platforms.forEach(p => {
           if (
@@ -969,7 +765,6 @@
           }
         });
 
-        // ล็อกพื้นด้านล่างสุด
         if (player.y > 530) {
           player.y = 530;
           player.vy = 0;
@@ -978,9 +773,9 @@
 
         const currentM = Math.max(0, Math.floor((530 - player.y) / 10));
         currentHeightMeters = currentM;
-        document.getElementById('ui-height').innerText = `${currentHeightMeters}`;
+        document.getElementById('hud-height').innerText = `${currentHeightMeters}`;
 
-        // กล้องติดตามตัวละคร Smooth Rigid-Lerp
+        // ล็อกกล้องตรงกลางจอแบบ Rigid-Lerp ไม่หลุดเฟรมบน/ล่าง
         const desiredCamY = player.y - cssHeight * 0.60;
         cameraY += (desiredCamY - cameraY) * 0.16;
 
@@ -992,8 +787,8 @@
     }
 
     function renderScene() {
-      // พื้นหลังสีฟ้าสดใส #e0f2fe
-      ctx.fillStyle = '#e0f2fe';
+      // พื้นหลังสีฟ้าสดใสคุมโทน Sweet Pastel
+      ctx.fillStyle = '#bae6fd';
       ctx.fillRect(0, 0, cssWidth, cssHeight);
 
       const offsetX = (cssWidth - WORLD_WIDTH) / 2;
@@ -1003,7 +798,7 @@
       ctx.fillRect(offsetX + LEFT_WALL - 12, 0, 12, cssHeight);
       ctx.fillRect(offsetX + RIGHT_WALL, 0, 12, cssHeight);
 
-      // วาดแท่นลอยสไตล์ขนมหวาน ขอบชมพู หน้าหญ้ามิ้นต์
+      // วาดแท่นกระโดดขอบมน ขอบชมพู หน้าหญ้ามิ้นต์
       platforms.forEach(p => {
         const ry = p.y - cameraY;
         if (ry < -60 || ry > cssHeight + 60) return;
@@ -1046,7 +841,7 @@
       const ry = y - cameraY;
       if (ry < -90 || ry > cssHeight + 90) return;
 
-      // เงา
+      // เงาตัวละคร
       ctx.fillStyle = 'rgba(255, 117, 143, 0.2)';
       ctx.beginPath();
       ctx.ellipse(x, ry + 20, 18 * sx, 5, 0, 0, Math.PI * 2);
@@ -1056,7 +851,7 @@
       ctx.translate(x, ry);
       ctx.scale(sx, sy);
 
-      // ลำตัว
+      // ลำตัวตัวการ์ตูนตาโต
       ctx.fillStyle = color;
       ctx.strokeStyle = '#e01e37';
       ctx.lineWidth = 3;
@@ -1072,7 +867,7 @@
       ctx.fill();
       ctx.stroke();
 
-      // ตาโตการ์ตูน
+      // ตาการ์ตูนกลมโต
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.arc(-6, -2, 5, 0, Math.PI * 2);
@@ -1100,27 +895,27 @@
     // --- 5. จัดการข้อสอบ & หน้าสรุปผล ---
     function openQuizModal() {
       if (isGameOver) return;
-      const q = quizDatabase[Math.floor(Math.random() * quizDatabase.length)];
-      document.getElementById('quiz-question').innerText = q.q;
+      const q = WORD_QUIZ[Math.floor(Math.random() * WORD_QUIZ.length)];
+      document.getElementById('quiz-question-text').innerText = q.q;
 
-      const opts = document.getElementById('quiz-options');
-      opts.innerHTML = '';
+      const optsBox = document.getElementById('quiz-options-box');
+      optsBox.innerHTML = '';
       q.a.forEach((ans, idx) => {
         const btn = document.createElement('button');
-        btn.className = "quiz-option";
+        btn.className = "w-full text-left font-bold py-2.5 px-4 rounded-xl border border-pink-200 bg-pink-50 hover:bg-pink-100 transition-all text-slate-700 text-xs sm:text-sm";
         btn.innerText = `${idx + 1}. ${ans}`;
-        btn.onclick = () => onAnswer(idx === q.c);
-        opts.appendChild(btn);
+        btn.onclick = () => handleAnswer(idx === q.c);
+        optsBox.appendChild(btn);
       });
       document.getElementById('quiz-modal').classList.remove('hidden');
     }
 
-    function onAnswer(isCorrect) {
+    function handleAnswer(isCorrect) {
       if (isCorrect) {
         currentEnergy += 5;
         correctCount++;
-        document.getElementById('ui-energy').innerText = currentEnergy;
-        alert("ถูกต้อง! 🌟 ได้รับ +5 Energy");
+        document.getElementById('hud-energy').innerText = currentEnergy;
+        alert("ยอดเยี่ยม! ตอบถูกต้อง 🌟 ได้รับ +5 Energy");
       } else {
         wrongCount++;
         alert("ยังไม่ถูกต้อง! ลองตอบใหม่อีกครั้ง");
@@ -1129,7 +924,7 @@
       broadcastMyState();
     }
 
-    function endMatch() {
+    function endGameMatch() {
       isGameOver = true;
       document.getElementById('quiz-modal').classList.add('hidden');
       if (!isHost) {
