@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Microsoft Word Jump Quiz Arena</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- ใช้ PeerJS (WebRTC) เพื่อเชื่อมต่อผู้เล่นต่างเครื่องโดยตรง ไม่ต้องผ่านเซิร์ฟเวอร์กลางที่ชอบหลุด -->
+  <!-- PeerJS WebRTC เชื่อมต่อสดข้ามเครื่อง -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Kanit:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700;800&family=Kanit:wght@400;600;700;800&display=swap');
     * { touch-action: manipulation; box-sizing: border-box; }
     body {
       font-family: 'Kanit', sans-serif;
       margin: 0;
       overflow: hidden;
-      background-color: #0f172a;
+      background-color: #0b132b;
       user-select: none;
       -webkit-user-select: none;
     }
@@ -32,10 +32,11 @@
 <body class="w-screen h-screen flex justify-center items-center">
 
   <!-- 1. ล็อบบี้สร้างห้อง / เข้าเล่น -->
-  <div id="lobbyScreen" class="absolute inset-0 bg-gradient-to-br from-indigo-900 via-sky-800 to-slate-900 flex justify-center items-center z-50 p-4">
-    <div class="bg-white/95 backdrop-blur-md border-4 border-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl text-center">
-      <h1 class="game-font text-3xl sm:text-4xl font-black text-slate-800 tracking-wider mb-1">JUMP QUIZ ARENA 🚀</h1>
-      <p class="text-xs sm:text-sm font-bold text-indigo-600 mb-5">Microsoft Word Multiplayer Battle</p>
+  <div id="lobbyScreen" class="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-900 to-sky-950 flex justify-center items-center z-50 p-4">
+    <div class="bg-white/95 backdrop-blur-md border-4 border-slate-900 rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl text-center">
+      <div class="inline-block p-3 bg-indigo-100 rounded-2xl mb-2 text-3xl shadow-inner">🏰✨</div>
+      <h1 class="game-font text-3xl sm:text-4xl font-black text-slate-800 tracking-wider mb-1">WORD JUMP ARENA</h1>
+      <p class="text-xs sm:text-sm font-bold text-indigo-600 mb-5">ศึกกระโดดพิชิตหอคอย Microsoft Word</p>
 
       <div class="space-y-4 text-left">
         <div>
@@ -45,7 +46,7 @@
         </div>
 
         <div>
-          <label class="text-xs font-bold text-slate-600 uppercase">รหัสห้อง (Room Code แนะนำตัวอักษรภาษาอังกฤษ/ตัวเลข)</label>
+          <label class="text-xs font-bold text-slate-600 uppercase">รหัสห้อง (Room Code)</label>
           <input id="inputRoomCode" type="text" placeholder="เช่น WORD1" value="WORD1" 
                  class="w-full mt-1 px-4 py-2.5 border-2 border-slate-300 rounded-xl font-bold uppercase text-slate-800 focus:outline-none focus:border-indigo-600">
         </div>
@@ -53,7 +54,7 @@
         <div class="pt-2 border-t border-slate-200">
           <label class="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" id="isAdminCheck" class="w-4 h-4 text-indigo-600 rounded">
-            <span class="text-xs sm:text-sm font-bold text-slate-700">ฉันเป็นแอดมิน (สร้างห้อง / กำหนดเวลา)</span>
+            <span class="text-xs sm:text-sm font-bold text-slate-700">เข้าสู่ระบบในฐานะ Admin (ผู้คุมเวลา / จอมอนิเตอร์)</span>
           </label>
           <div id="adminPanelConfig" class="hidden mt-3 p-3 bg-indigo-50 border-2 border-indigo-200 rounded-xl space-y-2">
             <div class="flex justify-between items-center">
@@ -65,12 +66,12 @@
                 <option value="600">10 นาที</option>
               </select>
             </div>
-            <p class="text-[11px] text-slate-500">*แอดมินมีหน้าที่ควบคุมเวลาและดูสถิติสด ไม่ต้องกระโดดแข่ง</p>
+            <p class="text-[11px] text-slate-500">*แอดมินไม่ต้องกระโดด แต่จะมีแดชบอร์ดสรุปผู้เล่นทุกคนแบบเรียลไทม์</p>
           </div>
         </div>
 
         <button id="btnJoinArena" onclick="enterArena()" class="btn-3d-blue w-full py-3.5 rounded-2xl text-white font-black text-lg sm:text-xl tracking-wider mt-2">
-          เข้าสู่ห้องแข่งขัน 🎮
+          เข้าสู่ห้องแข่งขัน 🚀
         </button>
         <p id="connectingText" class="hidden text-center text-xs font-bold text-indigo-700 animate-pulse">กำลังเชื่อมต่อโครงข่ายห้อง...</p>
       </div>
@@ -100,10 +101,10 @@
       </div>
     </div>
 
-    <!-- แถบแจ้งคนนำอันดับ 1 -->
-    <div class="mt-3 bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-transparent border border-amber-500/40 p-3 rounded-xl flex items-center justify-between">
+    <!-- แถบคนนำอันดับ 1 -->
+    <div class="mt-3 bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-transparent border border-amber-500/40 p-3.5 rounded-xl flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <span class="text-2xl">👑</span>
+        <span class="text-3xl">👑</span>
         <div>
           <div class="text-xs text-amber-300 font-bold uppercase">ผู้นำอันดับ 1 ตอนนี้</div>
           <div id="leaderName" class="text-base font-bold text-white">รอผู้เล่นเริ่มกระโดด...</div>
@@ -111,11 +112,11 @@
       </div>
       <div class="text-right">
         <div class="text-xs text-amber-300 font-bold uppercase">ระยะทางนำ</div>
-        <div id="leaderMeters" class="text-lg font-black text-amber-400 font-mono">0 เมตร</div>
+        <div id="leaderMeters" class="text-xl font-black text-amber-400 font-mono">0 เมตร</div>
       </div>
     </div>
 
-    <!-- ตารางผู้เล่นทั้งหมดสดๆ -->
+    <!-- ตารางรายชื่อผู้เล่นสด -->
     <div class="mt-3 flex-1 overflow-auto bg-slate-800/60 rounded-2xl border border-slate-700/80 p-2 sm:p-4">
       <table class="w-full text-left border-collapse">
         <thead>
@@ -135,7 +136,7 @@
   </div>
 
   <!-- 3. หน้าจอเล่นเกมสำหรับผู้เล่น (Player View) -->
-  <div id="playerGameContainer" class="hidden relative w-full h-full max-w-[1200px] max-h-[850px] overflow-hidden rounded-none sm:rounded-2xl border-0 sm:border-4 border-slate-800 bg-[#38bdf8]">
+  <div id="playerGameContainer" class="hidden relative w-full h-full max-w-[1200px] max-h-[880px] overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border-4 border-slate-800 bg-[#38bdf8] shadow-2xl">
     <canvas id="gameCanvas" class="w-full h-full block"></canvas>
 
     <!-- แถบแสดงสถานะด้านบน -->
@@ -151,7 +152,7 @@
           ⚡ พลัง: <span id="playerEnergyDisplay" class="text-yellow-400">15</span>
         </div>
         <div class="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/30 text-white font-bold text-xs sm:text-sm">
-          🚩 สูง: <span id="playerHeightDisplay" class="text-emerald-400">0m</span>
+          🚩 สูง: <span id="playerHeightDisplay" class="text-emerald-400 font-mono">0m</span>
         </div>
       </div>
       <div class="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/30 text-white font-bold text-xs sm:text-sm pointer-events-auto">
@@ -175,7 +176,7 @@
       <button id="btnJump" class="btn-3d-green text-white w-20 h-14 sm:w-24 sm:h-16 rounded-2xl flex justify-center items-center text-3xl font-bold">⬆</button>
     </div>
 
-    <!-- ป๊อปอัปข้อสอบ Word 20 ข้อ -->
+    <!-- ป๊อปอัปแบบทดสอบ 20 ข้อ -->
     <div id="quizModal" class="hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex justify-center items-center z-50 p-4">
       <div class="bg-white border-4 border-slate-900 rounded-3xl p-5 sm:p-6 w-full max-w-md shadow-2xl">
         <div class="flex justify-between items-center mb-3">
@@ -187,7 +188,7 @@
       </div>
     </div>
 
-    <!-- สรุปผลการแข่งขัน -->
+    <!-- หน้าสรุปผลตอนหมดเวลา -->
     <div id="gameOverModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md flex justify-center items-center z-50 p-4">
       <div class="bg-white border-4 border-slate-900 rounded-3xl p-6 w-full max-w-md shadow-2xl text-center">
         <h2 class="game-font font-black text-3xl text-slate-800 mb-1">🏁 สิ้นสุดการแข่งขัน!</h2>
@@ -203,7 +204,7 @@
     const CHARACTER_COLORS = ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93', '#f72585', '#4cc9f0', '#fb8500', '#10b981'];
     const myColor = CHARACTER_COLORS[Math.floor(Math.random() * CHARACTER_COLORS.length)];
 
-    // คลังข้อสอบ Microsoft Word 20 ข้อ คละระดับ
+    // คลังข้อสอบ Word 20 ข้อ
     const WORD_QUIZ = [
       { q: "คีย์ลัดสำหรับบันทึกเอกสาร (Save) คือข้อใด?", a: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + V"], c: 0, level: "ง่าย", badge: "bg-green-100 text-green-700 border-green-300" },
       { q: "คีย์ลัดสำหรับทำตัวอักษรหนา (Bold) คือข้อใด?", a: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + H"], c: 1, level: "ง่าย", badge: "bg-green-100 text-green-700 border-green-300" },
@@ -238,24 +239,15 @@
     let isGameOver = false;
     let gameTimer = null;
 
-    // ระบบเชื่อมโยงข้ามเครื่องผ่าน PeerJS WebRTC
+    // ระบบเชื่อมต่อแบบ WebRTC Mesh
     let peer = null;
     let myPeerId = "";
-    let connections = new Map(); // เก็บการเชื่อมต่อกับผู้เล่นคนอื่นทุกคน
-    let playersInRoom = new Map(); // เก็บข้อมูลพิกัดและความสูงของทุกคน
+    let connections = new Map();
+    let playersInRoom = new Map();
 
     document.getElementById('isAdminCheck').onchange = (e) => {
       document.getElementById('adminPanelConfig').classList.toggle('hidden', !e.target.checked);
     };
-
-    // ตัวสุ่มแบบมี Seed เพื่อให้ทุกคนในห้องเดียวกันได้แมพแท่นหินตำแหน่งเดียวกันเป๊ะ
-    function pseudoRandom(seed) {
-      let value = seed;
-      return function() {
-        value = (value * 9301 + 49297) % 233280;
-        return value / 233280;
-      };
-    }
 
     function enterArena() {
       playerName = document.getElementById('inputPlayerName').value.trim() || 'ผู้เล่น';
@@ -270,14 +262,11 @@
     }
 
     function initNetworking() {
-      // แอดมินจะเป็น Room Host มี ID ห้องตรงๆ ส่วนผู้เล่นจะมี ID สุ่มแล้ววิ่งไปหาโฮสต์
       myPeerId = isAdmin ? `jump_host_${roomCode}` : `jump_plr_${roomCode}_${Math.random().toString(36).substring(2, 7)}`;
-      
       peer = new Peer(myPeerId, { debug: 1 });
 
-      peer.on('open', (id) => {
+      peer.on('open', () => {
         document.getElementById('lobbyScreen').classList.add('hidden');
-        
         if (isAdmin) {
           document.getElementById('adminDashboard').classList.remove('hidden');
           document.getElementById('adminRoomDisplay').innerText = roomCode;
@@ -288,24 +277,21 @@
           document.getElementById('playerEnergyDisplay').innerText = energy;
           updateTimerDisplay(totalTime, false);
           initGameEngine();
-          // ถ้าเป็นผู้เล่น ให้เชื่อมต่อไปหา Admin Host เพื่อขอรับค่าเวลาและรายชื่อเพื่อน
           connectToPeer(`jump_host_${roomCode}`);
         }
 
-        // ส่งพิกัดตำแหน่งของตัวเองให้ทุกคนที่เชื่อมต่ออยู่ตลอดเวลา
         setInterval(() => {
           if (!isGameOver) broadcastMyState();
-        }, 50);
+        }, 40);
       });
 
       peer.on('error', (err) => {
         if (err.type === 'unavailable-id' && isAdmin) {
-          alert("มีคนเปิดห้องในฐานะ Admin รหัสห้องนี้อยู่แล้ว กรุณาเข้าแบบผู้เล่น หรือเปลี่ยนรหัสห้อง");
+          alert("มีแอดมินเปิดห้องรหัสนี้อยู่แล้ว กรุณาเข้าแบบผู้เล่น หรือเปลี่ยนรหัสห้อง");
           location.reload();
         }
       });
 
-      // รอรับการเชื่อมต่อจากผู้เล่นคนอื่นๆ ที่เข้ามาในห้อง
       peer.on('connection', (conn) => {
         setupConnection(conn);
       });
@@ -321,20 +307,16 @@
       conn.on('open', () => {
         connections.set(conn.peer, conn);
         updateRoomCount();
-
         if (isAdmin) {
-          // แอดมินส่งเวลาแข่งขันที่ตั้งไว้ให้ผู้เล่นใหม่ทันที
           conn.send({ type: 'sync_time', time: totalTime });
-          // ส่งรายชื่อผู้เล่นที่อยู่ในห้องทั้งหมดให้เชื่อมต่อกันเองแบบ Mesh
-          const currentPeers = Array.from(connections.keys());
-          conn.send({ type: 'peer_list', peers: currentPeers });
+          conn.send({ type: 'peer_list', peers: Array.from(connections.keys()) });
         } else {
           broadcastMyState();
         }
       });
 
       conn.on('data', (data) => {
-        handleNetworkData(data, conn);
+        handleNetworkData(data);
       });
 
       conn.on('close', () => {
@@ -364,13 +346,12 @@
         wrong: wrongCount,
         energy: energy
       };
-
       connections.forEach((conn) => {
         if (conn.open) conn.send(payload);
       });
     }
 
-    function handleNetworkData(data, conn) {
+    function handleNetworkData(data) {
       if (data.type === 'state') {
         playersInRoom.set(data.id, data);
         if (isAdmin) renderAdminTable();
@@ -383,7 +364,6 @@
       } else if (data.type === 'stop_match') {
         endMatch();
       } else if (data.type === 'peer_list') {
-        // เชื่อมต่อหาเพื่อนคนอื่นๆ ในห้องแบบ Mesh เพื่อเห็นกันทุกคน
         data.peers.forEach((pId) => {
           if (pId !== myPeerId && !connections.has(pId)) {
             connectToPeer(pId);
@@ -392,7 +372,6 @@
       }
     }
 
-    // แอดมินสั่งเริ่ม / จบ
     function adminStartGame() {
       connections.forEach((conn) => {
         if (conn.open) conn.send({ type: 'start_match', time: totalTime });
@@ -433,7 +412,6 @@
     function renderAdminTable() {
       const tbody = document.getElementById('adminPlayerTable');
       tbody.innerHTML = '';
-
       const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
       
       if (list.length > 0) {
@@ -480,21 +458,32 @@
       document.body.removeChild(link);
     }
 
-    // ================= โลจิกฝั่งตัวเกม (แมพเดียวกัน + กล้องล็อกตัวเรา) =================
+    // ================= โลจิกแมพสากล (FIXED VIRTUAL WORLD 1,000 PX) =================
+    // ทุกเครื่องใช้อาณาเขตความกว้าง WORLD_WIDTH = 1000px เท่ากันเป๊ะ
+    const WORLD_WIDTH = 1000;
     let canvas, ctx;
-    const player = { x: 300, y: 510, vx: 0, vy: 0, grounded: false };
+    const player = { x: 500, y: 510, vx: 0, vy: 0, grounded: false };
     let cameraY = 510;
-    const platforms = [{ x: -500, y: 550, w: 4000, h: 200 }]; // พื้นชั้นล่างสุด
-    let highestY = 460;
-    let seededRandomFunc = null;
+    const platforms = [{ x: -200, y: 550, w: 1400, h: 250 }]; // แท่นพื้นหลัก
+    let highestGeneratedY = 470;
 
-    function buildSharedMapUpTo(targetY) {
-      while (highestY > targetY - 1200) {
-        // สุ่มแท่นหินจาก Seed ประจำห้อง ทุกคนจึงได้บันไดตำแหน่งเดียวกันเป๊ะ
-        highestY -= Math.floor(seededRandomFunc() * 20 + 55);
-        const pWidth = Math.floor(seededRandomFunc() * 50 + 140);
-        const pX = Math.floor(seededRandomFunc() * (canvas.width - pWidth - 80) + 40);
-        platforms.push({ x: pX, y: highestY, w: pWidth, h: 32 });
+    // ฟังก์ชันสุ่มตัวเลขแบบ Seed ประจำห้อง
+    function createRoomRandom(seedStr) {
+      let seed = 0;
+      for (let i = 0; i < seedStr.length; i++) seed = (seed * 31 + seedStr.charCodeAt(i)) & 0xFFFFFFFF;
+      return function() {
+        seed = (seed * 1664525 + 1013904223) & 0xFFFFFFFF;
+        return (seed >>> 0) / 4294967296;
+      };
+    }
+    let roomRandom;
+
+    function buildWorldPlatformsUpTo(targetY) {
+      while (highestGeneratedY > targetY - 1400) {
+        highestGeneratedY -= Math.floor(roomRandom() * 20 + 52); // ความสูงบันไดแต่ละขั้น สม่ำเสมอ โดดง่าย
+        const pWidth = Math.floor(roomRandom() * 40 + 150); // แท่นกว้าง 150-190px
+        const pX = Math.floor(roomRandom() * (WORLD_WIDTH - pWidth - 100) + 50);
+        platforms.push({ x: pX, y: highestGeneratedY, w: pWidth, h: 32 });
       }
     }
 
@@ -508,15 +497,10 @@
       window.addEventListener('resize', resize);
       resize();
 
-      // แปลงรหัสห้องให้เป็นตัวเลข Seed ประจำห้อง
-      let seedVal = 0;
-      for (let i = 0; i < roomCode.length; i++) seedVal += roomCode.charCodeAt(i) * (i + 1);
-      seededRandomFunc = pseudoRandom(seedVal);
-
+      roomRandom = createRoomRandom(roomCode);
       cameraY = player.y - canvas.height * 0.60;
-      buildSharedMapUpTo(cameraY);
+      buildWorldPlatformsUpTo(cameraY);
       setupControls();
-
       requestAnimationFrame(gameLoop);
     }
 
@@ -556,7 +540,7 @@
         return;
       }
       if (player.grounded) {
-        player.vy = -14.5; // แรงกระโดดลอยตัวง่าย
+        player.vy = -14.5;
         player.grounded = false;
         energy--;
         document.getElementById('playerEnergyDisplay').innerText = energy;
@@ -566,24 +550,24 @@
 
     function gameLoop() {
       if (!isGameOver) {
-        if (keys.left) player.vx = -5;
-        else if (keys.right) player.vx = 5;
+        if (keys.left) player.vx = -5.2;
+        else if (keys.right) player.vx = 5.2;
         else player.vx *= 0.82;
 
         player.vy += 0.52;
         player.x += player.vx;
         player.y += player.vy;
 
-        // ขอบจอซ้าย-ขวา
-        if (player.x < 20) player.x = 20;
-        if (player.x > canvas.width - 20) player.x = canvas.width - 20;
+        // ขอบเขตโลก Fixed World (0 ถึง 1000px)
+        if (player.x < 30) player.x = 30;
+        if (player.x > WORLD_WIDTH - 30) player.x = WORLD_WIDTH - 30;
 
-        // ชนแท่นยืน
+        // เช็กการชนแท่นยืน
         player.grounded = false;
         platforms.forEach(p => {
           if (
-            player.x + 16 > p.x &&
-            player.x - 16 < p.x + p.w &&
+            player.x + 18 > p.x &&
+            player.x - 18 < p.x + p.w &&
             player.y + 18 >= p.y &&
             player.y + 18 <= p.y + 16 &&
             player.vy >= 0
@@ -594,75 +578,119 @@
           }
         });
 
-        // จุดเซฟกันตกหล่นโลก (จะหยุดที่พื้นล่างสุดเสมอ)
+        // กันตกหล่นโลก (หยุดที่พื้นหลักเสมอ)
         if (player.y > 530) {
           player.y = 530;
           player.vy = 0;
           player.grounded = true;
         }
 
-        // คำนวณความสูง
+        // คำนวณความสูง (เมตร)
         const currentM = Math.max(0, Math.floor((530 - player.y) / 10));
         currentHeightMeters = currentM;
         document.getElementById('playerHeightDisplay').innerText = `${currentHeightMeters}m`;
 
-        // **กล้องล็อกโฟกัสตัวละครตลอดเวลา 100% ไม่ว่าจะโดดสูงหรือตกลงมา**
+        // ล็อกกล้องติดตามตัวเราตรงกลางจอเสมอ
         const desiredCamY = player.y - canvas.height * 0.60;
         cameraY += (desiredCamY - cameraY) * 0.15;
 
-        buildSharedMapUpTo(cameraY);
+        buildWorldPlatformsUpTo(cameraY);
       }
 
-      // วาดท้องฟ้า
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // วาดแท่นบล็อกหิน (ตำแหน่งเดียวกันทุกคน)
-      platforms.forEach(p => {
-        const ry = p.y - cameraY;
-        if (ry < -60 || ry > canvas.height + 60) return;
-        ctx.fillStyle = '#64748b';
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 3.5;
-        ctx.beginPath();
-        ctx.roundRect(p.x, ry, p.w, p.h, 6);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.strokeStyle = '#475569';
-        ctx.lineWidth = 1.5;
-        for (let i = 1; i < Math.floor(p.w / 28); i++) {
-          ctx.beginPath();
-          ctx.moveTo(p.x + i * 28, ry);
-          ctx.lineTo(p.x + i * 28, ry + p.h);
-          ctx.stroke();
-        }
-      });
-
-      // **วาดเพื่อนทุกคนในห้อง (เห็นกันและกันชัดเจน)**
-      playersInRoom.forEach((p, id) => {
-        if (id !== myPeerId) {
-          drawMonster(p.x, p.y, p.color, `${p.name} (${p.height || 0}m)`);
-        }
-      });
-
-      // วาดตัวเราเอง
-      drawMonster(player.x, player.y, myColor, `${playerName} (เรา)`);
+      // วาดฉากกราฟิกสุดอลังการ
+      renderScene();
 
       requestAnimationFrame(gameLoop);
     }
 
-    function drawMonster(x, y, color, label) {
+    function renderScene() {
+      // 1. ท้องฟ้าแบบ Gradient Dynamic ยิ่งสูงสียิ่งเข้มไปสู่อวกาศ
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      const heightFactor = Math.min(1, currentHeightMeters / 150);
+      skyGrad.addColorStop(0, heightFactor > 0.6 ? '#0f172a' : '#0284c7');
+      skyGrad.addColorStop(1, heightFactor > 0.6 ? '#1e1b4b' : '#38bdf8');
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // คำนวณ Offset แนวนอนเพื่อให้กึ่งกลาง World อยู่กึ่งกลางหน้าจอเสมอ
+      const offsetX = (canvas.width - WORLD_WIDTH) / 2;
+
+      // 2. เสากำแพงปราสาทซ้าย-ขวา
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(offsetX - 20, 0, 20, canvas.height);
+      ctx.fillRect(offsetX + WORLD_WIDTH, 0, 20, canvas.height);
+
+      // 3. วาดแท่นหินพร้อมหน้าหญ้า 3D Cartoon
+      platforms.forEach(p => {
+        const ry = p.y - cameraY;
+        if (ry < -60 || ry > canvas.height + 60) return;
+
+        const renderX = p.x + offsetX;
+
+        // ตัวแท่นหิน (ก้อนหินสีเทาเข้ม)
+        ctx.fillStyle = '#475569';
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.roundRect(renderX, ry, p.w, p.h, 8);
+        ctx.fill();
+        ctx.stroke();
+
+        // พื้นหญ้าสีเขียวสดใสด้านบนแท่น
+        ctx.fillStyle = '#22c55e';
+        ctx.beginPath();
+        ctx.roundRect(renderX, ry, p.w, 8, [8, 8, 0, 0]);
+        ctx.fill();
+
+        // ขีดร่องหินสวยๆ
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1.5;
+        for (let i = 1; i < Math.floor(p.w / 35); i++) {
+          ctx.beginPath();
+          ctx.moveTo(renderX + i * 35, ry + 9);
+          ctx.lineTo(renderX + i * 35, ry + p.h);
+          ctx.stroke();
+        }
+
+        // ป้ายบอกระยะเมตรทุกๆ แท่นที่ระดับลงท้ายด้วย 0
+        const mLevel = Math.max(0, Math.floor((530 - p.y) / 10));
+        if (mLevel > 0 && mLevel % 10 === 0) {
+          ctx.font = 'bold 11px Kanit';
+          ctx.fillStyle = '#fef08a';
+          ctx.fillText(`🚩 ${mLevel}m`, renderX + p.w - 38, ry - 6);
+        }
+      });
+
+      // 4. วาดเพื่อนทุกคนในห้อง (พิกัดแมพเดียวกันเป๊ะ)
+      playersInRoom.forEach((p, id) => {
+        if (id !== myPeerId) {
+          drawMonster(p.x + offsetX, p.y, p.color, `${p.name} (${p.height || 0}m)`, false);
+        }
+      });
+
+      // 5. วาดตัวเราเอง
+      drawMonster(player.x + offsetX, player.y, myColor, `${playerName} (เรา)`, true);
+    }
+
+    function drawMonster(x, y, color, label, isSelf) {
       const ry = y - cameraY;
-      if (ry < -80 || ry > canvas.height + 80) return;
+      if (ry < -90 || ry > canvas.height + 90) return;
+
+      // แสงออร่าใต้เท้าเมื่อเป็นตัวเรา
+      if (isSelf) {
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.35)';
+        ctx.beginPath();
+        ctx.ellipse(x, ry + 20, 26, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // เงา
-      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
       ctx.beginPath();
       ctx.ellipse(x, ry + 20, 18, 5, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // ตัว
+      // ลำตัวมอนสเตอร์ทรงรีการ์ตูน
       ctx.fillStyle = color;
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 3.5;
@@ -671,27 +699,33 @@
       ctx.fill();
       ctx.stroke();
 
-      // ขา
+      // ขาซ้าย-ขวา
       ctx.beginPath();
       ctx.arc(x - 9, ry + 15, 5, 0, Math.PI * 2);
       ctx.arc(x + 9, ry + 15, 5, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // ตาโต
-      ctx.fillStyle = '#0f172a';
+      // ตาโตการ์ตูนสีขาวพร้อมตาดำ
+      ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.arc(x - 6, ry - 2, 3, 0, Math.PI * 2);
-      ctx.arc(x + 6, ry - 2, 3, 0, Math.PI * 2);
+      ctx.arc(x - 6, ry - 2, 4.5, 0, Math.PI * 2);
+      ctx.arc(x + 6, ry - 2, 4.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // ป้ายชื่อ
-      ctx.font = 'bold 12px Kanit';
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(x - 5, ry - 2, 2.5, 0, Math.PI * 2);
+      ctx.arc(x + 7, ry - 2, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ป้ายชื่อลอย
+      ctx.font = isSelf ? 'bold 13px Kanit' : 'bold 12px Kanit';
       ctx.textAlign = 'center';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3.5;
       ctx.strokeStyle = '#000';
       ctx.strokeText(label, x, ry + 36);
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = isSelf ? '#fde047' : '#ffffff';
       ctx.fillText(label, x, ry + 36);
     }
 
