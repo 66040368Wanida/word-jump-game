@@ -2,25 +2,30 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Microsoft Word Cyber Jump Arena</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Hunter Cyber Mission - Word Master Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- PeerJS WebRTC เชื่อมต่อเสถียร ไม่พึ่งพา Server กลาง -->
+  <!-- PeerJS สำหรับ Multiplayer ข้ามเครื่องแบบเสถียร -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700;800&family=Kanit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700;800&family=Kanit:wght@400;600;700;800&display=swap');
-    * { touch-action: manipulation; box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
+    }
     body {
       font-family: 'Kanit', sans-serif;
       margin: 0;
       overflow: hidden;
       background-color: #030712;
-      user-select: none;
-      -webkit-user-select: none;
+      color: #f8fafc;
     }
     .game-font { font-family: 'Fredoka', 'Kanit', sans-serif; }
     .glass-panel {
-      background: rgba(15, 23, 42, 0.88);
+      background: rgba(15, 23, 42, 0.90);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 2px solid rgba(255, 255, 255, 0.12);
@@ -33,41 +38,39 @@
     .btn-3d-green:active { transform: translateY(3px); box-shadow: 0 1px 0 #047857; }
     .btn-3d-rose { background-color: #f43f5e; box-shadow: 0 4px 0 #be123c; }
     .btn-3d-rose:active { transform: translateY(3px); box-shadow: 0 1px 0 #be123c; }
-    .btn-3d-amber { background-color: #f59e0b; box-shadow: 0 4px 0 #b45309; }
-    .btn-3d-amber:active { transform: translateY(3px); box-shadow: 0 1px 0 #b45309; }
   </style>
 </head>
 <body class="w-screen h-screen flex justify-center items-center">
 
   <!-- 1. ล็อบบี้สร้างห้อง / เข้าเล่น -->
   <div id="lobbyScreen" class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900 via-slate-950 to-black flex justify-center items-center z-50 p-4">
-    <div class="glass-panel rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-[0_0_50px_rgba(99,102,241,0.25)] text-center text-white">
+    <div class="glass-panel rounded-3xl p-6 sm:p-8 w-full max-w-md shadow-2xl text-center text-white">
       <div class="inline-block p-4 bg-gradient-to-tr from-indigo-500 to-cyan-400 rounded-3xl mb-3 shadow-lg shadow-cyan-500/30 text-3xl">🚀✨</div>
-      <h1 class="game-font text-3xl sm:text-4xl font-black tracking-wider bg-gradient-to-r from-cyan-400 via-indigo-300 to-pink-400 bg-clip-text text-transparent mb-1">WORD JUMP ARENA</h1>
-      <p class="text-xs sm:text-sm font-semibold text-cyan-300/80 mb-6">ศึกประลองความรู้ Microsoft Word แบบเรียลไทม์</p>
+      <h1 class="game-font text-3xl font-black bg-gradient-to-r from-cyan-400 via-indigo-300 to-pink-400 bg-clip-text text-transparent mb-1">HUNTER CYBER MISSION</h1>
+      <p class="text-xs font-semibold text-cyan-300/80 mb-5">Microsoft Word Multiplayer Jump Challenge</p>
 
-      <div class="space-y-4 text-left">
+      <div class="space-y-3.5 text-left">
         <div>
           <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">ชื่อผู้เล่น / แอดมิน</label>
-          <input id="inputPlayerName" type="text" placeholder="ระบุชื่อของคุณ..." value="ผู้เล่น" 
-                 class="w-full mt-1.5 px-4 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl font-bold text-white focus:outline-none focus:border-cyan-400 transition-all">
+          <input id="inputPlayerName" type="text" placeholder="พิมพ์ชื่อของคุณ..." value="ผู้เล่น" 
+                 class="w-full mt-1 px-4 py-2.5 bg-slate-900/90 border border-slate-700 rounded-2xl font-bold text-white focus:outline-none focus:border-cyan-400 transition-all">
         </div>
 
         <div>
           <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">รหัสห้อง (Room Code)</label>
           <input id="inputRoomCode" type="text" placeholder="เช่น WORD1" value="WORD1" 
-                 class="w-full mt-1.5 px-4 py-3 bg-slate-900/90 border border-slate-700 rounded-2xl font-bold uppercase text-cyan-300 focus:outline-none focus:border-cyan-400 transition-all">
+                 class="w-full mt-1 px-4 py-2.5 bg-slate-900/90 border border-slate-700 rounded-2xl font-bold uppercase text-cyan-300 focus:outline-none focus:border-cyan-400 transition-all">
         </div>
 
         <div class="pt-2 border-t border-slate-800">
-          <label class="flex items-center gap-2.5 cursor-pointer">
-            <input type="checkbox" id="isAdminCheck" class="w-4 h-4 text-cyan-500 rounded bg-slate-900 border-slate-700 focus:ring-0">
-            <span class="text-xs sm:text-sm font-bold text-slate-300">เข้าสู่ระบบในฐานะ Admin (ผู้คุมเวลา / สถิติ)</span>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="isAdminCheck" class="w-4 h-4 text-cyan-500 rounded bg-slate-900 border-slate-700">
+            <span class="text-xs sm:text-sm font-bold text-slate-300">ฉันคือผู้สอน / Admin (จอมอนิเตอร์)</span>
           </label>
-          <div id="adminPanelConfig" class="hidden mt-3 p-3.5 bg-slate-900/80 border border-indigo-500/30 rounded-2xl space-y-3">
+          <div id="adminPanelConfig" class="hidden mt-3 p-3 bg-slate-900/90 border border-indigo-500/30 rounded-2xl space-y-2.5">
             <div class="flex justify-between items-center">
               <span class="text-xs font-bold text-slate-300">เวลาการแข่งขัน:</span>
-              <select id="selectDuration" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 font-bold text-xs sm:text-sm text-cyan-300 focus:outline-none">
+              <select id="selectDuration" class="px-2.5 py-1 bg-slate-800 border border-slate-700 rounded-xl font-bold text-xs text-cyan-300">
                 <option value="60">1 นาที (ทดสอบด่วน)</option>
                 <option value="180">3 นาที</option>
                 <option value="300" selected>5 นาที</option>
@@ -75,18 +78,17 @@
               </select>
             </div>
             <div class="flex justify-between items-center">
-              <span class="text-xs font-bold text-slate-300">ค่าพลังงานเริ่มต้น (⚡):</span>
+              <span class="text-xs font-bold text-slate-300">พลังงานเริ่มต้น (⚡):</span>
               <input id="inputStartEnergy" type="number" min="1" max="100" value="5" 
-                     class="w-20 px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-xl font-bold text-center text-xs sm:text-sm text-yellow-400 focus:outline-none focus:border-yellow-400">
+                     class="w-16 px-2 py-1 bg-slate-800 border border-slate-700 rounded-xl font-bold text-center text-xs text-yellow-400">
             </div>
-            <p class="text-[11px] text-slate-400 leading-relaxed">*แอดมินไม่ต้องกระโดด แต่จะมีแดชบอร์ดสรุปคะแนนและความสูงสดๆ</p>
           </div>
         </div>
 
-        <button id="btnJoinArena" onclick="enterArena()" class="btn-3d-cyan w-full py-4 rounded-2xl text-slate-950 font-black text-lg tracking-wider mt-2 transition-all">
+        <button id="btnJoinArena" onclick="enterArena()" class="btn-3d-cyan w-full py-3.5 rounded-2xl text-slate-950 font-black text-lg tracking-wider mt-2">
           เข้าสู่สนามแข่งขัน 🚀
         </button>
-        <p id="connectingText" class="hidden text-center text-xs font-bold text-cyan-400 animate-pulse">กำลังเชื่อมต่อเครือข่ายห้อง...</p>
+        <p id="connectingText" class="hidden text-center text-xs font-bold text-cyan-400 animate-pulse">กำลังเชื่อมต่อเครือข่าย Peer-to-Peer...</p>
       </div>
     </div>
   </div>
@@ -95,16 +97,16 @@
   <div id="adminDashboard" class="hidden w-full h-full bg-slate-950 text-white flex flex-col p-4 sm:p-6 overflow-hidden">
     <div class="glass-panel p-4 rounded-3xl flex flex-wrap justify-between items-center gap-3 shadow-xl">
       <div class="flex items-center gap-3">
-        <button type="button" onclick="adminExitRoom()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-md transition-all active:scale-95">
+        <button type="button" onclick="adminExitRoom()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 transition-all">
           <span>🔙</span> ย้อนกลับหน้าแรก
         </button>
         <div>
-          <h2 class="text-lg sm:text-2xl font-black bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">ADMIN MONITOR HUB</h2>
-          <p class="text-xs text-slate-400">ห้อง: <span id="adminRoomDisplay" class="text-cyan-400 font-bold">WORD1</span> | ผู้เล่นออนไลน์: <span id="playerCountDisplay" class="text-emerald-400 font-bold">0</span> คน</p>
+          <h2 class="text-lg sm:text-xl font-black bg-gradient-to-r from-amber-300 to-yellow-500 bg-clip-text text-transparent">ADMIN MONITOR HUB</h2>
+          <p class="text-xs text-slate-400">ห้อง: <span id="adminRoomDisplay" class="text-cyan-400 font-bold">WORD1</span> | ผู้เรียนในห้อง: <span id="playerCountDisplay" class="text-emerald-400 font-bold">0</span> คน</p>
         </div>
       </div>
       <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-        <div class="glass-panel px-4 py-2 rounded-2xl border border-yellow-500/30 font-mono text-xl sm:text-2xl text-yellow-400 font-black">
+        <div class="glass-panel px-4 py-2 rounded-2xl border border-yellow-500/30 font-mono text-xl text-yellow-400 font-black">
           ⏱️ <span id="adminTimerDisplay">05:00</span>
         </div>
         <button id="btnAdminStart" onclick="adminStartGame()" class="btn-3d-green text-white px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm">
@@ -113,35 +115,35 @@
         <button onclick="adminStopGame()" class="btn-3d-rose text-white px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm">
           ⏹ สั่งจบเกม
         </button>
-        <button onclick="exportDataCSV()" class="btn-3d-amber text-slate-950 px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm">
+        <button onclick="exportDataCSV()" class="btn-3d-cyan text-slate-950 px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm">
           📥 Export CSV
         </button>
       </div>
     </div>
 
     <!-- แถบคนนำอันดับ 1 -->
-    <div class="mt-3.5 bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-transparent border border-amber-500/30 p-3.5 rounded-2xl flex items-center justify-between shadow-lg">
+    <div class="mt-3 bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-transparent border border-amber-500/30 p-3.5 rounded-2xl flex items-center justify-between shadow-lg">
       <div class="flex items-center gap-3">
-        <span class="text-3xl animate-bounce">👑</span>
+        <span class="text-3xl">👑</span>
         <div>
           <div class="text-[11px] text-amber-300 font-bold uppercase tracking-wider">ผู้นำอันดับ 1 ตอนนี้</div>
-          <div id="leaderName" class="text-base sm:text-lg font-bold text-white">รอผู้เล่นเริ่มกระโดด...</div>
+          <div id="leaderName" class="text-base font-bold text-white">รอผู้เล่นเริ่มแข่งขัน...</div>
         </div>
       </div>
       <div class="text-right">
         <div class="text-[11px] text-amber-300 font-bold uppercase tracking-wider">ระยะทางนำ</div>
-        <div id="leaderMeters" class="text-lg sm:text-2xl font-black text-yellow-400 font-mono">0 เมตร</div>
+        <div id="leaderMeters" class="text-xl font-black text-yellow-400 font-mono">0 เมตร</div>
       </div>
     </div>
 
     <!-- ตารางผู้เล่นสด -->
-    <div class="mt-3.5 flex-1 overflow-auto glass-panel rounded-3xl p-3 sm:p-5">
+    <div class="mt-3 flex-1 overflow-auto glass-panel rounded-3xl p-3 sm:p-5">
       <table class="w-full text-left border-collapse">
         <thead>
           <tr class="border-b border-slate-800 text-slate-400 text-xs sm:text-sm">
             <th class="p-3">อันดับ</th>
             <th class="p-3">ชื่อผู้เรียน</th>
-            <th class="p-3 text-center">ระยะทาง (เมตร)</th>
+            <th class="p-3 text-center">ระยะทางความสูง</th>
             <th class="p-3 text-center">ตอบถูก</th>
             <th class="p-3 text-center">ตอบผิด</th>
             <th class="p-3 text-center">ความแม่นยำ</th>
@@ -153,27 +155,27 @@
     </div>
   </div>
 
-  <!-- 3. หน้าจอเล่นเกมสำหรับผู้เล่น (Player View) -->
+  <!-- 3. หน้าจอเล่นเกมสำหรับผู้เล่น (Smooth Game View) -->
   <div id="playerGameContainer" class="hidden relative w-full h-full max-w-[1200px] max-h-[880px] overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border-4 border-slate-800 shadow-2xl">
     <canvas id="gameCanvas" class="w-full h-full block"></canvas>
 
-    <!-- แถบแสดงสถานะด้านบน -->
+    <!-- แถบด้านบน -->
     <div class="absolute top-3 left-3 right-3 flex justify-between items-center pointer-events-none">
       <div class="flex flex-wrap items-center gap-2 pointer-events-auto">
-        <div class="glass-panel px-3.5 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm">
+        <div class="glass-panel px-3 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm">
           🏠 <span id="playerRoomDisplay" class="text-cyan-300">WORD1</span>
         </div>
-        <div class="glass-panel px-3.5 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm">
+        <div class="glass-panel px-3 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm">
           ⏱️ <span id="playerTimerDisplay" class="text-yellow-300 font-mono">05:00</span>
         </div>
-        <div class="glass-panel px-3.5 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm">
+        <div class="glass-panel px-3 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm">
           ⚡ พลัง: <span id="playerEnergyDisplay" class="text-yellow-400">5</span>
         </div>
-        <div class="glass-panel px-3.5 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm">
+        <div class="glass-panel px-3 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm">
           🚩 สูง: <span id="playerHeightDisplay" class="text-emerald-400 font-mono">0m</span>
         </div>
       </div>
-      <div class="glass-panel px-3.5 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm pointer-events-auto">
+      <div class="glass-panel px-3 py-1.5 rounded-2xl text-white font-bold text-xs sm:text-sm pointer-events-auto">
         👥 ในห้อง: <span id="inGamePlayerCount" class="text-cyan-300 font-bold">1</span> คน
       </div>
     </div>
@@ -185,7 +187,7 @@
       </button>
     </div>
 
-    <!-- ปุ่มควบคุมสัมผัสบนมือถือ / แท็บเล็ต -->
+    <!-- ปุ่มสัมผัสสำหรับมือถือ -->
     <div class="absolute bottom-4 left-4 flex gap-2.5 z-20">
       <button id="btnLeft" class="btn-3d-purple text-white w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex justify-center items-center text-3xl font-bold">⬅</button>
       <button id="btnRight" class="btn-3d-purple text-white w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex justify-center items-center text-3xl font-bold">➡</button>
@@ -206,7 +208,7 @@
       </div>
     </div>
 
-    <!-- สรุปผลการแข่งขันเมื่อหมดเวลา จัดเรียงตามลำดับความสูงจริง -->
+    <!-- กระดานสรุปผลตอนสิ้นสุดเกม -->
     <div id="gameOverModal" class="hidden absolute inset-0 bg-black/90 backdrop-blur-lg flex justify-center items-center z-50 p-4">
       <div class="glass-panel border-2 border-cyan-500/40 rounded-3xl p-6 w-full max-w-md shadow-2xl text-center text-white">
         <h2 class="game-font font-black text-3xl text-cyan-400 mb-1">🏁 สรุปผลการแข่งขัน</h2>
@@ -222,24 +224,24 @@
     const myColor = CHARACTER_COLORS[Math.floor(Math.random() * CHARACTER_COLORS.length)];
 
     const WORD_QUIZ = [
-      { q: "คีย์ลัดสำหรับบันทึกเอกสาร (Save) คือข้อใด?", a: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + V"], c: 0, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { q: "คีย์ลัดสำหรับทำตัวอักษรหนา (Bold) คือข้อใด?", a: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + H"], c: 1, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { q: "คีย์ลัดสำหรับยกเลิกคำสั่งล่าสุด (Undo) คือข้อใด?", a: ["Ctrl + Y", "Ctrl + Z", "Ctrl + X", "Ctrl + A"], c: 1, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { q: "ต้องการคัดลอกข้อความ (Copy) ต้องใช้คีย์ลัดใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + D"], c: 0, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { q: "การวางข้อความที่คัดลอกไว้ (Paste) ใช้คีย์ลัดใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + Shift + V", "Ctrl + B"], c: 1, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { q: "ต้องการเปิดสร้างเอกสารเปล่าแผ่นใหม่ทันที กดปุ่มใด?", a: ["Ctrl + M", "Ctrl + N", "Ctrl + O", "Ctrl + W"], c: 1, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { q: "คีย์ลัดสำหรับสั่งพิมพ์เอกสาร (Print) คือข้อใด?", a: ["Ctrl + P", "Ctrl + Shift + P", "Alt + P", "F12"], c: 0, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
-      { q: "การจัดข้อความให้อยู่กึ่งกลางหน้ากระดาษ (Center) ใช้ปุ่มใด?", a: ["Ctrl + C", "Ctrl + E", "Ctrl + J", "Ctrl + M"], c: 1, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
-      { q: "การขึ้นหน้าใหม่ทันที (Page Break) โดยไม่ต้องเคาะ Enter ถี่ๆ ใช้ปุ่มใด?", a: ["Ctrl + Enter", "Shift + Enter", "Alt + Enter", "Tab + Enter"], c: 0, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+      { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'บันทึกเอกสาร' (Save)?", a: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + V"], c: 0, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'ทำตัวอักษรหนา' (Bold)?", a: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + H"], c: 1, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'ยกเลิกคำสั่งล่าสุด' (Undo)?", a: ["Ctrl + Y", "Ctrl + Z", "Ctrl + X", "Ctrl + A"], c: 1, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องใช้คีย์ลัดใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + D"], c: 0, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { q: "การ 'วางข้อความ' (Paste) ที่คัดลอกไว้ ใช้คีย์ลัดใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + Shift + V", "Ctrl + B"], c: 1, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { q: "ต้องการเปิดสร้าง 'เอกสารเปล่าแผ่นใหม่' ทันที กดปุ่มใด?", a: ["Ctrl + M", "Ctrl + N", "Ctrl + O", "Ctrl + W"], c: 1, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { q: "คีย์ลัดสำหรับสั่ง 'พิมพ์เอกสาร' (Print) คือข้อใด?", a: ["Ctrl + P", "Ctrl + Shift + P", "Alt + P", "F12"], c: 0, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
+      { q: "การจัดข้อความให้อยู่ 'กึ่งกลางหน้ากระดาษ' (Center) ใช้ปุ่มใด?", a: ["Ctrl + C", "Ctrl + E", "Ctrl + J", "Ctrl + M"], c: 1, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+      { q: "การขึ้นหน้าใหม่ทันที (Page Break) ใช้คีย์ลัดใด?", a: ["Ctrl + Enter", "Shift + Enter", "Alt + Enter", "Tab + Enter"], c: 0, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
       { q: "ฟังก์ชัน Mail Merge (จดหมายเวียน) อยู่ภายใต้แท็บเมนูใด?", a: ["References", "Mailings", "Review", "Insert"], c: 1, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
-      { q: "คีย์ลัดสำหรับเปิดหน้าต่างค้นหาและแทนที่คำ (Find and Replace) คืออะไร?", a: ["Ctrl + F", "Ctrl + H", "Ctrl + G", "Ctrl + R"], c: 1, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+      { q: "คีย์ลัดเปิดหน้าต่าง 'ค้นหาและแทนที่คำ' (Find and Replace) คืออะไร?", a: ["Ctrl + F", "Ctrl + H", "Ctrl + G", "Ctrl + R"], c: 1, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
       { q: "การแทรกเชิงอรรถอ้างอิง (Footnote) อยู่ภายใต้แท็บเครื่องมือใด?", a: ["Layout", "References", "Insert", "View"], c: 1, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
-      { q: "คีย์ลัดในการแทรกลิงก์เชื่อมโยง (Hyperlink) ลงในเอกสารคือข้อใด?", a: ["Ctrl + L", "Ctrl + K", "Ctrl + H", "Alt + K"], c: 1, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
+      { q: "คีย์ลัดในการแทรกลิงก์ (Hyperlink) ลงในเอกสารคือข้อใด?", a: ["Ctrl + L", "Ctrl + K", "Ctrl + H", "Alt + K"], c: 1, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
       { q: "การกดบันทึกเป็นชื่อใหม่ (Save As) ด้วยปุ่มฟังก์ชันลัดด้านบน คือปุ่มใด?", a: ["F2", "F7", "F12", "F5"], c: 2, level: "ปานกลาง", badge: "bg-amber-500/20 text-amber-300 border-amber-500/30" },
       { q: "การขึ้นบรรทัดใหม่โดยไม่เริ่มย่อหน้าใหม่ (Line Break) ต้องกดปุ่มใด?", a: ["Ctrl + Enter", "Shift + Enter", "Alt + Enter", "Tab + Enter"], c: 1, level: "ยาก", badge: "bg-rose-500/20 text-rose-300 border-rose-500/30" },
-      { q: "ต้องการตั้งค่าให้หน้าถัดไปเป็นแนวนอนโดยไม่กระทบหน้าก่อนหน้า ต้องใช้คำสั่งใด?", a: ["Page Break", "Section Break (Next Page)", "Column Break", "Text Wrapping"], c: 1, level: "ยาก", badge: "bg-rose-500/20 text-rose-300 border-rose-500/30" },
-      { q: "คีย์ลัด Format Painter (คัดลอกเฉพาะรูปแบบตัวอักษรและสี) คือข้อใด?", a: ["Ctrl + Shift + C แล้ว Ctrl + Shift + V", "Ctrl + Alt + C แล้ว Ctrl + Alt + V", "Shift + F3", "Alt + Shift + C"], c: 0, level: "ยาก", badge: "bg-rose-500/20 text-rose-300 border-rose-500/30" },
-      { q: "คีย์ลัดสลับตัวพิมพ์เล็ก/ใหญ่ ในภาษาอังกฤษ (Change Case) คือปุ่มใด?", a: ["Ctrl + F3", "Shift + F3", "Alt + F3", "Ctrl + Shift + A"], c: 1, level: "ยาก", badge: "bg-rose-500/20 text-rose-300 border-rose-500/30" },
+      { q: "ต้องการตั้งค่าให้หน้าถัดไปเป็นแนวนอนโดยไม่กระทบหน้าเดิม ต้องใช้คำสั่งใด?", a: ["Page Break", "Section Break (Next Page)", "Column Break", "Text Wrapping"], c: 1, level: "ยาก", badge: "bg-rose-500/20 text-rose-300 border-rose-500/30" },
+      { q: "คีย์ลัด Format Painter (คัดลอกเฉพาะรูปแบบตัวอักษร) คือข้อใด?", a: ["Ctrl + Shift + C แล้ว Ctrl + Shift + V", "Ctrl + Alt + C แล้ว Ctrl + Alt + V", "Shift + F3", "Alt + Shift + C"], c: 0, level: "ยาก", badge: "bg-rose-500/20 text-rose-300 border-rose-500/30" },
+      { q: "คีย์ลัดสลับตัวพิมพ์เล็ก/ใหญ่ภาษาอังกฤษ (Change Case) คือปุ่มใด?", a: ["Ctrl + F3", "Shift + F3", "Alt + F3", "Ctrl + Shift + A"], c: 1, level: "ยาก", badge: "bg-rose-500/20 text-rose-300 border-rose-500/30" },
       { q: "การสร้างสารบัญอัตโนมัติ (Table of Contents) ดึงข้อมูลมาจากสิ่งใดเป็นหลัก?", a: ["Font Size", "Heading Styles (Heading 1, 2)", "Bookmarks", "Bold Words"], c: 1, level: "ยาก", badge: "bg-rose-500/20 text-rose-300 border-rose-500/30" },
       { q: "การสั่งอัปเดตฟิลด์หรือเลขหน้าสารบัญแบบด่วน กดปุ่มฟังก์ชันใด?", a: ["F5", "F7", "F9", "F11"], c: 2, level: "ยาก", badge: "bg-rose-500/20 text-rose-300 border-rose-500/30" }
     ];
@@ -317,7 +319,7 @@
 
         setInterval(() => {
           if (!isGameOver) broadcastMyState();
-        }, 40);
+        }, 35);
       });
 
       peer.on('error', (err) => {
@@ -458,7 +460,7 @@
         const totalAnswers = (p.correct || 0) + (p.wrong || 0);
         const acc = totalAnswers > 0 ? Math.round((p.correct / totalAnswers) * 100) : 0;
         const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-850 transition-colors";
+        tr.className = "hover:bg-slate-800/40 transition-colors";
         tr.innerHTML = `
           <td class="p-3 font-bold">${idx === 0 ? '🥇 1' : idx === 1 ? '🥈 2' : idx === 2 ? '🥉 3' : idx + 1}</td>
           <td class="p-3 font-bold text-cyan-300 flex items-center gap-2">
@@ -493,7 +495,7 @@
       document.body.removeChild(link);
     }
 
-    // ================= CYBER-POP HIGH DEF ENGINE =================
+    // ================= ULTRA-SMOOTH GAME ENGINE =================
     const WORLD_WIDTH = 1000;
     const LEFT_BOUNDARY = 40;
     const RIGHT_BOUNDARY = WORLD_WIDTH - 40;
@@ -584,8 +586,7 @@
           vx: (Math.random() - 0.5) * 6,
           vy: (Math.random() - 0.5) * 2 - 1,
           alpha: 1,
-          size: Math.random() * 4 + 2,
-          color: '#38bdf8'
+          size: Math.random() * 4 + 2
         });
       }
     }
@@ -610,6 +611,7 @@
 
     function gameLoop() {
       if (!isGameOver) {
+        // การเคลื่อนไหวแนวนอนแบบ Smooth
         if (keys.left) player.vx = -5.4;
         else if (keys.right) player.vx = 5.4;
         else player.vx *= 0.82;
@@ -621,7 +623,7 @@
         player.scaleX += (1 - player.scaleX) * 0.15;
         player.scaleY += (1 - player.scaleY) * 0.15;
 
-        // กำแพงข้างหนาแน่น ไม่ตกแมพออกด้านข้างแน่นอน
+        // กำแพงด้านข้างแข็งแรง ไม่ตกแมพ
         if (player.x < LEFT_BOUNDARY) {
           player.x = LEFT_BOUNDARY;
           player.vx = 0;
@@ -660,6 +662,7 @@
         currentHeightMeters = currentM;
         document.getElementById('playerHeightDisplay').innerText = `${currentHeightMeters}m`;
 
+        // Smooth Camera Follow
         const desiredCamY = player.y - cssHeight * 0.60;
         cameraY += (desiredCamY - cameraY) * 0.15;
 
@@ -680,7 +683,7 @@
 
       const offsetX = (cssWidth - WORLD_WIDTH) / 2;
 
-      // เสากำแพงนีออนกั้นตกด้านข้างแบบเด่นชัด
+      // เสากำแพงนีออนกั้นตกด้านข้าง
       ctx.fillStyle = '#090d16';
       ctx.fillRect(offsetX + LEFT_BOUNDARY - 24, 0, 24, cssHeight);
       ctx.fillRect(offsetX + RIGHT_BOUNDARY, 0, 24, cssHeight);
@@ -852,7 +855,6 @@
         const rows = document.getElementById('summaryRows');
         rows.innerHTML = '';
 
-        // รวบรวมทุกคนในห้อง + ตัวเราเอง แล้วเรียงลำดับตามความสูงจริงจากมากไปน้อย
         const all = [
           { name: playerName, height: currentHeightMeters, correct: correctCount, wrong: wrongCount, isSelf: true },
           ...Array.from(playersInRoom.values()).map(p => ({
