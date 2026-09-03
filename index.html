@@ -5,109 +5,145 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Hunter Cyber Mission - Endless Sweet Edition</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- PeerJS เชื่อมต่อห้องสดแบบ P2P เสถียร ไม่ต้องรัน Backend ในเครื่อง -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Kanit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
-    }
-    html, body {
+      touch-action: manipulation;
       margin: 0;
       padding: 0;
-      width: 100%;
-      height: 100%;
+      font-family: 'Kanit', system-ui, -apple-system, sans-serif;
+    }
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
       background: #e0f2fe;
       color: #0f172a;
-      font-family: system-ui, -apple-system, sans-serif;
-      touch-action: none;
     }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+    .game-font { font-family: 'Fredoka', 'Kanit', sans-serif; }
+
+    /* การ์ดคอนเทนเนอร์ธีม Sweet Candy */
     .container {
       background: rgba(255, 255, 255, 0.96);
-      border: 2px solid #ff758f;
-      border-radius: 24px;
-      padding: 22px;
-      max-width: 480px;
+      border: 2.5px solid #ff758f;
+      border-radius: 28px;
+      padding: 24px;
+      max-width: 460px;
       width: 90%;
       text-align: center;
-      box-shadow: 0 12px 35px rgba(255, 117, 143, 0.15);
+      box-shadow: 0 16px 40px rgba(255, 117, 143, 0.22);
       backdrop-filter: blur(12px);
       max-height: 94vh;
       overflow-y: auto;
+      z-index: 50;
     }
     h1 {
       color: #e01e37;
-      margin: 0 0 8px 0;
+      margin: 0 0 6px 0;
       font-size: 24px;
+      font-weight: 900;
       letter-spacing: 0.5px;
     }
+    h2 {
+      color: #e01e37;
+      margin-bottom: 12px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    /* ปุ่มกดสไตล์ Sweet Tactile */
     .btn {
       background: linear-gradient(135deg, #ff758f, #ff4d6d);
       color: white;
       border: none;
       padding: 13px;
-      border-radius: 14px;
+      border-radius: 16px;
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
       width: 100%;
-      margin: 8px 0;
-      touch-action: manipulation;
+      margin: 6px 0;
       box-shadow: 0 4px 14px rgba(255, 77, 109, 0.3);
+      transition: transform 0.1s;
     }
-    .btn:active { transform: scale(0.98); }
-    .btn-excel {
-      background: linear-gradient(135deg, #10b981, #047857);
+    .btn:active { transform: scale(0.97); }
+    .btn-green {
+      background: linear-gradient(135deg, #34d399, #10b981);
       box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
     }
+    .btn-sky {
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+    }
+    .btn-gray {
+      background: #f1f5f9;
+      color: #475569;
+      border: 2px solid #cbd5e1;
+      padding: 8px 16px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      width: auto;
+    }
+
     input, select {
       width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 6px 0;
+      border-radius: 14px;
       border: 1.5px solid #ff758f;
       background: #fff5f7;
       color: #e01e37;
       text-align: center;
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 700;
       outline: none;
     }
+    input:focus, select:focus {
+      background: #ffffff;
+      border-color: #e01e37;
+    }
+
     .pin-display {
-      font-size: 38px;
-      letter-spacing: 6px;
+      font-size: 34px;
+      letter-spacing: 5px;
       font-weight: 900;
       color: #e01e37;
       background: #ffe4e6;
-      padding: 6px;
-      border-radius: 14px;
+      padding: 8px;
+      border-radius: 16px;
       margin: 8px 0;
       border: 2px dashed #ff758f;
     }
+
     .qr-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       background: #fff;
       padding: 10px;
-      border-radius: 14px;
+      border-radius: 16px;
       width: fit-content;
       margin: 8px auto;
       box-shadow: 0 2px 10px rgba(0,0,0,0.06);
     }
+
     .badge-list {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
       justify-content: center;
       margin: 10px 0;
+      max-height: 100px;
+      overflow-y: auto;
     }
     .badge {
       background: #ffe4e6;
@@ -118,8 +154,10 @@
       color: #e01e37;
       font-weight: bold;
     }
+
     .hidden { display: none !important; }
 
+    /* หน้าจอเกมหลัก */
     #game-wrapper {
       position: relative;
       width: 100vw;
@@ -144,20 +182,21 @@
       z-index: 10;
     }
     .stat-pill {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1.5px solid rgba(255, 117, 143, 0.4);
+      background: rgba(255, 255, 255, 0.94);
+      border: 2px solid rgba(255, 117, 143, 0.5);
       backdrop-filter: blur(8px);
       padding: 6px 14px;
       border-radius: 20px;
       font-weight: 800;
       font-size: 14px;
       color: #0f172a;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
+    /* ปุ่มควบคุมสัมผัสบนมือถือ */
     .controls-bar {
       position: absolute;
-      bottom: env(safe-area-inset-bottom, 14px);
+      bottom: env(safe-area-inset-bottom, 16px);
       left: 16px;
       right: 16px;
       display: flex;
@@ -168,65 +207,72 @@
     }
     .d-pad {
       display: flex;
-      gap: 14px;
-      pointer-events: auto;
-    }
-    .action-pad {
+      gap: 12px;
       pointer-events: auto;
     }
     .ctrl-btn {
-      width: 72px;
-      height: 72px;
-      background: rgba(255, 255, 255, 0.95);
-      border: 2.5px solid #ff758f;
+      width: 70px;
+      height: 70px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 3px solid #ff758f;
       color: #e01e37;
-      font-size: 30px;
-      border-radius: 24px;
+      font-size: 28px;
+      font-weight: 900;
+      border-radius: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
-      touch-action: none;
       box-shadow: 0 6px 16px rgba(255, 117, 143, 0.25);
+      cursor: pointer;
     }
     .ctrl-btn:active {
       background: #ffe4e6;
       transform: scale(0.92);
     }
     .btn-jump-action {
-      background: #10b981;
-      border-color: #059669;
-      color: white;
       width: 80px;
       height: 80px;
-      font-size: 36px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: 3px solid #ffffff;
+      color: white;
+      font-size: 32px;
+      font-weight: 900;
+      border-radius: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+      pointer-events: auto;
+      cursor: pointer;
     }
     .btn-jump-action:active {
       background: #047857;
       transform: scale(0.92);
     }
-    
+
     .btn-answer-quiz {
       position: absolute;
-      bottom: env(safe-area-inset-bottom, 20px);
+      bottom: env(safe-area-inset-bottom, 22px);
       left: 50%;
       transform: translateX(-50%);
       background: linear-gradient(180deg, #ff758f, #ff4d6d);
       border: 2px solid #ffffff;
       color: white;
-      padding: 12px 20px;
-      border-radius: 20px;
+      padding: 12px 22px;
+      border-radius: 22px;
       font-weight: 900;
-      font-size: 13px;
+      font-size: 14px;
       pointer-events: auto;
       white-space: nowrap;
-      box-shadow: 0 4px 16px rgba(255, 77, 109, 0.35);
+      box-shadow: 0 6px 18px rgba(255, 77, 109, 0.35);
+      cursor: pointer;
     }
     .btn-answer-quiz:active { transform: translateX(-50%) scale(0.95); }
 
+    /* ป๊อปอัปคำถาม */
     #quiz-modal {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
+      inset: 0;
       background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(8px);
       display: flex;
@@ -237,57 +283,42 @@
     }
     .quiz-card {
       background: #ffffff;
-      padding: 22px;
-      border-radius: 22px;
+      padding: 24px;
+      border-radius: 26px;
       width: 100%;
-      max-width: 440px;
-      border: 2px solid #ff758f;
+      max-width: 420px;
+      border: 3px solid #ff758f;
       text-align: center;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.15);
     }
     .quiz-option {
       background: #fff5f7;
-      border: 1.5px solid #ffccd5;
+      border: 2px solid #ffccd5;
       color: #e01e37;
-      padding: 12px 14px;
+      padding: 12px 16px;
       border-radius: 14px;
       width: 100%;
       margin: 8px 0;
       cursor: pointer;
       text-align: left;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 700;
       transition: background 0.15s;
     }
     .quiz-option:active { background: #ff758f; color: white; border-color: #ff758f; }
-
-    .leaderboard-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      text-align: left;
-      font-size: 14px;
-    }
-    .leaderboard-table th {
-      color: #64748b;
-      padding: 8px 4px;
-      border-bottom: 2px solid #e2e8f0;
-    }
-    .leaderboard-table td {
-      padding: 10px 4px;
-      border-bottom: 1px solid #f1f5f9;
-    }
   </style>
 </head>
-<body>
+<body class="w-screen h-screen flex justify-center items-center">
 
+  <!-- 1. เมนูหลักเลือกโหมด -->
   <div id="view-mode" class="container">
     <h1>HUNTER CYBER MISSION</h1>
-    <p style="color: #64748b; font-size:14px; margin-bottom: 16px;">เกมตอบคำถามชิงความสูง (Endless Sweet Edition)</p>
+    <p style="color: #64748b; font-size:14px; margin-bottom: 16px;">เกมกระโดดตอบคำถาม Microsoft Word (Endless Sweet Edition)</p>
     <button class="btn" id="btn-mode-host">👑 ผู้สอน (Host สร้างห้อง)</button>
-    <button class="btn" id="btn-mode-join" style="background:#475569;">🎮 ผู้เรียน (Join เข้าเล่น)</button>
+    <button class="btn btn-sky" id="btn-mode-join">🎮 ผู้เรียน (Join เข้าเล่น)</button>
   </div>
 
+  <!-- 2. หน้า Host ตั้งห้องและแชร์ QR Code -->
   <div id="view-host" class="container hidden">
     <h2>ห้องควบคุมโฮสต์</h2>
     <p style="margin-bottom:2px; font-size:13px; color:#64748b;">รหัสเข้าห้อง (Room PIN):</p>
@@ -298,43 +329,106 @@
       <span style="color:#e01e37; font-size:11px; font-weight:bold; margin-top:4px;">สแกนเพื่อเข้าห้อง</span>
     </div>
     
-    <button class="btn" id="btn-copy-link" style="padding:8px; font-size:12px; margin:4px 0 8px 0;">📋 คัดลอกลิงก์ส่งให้นักเรียน</button>
+    <button class="btn btn-sky" id="btn-copy-link" style="padding:10px; font-size:13px;">📋 คัดลอกลิงก์ส่งให้นักเรียน</button>
 
-    <label style="color:#64748b; font-size:12px;">ระยะเวลาแข่งขัน:</label>
-    <select id="select-duration">
-      <option value="1">1 นาที (ทดสอบ)</option>
-      <option value="3" selected>3 นาที</option>
-      <option value="5">5 นาที</option>
-      <option value="10">10 นาที</option>
-    </select>
+    <div style="display: flex; gap: 8px; margin-top: 6px;">
+      <div style="flex: 1;">
+        <label style="color:#64748b; font-size:12px; font-weight:bold;">เวลาแข่งขัน:</label>
+        <select id="select-duration">
+          <option value="60">1 นาที (ทดสอบ)</option>
+          <option value="180" selected>3 นาที</option>
+          <option value="300">5 นาที</option>
+          <option value="600">10 นาที</option>
+        </select>
+      </div>
+      <div style="flex: 1;">
+        <label style="color:#64748b; font-size:12px; font-weight:bold;">พลังงานเริ่มต้น:</label>
+        <input id="host-start-energy" type="number" min="1" max="50" value="5">
+      </div>
+    </div>
 
     <p style="margin: 8px 0 4px 0; font-size:13px; color:#64748b;">ผู้เล่นในห้อง (<span id="player-count">0</span> คน):</p>
     <div id="host-players" class="badge-list"></div>
-    <button id="btn-start" class="btn" style="background: linear-gradient(135deg, #10b981, #059669);" disabled>🚀 เริ่มการแข่งขัน</button>
+    <button id="btn-start" class="btn btn-green">🚀 เริ่มการแข่งขันทันที</button>
   </div>
 
-  <div id="view-host-live" class="container hidden">
-    <h2>📡 การแข่งขันสด</h2>
-    <div style="font-size:32px; font-weight:900; color:#ef4444; margin:8px 0;">
-      ⏳ <span id="host-timer">00:00</span>
+  <!-- 3. หน้า Host มอนิเตอร์สถิติสดแบบ Real-time -->
+  <div id="view-host-live" class="hidden w-full h-full bg-slate-50 flex flex-col p-4 sm:p-6 overflow-hidden">
+    <div class="bg-white border-2 border-pink-200 p-4 rounded-3xl flex flex-wrap justify-between items-center gap-3 shadow-md">
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="adminExitRoom()" class="btn-gray">
+          🔙 กลับหน้าแรก
+        </button>
+        <div>
+          <h2 class="text-lg sm:text-xl font-black text-rose-600 mb-0">👑 HOST LIVE DASHBOARD</h2>
+          <p class="text-xs text-slate-500">ห้อง: <span id="admin-room-display" class="font-bold text-rose-500">------</span> | ออนไลน์: <span id="admin-player-count" class="font-bold text-emerald-600">0</span> คน</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="bg-rose-50 border border-rose-200 px-4 py-1.5 rounded-2xl font-mono text-xl text-rose-600 font-black">
+          ⏱️ <span id="host-timer">00:00</span>
+        </div>
+        <button onclick="adminStopGame()" class="btn !bg-rose-600 !w-auto !py-2 !px-4 !my-0 text-sm">
+          ⏹ สั่งจบเกม
+        </button>
+        <button onclick="exportDataCSV()" class="btn btn-green !w-auto !py-2 !px-4 !my-0 text-sm">
+          📥 Export CSV
+        </button>
+      </div>
     </div>
-    <div id="live-ranking" style="text-align: left; margin-top:10px; max-height:220px; overflow-y:auto;"></div>
+
+    <!-- แถบคนนำอันดับ 1 -->
+    <div class="mt-3.5 bg-amber-50 border border-amber-200 p-3.5 rounded-2xl flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">👑</span>
+        <div>
+          <div class="text-[11px] text-amber-700 font-bold uppercase">ผู้นำอันดับ 1 ตอนนี้</div>
+          <div id="leaderName" class="text-base font-bold text-slate-800">รอผู้เล่นกระโดด...</div>
+        </div>
+      </div>
+      <div class="text-right">
+        <div class="text-[11px] text-amber-700 font-bold uppercase">ระยะทางนำ</div>
+        <div id="leaderMeters" class="text-xl font-black text-amber-600 font-mono">0 m</div>
+      </div>
+    </div>
+
+    <!-- ตารางผู้เล่นทุกคนแบบสดๆ -->
+    <div class="mt-3.5 flex-1 overflow-auto bg-white border-2 border-pink-100 rounded-3xl p-3 sm:p-5 shadow-sm">
+      <table class="w-full text-left border-collapse text-xs sm:text-sm">
+        <thead>
+          <tr class="border-b border-slate-200 text-slate-400">
+            <th class="p-3">อันดับ</th>
+            <th class="p-3">ชื่อผู้เรียน</th>
+            <th class="p-3 text-center">ความสูง (เมตร)</th>
+            <th class="p-3 text-center">ตอบถูก</th>
+            <th class="p-3 text-center">ตอบผิด</th>
+            <th class="p-3 text-center">ความแม่นยำ</th>
+            <th class="p-3 text-center">พลังงาน</th>
+          </tr>
+        </thead>
+        <tbody id="adminPlayerTable" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
   </div>
 
+  <!-- 4. หน้า Join กรอกรหัส -->
   <div id="view-join" class="container hidden">
     <h2>เข้าสู่สมรภูมิขนมหวาน</h2>
     <input type="text" id="input-pin" placeholder="รหัสห้อง 6 หลัก" maxlength="6" inputmode="numeric">
-    <input type="text" id="input-name" placeholder="ชื่อเล่นของคุณ" maxlength="12">
-    <button class="btn" id="btn-do-join">เข้าสู่ห้อง</button>
+    <input type="text" id="input-name" placeholder="ชื่อเล่นของคุณ" maxlength="12" value="นักเรียน">
+    <button class="btn btn-green" id="btn-do-join">เข้าสู่ห้องแข่งขัน 🚀</button>
   </div>
 
+  <!-- 5. หน้าต่างรอการแข่งขัน (Waiting Room) -->
   <div id="view-waiting" class="container hidden">
     <h2>ห้องเตรียมพร้อม</h2>
-    <p>รหัสห้อง: <b id="wait-pin" style="color:#e01e37;"></b></p>
-    <p>ผู้เล่น: <b id="wait-name" style="color:#10b981;"></b></p>
-    <p style="color: #f59e0b; margin-top:18px; font-size:15px; font-weight:bold;">⏳ รอสัญญาณปล่อยตัวจากผู้สอน...</p>
+    <p style="font-size:14px; color:#64748b; margin:6px 0;">รหัสห้อง: <b id="wait-pin" style="color:#e01e37; font-size:18px;"></b></p>
+    <p style="font-size:14px; color:#64748b;">ผู้เล่น: <b id="wait-name" style="color:#10b981; font-size:16px;"></b></p>
+    <div style="display:inline-block; margin:20px 0; font-size:40px;" class="animate-bounce">⏳</div>
+    <p style="color: #f59e0b; font-size:15px; font-weight:800;">รอสัญญาณปล่อยตัวจากผู้สอน...</p>
   </div>
 
+  <!-- 6. สนามเล่นเกมจริง (Player Game Wrapper) -->
   <div id="game-wrapper" class="hidden">
     <canvas id="gameCanvas"></canvas>
 
@@ -344,4 +438,737 @@
       <div class="stat-pill">🎯 <span id="ui-height" style="color:#0284c7;">0</span> m</div>
     </div>
 
-    <button class="btn-answ
+    <!-- ปุ่มตอบคำถามกลางจอ -->
+    <button class="btn-answer-quiz" id="btn-open-quiz">⚡ ตอบคำถามรับพลังงาน</button>
+
+    <!-- ปุ่มควบคุมมือถือ -->
+    <div class="controls-bar">
+      <div class="d-pad">
+        <button class="ctrl-btn" id="btn-left">◀</button>
+        <button class="ctrl-btn" id="btn-right">▶</button>
+      </div>
+      <button class="btn-jump-action" id="btn-jump">🚀</button>
+    </div>
+
+    <!-- หน้าต่างป๊อปอัปข้อสอบ -->
+    <div id="quiz-modal" class="hidden">
+      <div class="quiz-card">
+        <div style="font-size:12px; font-weight:bold; color:#10b981; margin-bottom:4px;">+5 Energy ต่อข้อ</div>
+        <div id="quiz-question" style="font-size:16px; font-weight:800; color:#0f172a; margin-bottom:12px; line-height:1.4;">คำถาม...</div>
+        <div id="quiz-options"></div>
+      </div>
+    </div>
+
+    <!-- กระดานสรุปผลตอนสิ้นสุดเกม -->
+    <div id="gameOverModal" class="hidden absolute inset-0 bg-slate-900/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <div class="container max-w-md">
+        <h2 class="game-font font-black text-2xl text-rose-600 mb-1">🏁 สรุปผลการแข่งขัน</h2>
+        <p class="text-xs font-semibold text-slate-500 mb-4">จัดอันดับตามระยะทางความสูงจริงที่ทำได้</p>
+        <div id="summaryRows" class="space-y-2 mb-4 max-h-60 overflow-y-auto px-1"></div>
+        <button onclick="location.reload()" class="btn">ออกจากห้อง / เล่นใหม่</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- 1. คลังข้อสอบ Microsoft Word ---
+    const quizDatabase = [
+      { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'บันทึกเอกสาร' (Save)?", a: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + V"], c: 0 },
+      { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'ทำตัวอักษรหนา' (Bold)?", a: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + H"], c: 1 },
+      { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'ยกเลิกคำสั่งล่าสุด' (Undo)?", a: ["Ctrl + Y", "Ctrl + Z", "Ctrl + X", "Ctrl + A"], c: 1 },
+      { q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องใช้คีย์ลัดใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + D"], c: 0 },
+      { q: "การ 'วางข้อความ' (Paste) ที่คัดลอกไว้ ใช้คีย์ลัดใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + Shift + V", "Ctrl + B"], c: 1 },
+      { q: "ต้องการเปิดสร้าง 'เอกสารเปล่าแผ่นใหม่' ทันที กดปุ่มใด?", a: ["Ctrl + M", "Ctrl + N", "Ctrl + O", "Ctrl + W"], c: 1 },
+      { q: "คีย์ลัดสำหรับสั่ง 'พิมพ์เอกสาร' (Print) คือข้อใด?", a: ["Ctrl + P", "Ctrl + Shift + P", "Alt + P", "F12"], c: 0 },
+      { q: "การจัดข้อความให้อยู่ 'กึ่งกลางหน้ากระดาษ' (Center) ใช้ปุ่มใด?", a: ["Ctrl + C", "Ctrl + E", "Ctrl + J", "Ctrl + M"], c: 1 },
+      { q: "การขึ้นหน้าใหม่ทันที (Page Break) ใช้คีย์ลัดใด?", a: ["Ctrl + Enter", "Shift + Enter", "Alt + Enter", "Tab + Enter"], c: 0 },
+      { q: "ฟังก์ชัน Mail Merge (จดหมายเวียน) อยู่ภายใต้แท็บเมนูใด?", a: ["References", "Mailings", "Review", "Insert"], c: 1 },
+      { q: "คีย์ลัดเปิดหน้าต่าง 'ค้นหาและแทนที่คำ' (Find and Replace) คืออะไร?", a: ["Ctrl + F", "Ctrl + H", "Ctrl + G", "Ctrl + R"], c: 1 },
+      { q: "การแทรกเชิงอรรถอ้างอิง (Footnote) อยู่ภายใต้แท็บเครื่องมือใด?", a: ["Layout", "References", "Insert", "View"], c: 1 },
+      { q: "คีย์ลัดในการแทรกลิงก์ (Hyperlink) ลงในเอกสารคือข้อใด?", a: ["Ctrl + L", "Ctrl + K", "Ctrl + H", "Alt + K"], c: 1 },
+      { q: "การกดบันทึกเป็นชื่อใหม่ (Save As) ด้วยปุ่มฟังก์ชันลัดด้านบน คือปุ่มใด?", a: ["F2", "F7", "F12", "F5"], c: 2 },
+      { q: "การขึ้นบรรทัดใหม่โดยไม่เริ่มย่อหน้าใหม่ (Line Break) ต้องกดปุ่มใด?", a: ["Ctrl + Enter", "Shift + Enter", "Alt + Enter", "Tab + Enter"], c: 1 },
+      { q: "ต้องการตั้งค่าให้หน้าถัดไปเป็นแนวนอนโดยไม่กระทบหน้าเดิม ต้องใช้คำสั่งใด?", a: ["Page Break", "Section Break (Next Page)", "Column Break", "Text Wrapping"], c: 1 },
+      { q: "คีย์ลัด Format Painter (คัดลอกเฉพาะรูปแบบตัวอักษร) คือข้อใด?", a: ["Ctrl + Shift + C แล้ว Ctrl + Shift + V", "Ctrl + Alt + C แล้ว Ctrl + Alt + V", "Shift + F3", "Alt + Shift + C"], c: 0 },
+      { q: "คีย์ลัดสลับตัวพิมพ์เล็ก/ใหญ่ภาษาอังกฤษ (Change Case) คือปุ่มใด?", a: ["Ctrl + F3", "Shift + F3", "Alt + F3", "Ctrl + Shift + A"], c: 1 },
+      { q: "การสร้างสารบัญอัตโนมัติ (Table of Contents) ดึงข้อมูลมาจากสิ่งใดเป็นหลัก?", a: ["Font Size", "Heading Styles (Heading 1, 2)", "Bookmarks", "Bold Words"], c: 1 },
+      { q: "การสั่งอัปเดตฟิลด์หรือเลขหน้าสารบัญแบบด่วน กดปุ่มฟังก์ชันใด?", a: ["F5", "F7", "F9", "F11"], c: 2 }
+    ];
+
+    // สีตัวละครสไตล์ขนมหวานสดใส
+    const CHARACTER_COLORS = ['#ff758f', '#38bdf8', '#34d399', '#fbbf24', '#a855f7', '#fb923c', '#ec4899', '#06b6d4'];
+    const myColor = CHARACTER_COLORS[Math.floor(Math.random() * CHARACTER_COLORS.length)];
+
+    let isHost = false;
+    let roomPin = "";
+    let myPlayerName = "ผู้เล่น";
+    let totalGameTime = 180;
+    let initialEnergy = 5;
+    let currentEnergy = 5;
+    let currentHeightMeters = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let isGameOver = false;
+    let gameInterval = null;
+
+    let peer = null;
+    let myPeerId = "";
+    let hostConnection = null;
+    let connections = new Map();
+    let playersInRoom = new Map();
+
+    // --- 2. การสลับหน้าจอ (UI Navigation) ---
+    function showView(viewId) {
+      ['view-mode', 'view-host', 'view-host-live', 'view-join', 'view-waiting', 'game-wrapper'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+      const target = document.getElementById(viewId);
+      if (target) target.classList.remove('hidden');
+    }
+
+    // เมื่อเปิดลิงก์แบบมี ?pin=123456 ให้สลับไปหน้า Join ทันที
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const pinParam = urlParams.get('pin');
+      if (pinParam) {
+        document.getElementById('input-pin').value = pinParam;
+        showView('view-join');
+      }
+    });
+
+    document.getElementById('btn-mode-host').onclick = () => {
+      isHost = true;
+      roomPin = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById('host-pin').innerText = roomPin;
+      
+      // สร้าง QR Code จาก URL เว็บไซต์จริงบน GitHub Pages
+      const joinUrl = `${window.location.origin}${window.location.pathname}?pin=${roomPin}`;
+      document.getElementById('qrcode').innerHTML = "";
+      new QRCode(document.getElementById("qrcode"), {
+        text: joinUrl,
+        width: 130,
+        height: 130,
+        colorDark : "#e01e37",
+        colorLight : "#ffffff"
+      });
+
+      document.getElementById('btn-copy-link').onclick = () => {
+        navigator.clipboard.writeText(joinUrl);
+        alert("คัดลอกลิงก์ห้องเรียบร้อยแล้ว: " + joinUrl);
+      };
+
+      initPeer(true);
+      showView('view-host');
+    };
+
+    document.getElementById('btn-mode-join').onclick = () => {
+      isHost = false;
+      showView('view-join');
+    };
+
+    document.getElementById('btn-do-join').onclick = () => {
+      roomPin = document.getElementById('input-pin').value.trim();
+      myPlayerName = document.getElementById('input-name').value.trim() || "นักเรียน";
+      if (roomPin.length !== 6) {
+        alert("กรุณาระบุรหัสห้อง 6 หลักให้ถูกต้อง");
+        return;
+      }
+      document.getElementById('wait-pin').innerText = roomPin;
+      document.getElementById('wait-name').innerText = myPlayerName;
+      initPeer(false);
+      showView('view-waiting');
+    };
+
+    // --- 3. ระบบเชื่อมต่อ PeerJS P2P ---
+    function initPeer(asHost) {
+      myPeerId = asHost ? `sweet_host_${roomPin}` : `sweet_plr_${roomPin}_${Math.random().toString(36).substring(2, 7)}`;
+      peer = new Peer(myPeerId, { debug: 1 });
+
+      peer.on('open', () => {
+        if (!asHost) {
+          // ถ้าเป็นนักเรียน ให้เชื่อมต่อไปหา Host
+          const hostPeerId = `sweet_host_${roomPin}`;
+          hostConnection = peer.connect(hostPeerId);
+          setupClientConnection(hostConnection);
+        }
+      });
+
+      peer.on('connection', (conn) => {
+        if (asHost) {
+          setupHostConnection(conn);
+        } else {
+          setupMeshConnection(conn);
+        }
+      });
+
+      peer.on('error', (err) => {
+        if (err.type === 'unavailable-id' && asHost) {
+          alert("รหัสห้องนี้มีผู้ใช้งานอยู่แล้ว กรุณาลองใหม่อีกครั้ง");
+          location.reload();
+        }
+      });
+    }
+
+    function setupHostConnection(conn) {
+      conn.on('open', () => {
+        connections.set(conn.peer, conn);
+        totalGameTime = parseInt(document.getElementById('select-duration').value);
+        initialEnergy = parseInt(document.getElementById('host-start-energy').value) || 5;
+
+        // ส่งข้อมูลตั้งต้นและรายชื่อ Peer ให้เครื่องนักเรียนเชื่อมถึงกัน (Mesh)
+        conn.send({ type: 'sync_config', time: totalGameTime, energy: initialEnergy });
+        conn.send({ type: 'peer_list', peers: Array.from(connections.keys()) });
+      });
+
+      conn.on('data', (data) => {
+        if (data.type === 'state') {
+          playersInRoom.set(data.id, data);
+          updateHostLobby();
+          renderAdminTable();
+        }
+      });
+
+      conn.on('close', () => {
+        connections.delete(conn.peer);
+        playersInRoom.delete(conn.peer);
+        updateHostLobby();
+        renderAdminTable();
+      });
+    }
+
+    function setupClientConnection(conn) {
+      conn.on('open', () => {
+        broadcastMyState();
+      });
+
+      conn.on('data', (data) => {
+        if (data.type === 'sync_config') {
+          totalGameTime = data.time;
+          currentEnergy = data.energy;
+          document.getElementById('ui-energy').innerText = currentEnergy;
+          updateTimerUI(totalGameTime);
+        } else if (data.type === 'start_game') {
+          totalGameTime = data.time;
+          currentEnergy = data.energy;
+          document.getElementById('ui-energy').innerText = currentEnergy;
+          showView('game-wrapper');
+          initGameEngine();
+          startTimerCountdown(false);
+        } else if (data.type === 'stop_game') {
+          endMatch();
+        } else if (data.type === 'peer_list') {
+          data.peers.forEach((pId) => {
+            if (pId !== myPeerId && !connections.has(pId)) {
+              const meshConn = peer.connect(pId);
+              setupMeshConnection(meshConn);
+            }
+          });
+        }
+      });
+    }
+
+    function setupMeshConnection(conn) {
+      conn.on('open', () => {
+        connections.set(conn.peer, conn);
+        broadcastMyState();
+      });
+      conn.on('data', (data) => {
+        if (data.type === 'state') {
+          playersInRoom.set(data.id, data);
+        }
+      });
+      conn.on('close', () => {
+        connections.delete(conn.peer);
+        playersInRoom.delete(conn.peer);
+      });
+    }
+
+    function updateHostLobby() {
+      document.getElementById('player-count').innerText = playersInRoom.size;
+      const listEl = document.getElementById('host-players');
+      listEl.innerHTML = "";
+      playersInRoom.forEach(p => {
+        const badge = document.createElement('span');
+        badge.className = "badge";
+        badge.innerText = p.name;
+        listEl.appendChild(badge);
+      });
+      document.getElementById('btn-start').disabled = (playersInRoom.size === 0);
+    }
+
+    function broadcastMyState() {
+      const payload = {
+        type: 'state',
+        id: myPeerId,
+        name: myPlayerName,
+        x: Math.round(player.x),
+        y: Math.round(player.y),
+        color: myColor,
+        height: currentHeightMeters,
+        correct: correctCount,
+        wrong: wrongCount,
+        energy: currentEnergy
+      };
+      connections.forEach(conn => {
+        if (conn.open) conn.send(payload);
+      });
+      if (hostConnection && hostConnection.open) {
+        hostConnection.send(payload);
+      }
+    }
+
+    // แอดมินกดเริ่มเกม
+    document.getElementById('btn-start').onclick = () => {
+      totalGameTime = parseInt(document.getElementById('select-duration').value);
+      initialEnergy = parseInt(document.getElementById('host-start-energy').value) || 5;
+
+      connections.forEach(conn => {
+        if (conn.open) conn.send({ type: 'start_game', time: totalGameTime, energy: initialEnergy });
+      });
+
+      document.getElementById('admin-room-display').innerText = roomPin;
+      showView('view-host-live');
+      startTimerCountdown(true);
+    };
+
+    function adminStopGame() {
+      connections.forEach(conn => {
+        if (conn.open) conn.send({ type: 'stop_game' });
+      });
+      endMatch();
+    }
+
+    function adminExitRoom() {
+      if (confirm("ต้องการกลับไปหน้าแรกหรือไม่?")) {
+        if (gameInterval) clearInterval(gameInterval);
+        if (peer) peer.destroy();
+        location.reload();
+      }
+    }
+
+    function startTimerCountdown(forHost) {
+      if (gameInterval) clearInterval(gameInterval);
+      gameInterval = setInterval(() => {
+        totalGameTime--;
+        updateTimerUI(totalGameTime);
+        if (totalGameTime <= 0) {
+          clearInterval(gameInterval);
+          endMatch();
+        }
+      }, 1000);
+    }
+
+    function updateTimerUI(sec) {
+      const m = Math.floor(sec / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toString().padStart(2, '0');
+      if (isHost) {
+        document.getElementById('host-timer').innerText = `${m}:${s}`;
+      } else {
+        document.getElementById('ui-timer').innerText = `${m}:${s}`;
+      }
+    }
+
+    function renderAdminTable() {
+      document.getElementById('admin-player-count').innerText = playersInRoom.size;
+      const tbody = document.getElementById('adminPlayerTable');
+      tbody.innerHTML = '';
+      const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
+      
+      if (list.length > 0) {
+        document.getElementById('leaderName').innerText = list[0].name;
+        document.getElementById('leaderMeters').innerText = `${list[0].height} m`;
+      }
+
+      list.forEach((p, idx) => {
+        const total = (p.correct || 0) + (p.wrong || 0);
+        const acc = total > 0 ? Math.round((p.correct / total) * 100) : 0;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="p-3 font-bold">${idx === 0 ? '🥇 1' : idx === 1 ? '🥈 2' : idx === 2 ? '🥉 3' : idx + 1}</td>
+          <td class="p-3 font-bold text-rose-600 flex items-center gap-2">
+            <span class="w-3.5 h-3.5 rounded-full inline-block shadow-sm" style="background:${p.color}"></span>
+            ${p.name}
+          </td>
+          <td class="p-3 text-center font-black text-sky-600 font-mono text-base">${p.height || 0} m</td>
+          <td class="p-3 text-center font-bold text-emerald-600">${p.correct || 0}</td>
+          <td class="p-3 text-center font-bold text-rose-500">${p.wrong || 0}</td>
+          <td class="p-3 text-center font-bold text-amber-600">${acc}%</td>
+          <td class="p-3 text-center font-bold text-amber-500">${p.energy || 0} ⚡</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportDataCSV() {
+      let csv = "อันดับ,ชื่อผู้เรียน,ระยะทาง (เมตร),ตอบถูก,ตอบผิด,ความแม่นยำ (%),พลังงานคงเหลือ\n";
+      const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
+      list.forEach((p, idx) => {
+        const total = (p.correct || 0) + (p.wrong || 0);
+        const acc = total > 0 ? Math.round((p.correct / total) * 100) : 0;
+        csv += `${idx + 1},"${p.name}",${p.height || 0},${p.correct || 0},${p.wrong || 0},${acc}%,${p.energy || 0}\n`;
+      });
+      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `ผลคะแนน_${roomPin}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // --- 4. ฟิสิกส์เกม & การวาดกราฟิก (Fixed Virtual World 1000px) ---
+    const WORLD_WIDTH = 1000;
+    const LEFT_WALL = 45;
+    const RIGHT_WALL = WORLD_WIDTH - 45;
+
+    let canvas, ctx;
+    let cssWidth = 0, cssHeight = 0;
+    let dpr = window.devicePixelRatio || 1;
+    const player = { x: 500, y: 510, vx: 0, vy: 0, grounded: false, scaleX: 1, scaleY: 1 };
+    let cameraY = 510;
+    const platforms = [{ x: -200, y: 550, w: 1400, h: 250 }];
+    let highestGeneratedY = 470;
+
+    function createRoomRandom(seedStr) {
+      let seed = 0;
+      for (let i = 0; i < seedStr.length; i++) seed = (seed * 31 + seedStr.charCodeAt(i)) & 0xFFFFFFFF;
+      return function() {
+        seed = (seed * 1664525 + 1013904223) & 0xFFFFFFFF;
+        return (seed >>> 0) / 4294967296;
+      };
+    }
+    let roomRandom;
+
+    function buildWorldPlatformsUpTo(targetY) {
+      while (highestGeneratedY > targetY - 1400) {
+        highestGeneratedY -= Math.floor(roomRandom() * 16 + 50);
+        const pWidth = Math.floor(roomRandom() * 40 + 155);
+        const pX = Math.floor(roomRandom() * (WORLD_WIDTH - pWidth - 120) + 60);
+        platforms.push({ x: pX, y: highestGeneratedY, w: pWidth, h: 26 });
+      }
+    }
+
+    function resizeCanvasHD() {
+      cssWidth = canvas.parentElement.clientWidth;
+      cssHeight = canvas.parentElement.clientHeight;
+      dpr = window.devicePixelRatio || 1;
+      canvas.width = cssWidth * dpr;
+      canvas.height = cssHeight * dpr;
+      ctx.scale(dpr, dpr);
+    }
+
+    function initGameEngine() {
+      canvas = document.getElementById('gameCanvas');
+      ctx = canvas.getContext('2d');
+      window.addEventListener('resize', resizeCanvasHD);
+      resizeCanvasHD();
+
+      roomRandom = createRoomRandom(roomPin);
+      cameraY = player.y - cssHeight * 0.60;
+      buildWorldPlatformsUpTo(cameraY);
+      setupControls();
+
+      setInterval(() => {
+        if (!isGameOver) broadcastMyState();
+      }, 35);
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    const keys = { left: false, right: false };
+    function setupControls() {
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+        if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') doJump();
+      });
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+        if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+      });
+
+      const bLeft = document.getElementById('btn-left');
+      const bRight = document.getElementById('btn-right');
+      const bJump = document.getElementById('btn-jump');
+      const bQuiz = document.getElementById('btn-open-quiz');
+
+      bLeft.ontouchstart = (e) => { e.preventDefault(); keys.left = true; };
+      bLeft.ontouchend = () => keys.left = false;
+      bRight.ontouchstart = (e) => { e.preventDefault(); keys.right = true; };
+      bRight.ontouchend = () => keys.right = false;
+      bJump.ontouchstart = (e) => { e.preventDefault(); doJump(); };
+
+      bLeft.onmousedown = () => keys.left = true;
+      bLeft.onmouseup = () => keys.left = false;
+      bRight.onmousedown = () => keys.right = true;
+      bRight.onmouseup = () => keys.right = false;
+      bJump.onclick = () => doJump();
+      bQuiz.onclick = () => openQuizModal();
+    }
+
+    function doJump() {
+      if (isGameOver) return;
+      if (currentEnergy <= 0) {
+        openQuizModal();
+        return;
+      }
+      if (player.grounded) {
+        player.vy = -14.4;
+        player.grounded = false;
+        player.scaleX = 0.85;
+        player.scaleY = 1.25;
+        currentEnergy--;
+        document.getElementById('ui-energy').innerText = currentEnergy;
+        if (currentEnergy === 0) openQuizModal();
+      }
+    }
+
+    function gameLoop() {
+      if (!isGameOver) {
+        // ฟิสิกส์แนวนอน Smooth
+        if (keys.left) player.vx = -5.2;
+        else if (keys.right) player.vx = 5.2;
+        else player.vx *= 0.80;
+
+        player.vy += 0.50;
+        player.x += player.vx;
+        player.y += player.vy;
+
+        player.scaleX += (1 - player.scaleX) * 0.15;
+        player.scaleY += (1 - player.scaleY) * 0.15;
+
+        // ขอบกำแพงกั้นไม่ให้ตกแมพด้านข้าง
+        if (player.x < LEFT_WALL) {
+          player.x = LEFT_WALL;
+          player.vx = 0;
+        }
+        if (player.x > RIGHT_WALL) {
+          player.x = RIGHT_WALL;
+          player.vx = 0;
+        }
+
+        // การตกกระทบแท่น
+        player.grounded = false;
+        platforms.forEach(p => {
+          if (
+            player.x + 18 > p.x &&
+            player.x - 18 < p.x + p.w &&
+            player.y + 18 >= p.y &&
+            player.y + 18 <= p.y + 16 &&
+            player.vy >= 0
+          ) {
+            if (!player.grounded) {
+              player.scaleX = 1.2;
+              player.scaleY = 0.8;
+            }
+            player.y = p.y - 18;
+            player.vy = 0;
+            player.grounded = true;
+          }
+        });
+
+        // ล็อกพื้นด้านล่างสุด
+        if (player.y > 530) {
+          player.y = 530;
+          player.vy = 0;
+          player.grounded = true;
+        }
+
+        const currentM = Math.max(0, Math.floor((530 - player.y) / 10));
+        currentHeightMeters = currentM;
+        document.getElementById('ui-height').innerText = `${currentHeightMeters}`;
+
+        // กล้องติดตามตัวละคร Smooth Rigid-Lerp
+        const desiredCamY = player.y - cssHeight * 0.60;
+        cameraY += (desiredCamY - cameraY) * 0.16;
+
+        buildWorldPlatformsUpTo(cameraY);
+      }
+
+      renderScene();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function renderScene() {
+      // พื้นหลังสีฟ้าสดใส #e0f2fe
+      ctx.fillStyle = '#e0f2fe';
+      ctx.fillRect(0, 0, cssWidth, cssHeight);
+
+      const offsetX = (cssWidth - WORLD_WIDTH) / 2;
+
+      // เสากำแพงด้านข้างสีชมพูพาสเทล
+      ctx.fillStyle = '#ffccd5';
+      ctx.fillRect(offsetX + LEFT_WALL - 12, 0, 12, cssHeight);
+      ctx.fillRect(offsetX + RIGHT_WALL, 0, 12, cssHeight);
+
+      // วาดแท่นลอยสไตล์ขนมหวาน ขอบชมพู หน้าหญ้ามิ้นต์
+      platforms.forEach(p => {
+        const ry = p.y - cameraY;
+        if (ry < -60 || ry > cssHeight + 60) return;
+
+        const renderX = p.x + offsetX;
+
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#ff758f';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.roundRect(renderX, ry, p.w, p.h, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#34d399';
+        ctx.beginPath();
+        ctx.roundRect(renderX, ry, p.w, 6, [12, 12, 0, 0]);
+        ctx.fill();
+
+        const mLevel = Math.max(0, Math.floor((530 - p.y) / 10));
+        if (mLevel > 0 && mLevel % 10 === 0) {
+          ctx.font = 'bold 11px Kanit';
+          ctx.fillStyle = '#e01e37';
+          ctx.fillText(`🚩 ${mLevel}m`, renderX + p.w - 38, ry - 6);
+        }
+      });
+
+      // วาดเพื่อนๆ ทุกคนในห้อง
+      playersInRoom.forEach((p, id) => {
+        if (id !== myPeerId) {
+          drawMonster(p.x + offsetX, p.y, p.color, `${p.name} (${p.height || 0}m)`, false, 1, 1);
+        }
+      });
+
+      // วาดตัวเราเอง
+      drawMonster(player.x + offsetX, player.y, myColor, `${myPlayerName} (เรา)`, true, player.scaleX, player.scaleY);
+    }
+
+    function drawMonster(x, y, color, label, isSelf, sx, sy) {
+      const ry = y - cameraY;
+      if (ry < -90 || ry > cssHeight + 90) return;
+
+      // เงา
+      ctx.fillStyle = 'rgba(255, 117, 143, 0.2)';
+      ctx.beginPath();
+      ctx.ellipse(x, ry + 20, 18 * sx, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(x, ry);
+      ctx.scale(sx, sy);
+
+      // ลำตัว
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#e01e37';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 20, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // ขา
+      ctx.beginPath();
+      ctx.arc(-9, 15, 5, 0, Math.PI * 2);
+      ctx.arc(9, 15, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // ตาโตการ์ตูน
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(-6, -2, 5, 0, Math.PI * 2);
+      ctx.arc(6, -2, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(-5, -2, 2.5, 0, Math.PI * 2);
+      ctx.arc(7, -2, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      // ป้ายชื่อ
+      ctx.font = isSelf ? 'bold 13px Kanit' : 'bold 12px Kanit';
+      ctx.textAlign = 'center';
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#ffffff';
+      ctx.strokeText(label, x, ry + 36);
+      ctx.fillStyle = isSelf ? '#e01e37' : '#334155';
+      ctx.fillText(label, x, ry + 36);
+    }
+
+    // --- 5. จัดการข้อสอบ & หน้าสรุปผล ---
+    function openQuizModal() {
+      if (isGameOver) return;
+      const q = quizDatabase[Math.floor(Math.random() * quizDatabase.length)];
+      document.getElementById('quiz-question').innerText = q.q;
+
+      const opts = document.getElementById('quiz-options');
+      opts.innerHTML = '';
+      q.a.forEach((ans, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "quiz-option";
+        btn.innerText = `${idx + 1}. ${ans}`;
+        btn.onclick = () => onAnswer(idx === q.c);
+        opts.appendChild(btn);
+      });
+      document.getElementById('quiz-modal').classList.remove('hidden');
+    }
+
+    function onAnswer(isCorrect) {
+      if (isCorrect) {
+        currentEnergy += 5;
+        correctCount++;
+        document.getElementById('ui-energy').innerText = currentEnergy;
+        alert("ถูกต้อง! 🌟 ได้รับ +5 Energy");
+      } else {
+        wrongCount++;
+        alert("ยังไม่ถูกต้อง! ลองตอบใหม่อีกครั้ง");
+      }
+      document.getElementById('quiz-modal').classList.add('hidden');
+      broadcastMyState();
+    }
+
+    function endMatch() {
+      isGameOver = true;
+      document.getElementById('quiz-modal').classList.add('hidden');
+      if (!isHost) {
+        const board = document.getElementById('gameOverModal');
+        const rows = document.getElementById('summaryRows');
+        rows.innerHTML = '';
+
+        const all = [
+          { name: myPlayerName, height: currentHeightMeters, correct: correctCount, wrong: wrongCount, isSelf: true },
+          ...Array.from(playersInRoom.values()).map(p => ({
+            name: p.name,
+            height: p.height || 0,
+            correct: p.correct || 0,
+            wrong: p.wrong || 0,
+            isSelf: false
+          }))
+        ].sort((a, b) => b.height - a.height);
+
+        all.forEach((p, i) => {
+          const rankBadge = i === 0 ? '🥇 1' : i === 1 ? '🥈 2' : i === 2 ? '🥉 3' : `#${i + 1}`;
+          const div = document.createElement('div');
+          div.className = `flex justify-between items-center p-3 rounded-2xl text-xs sm:text-sm border transition-all ${
+            p.isSelf ? 'bg-pink-50 border-pink-400 font-bold' : 'bg-slate-50 border-slate-200'
+          }`;
+          div.innerHTML = `
+            <div class="flex items-center gap-2">
+              <span class="font-black text-rose-600">${rankBadge}</span>
+              <span class="text-slate-800">${p.name} ${p.isSelf ? '<span class="text-rose-500 text-[11px]">(คุณ)</span>' : ''}</span>
+            </div>
+            <div class="text-right">
+              <span class="font-black text-rose-600 block text-sm">${p.height} m</span>
+              <span class="text-[11px] text-slate-500">ถูก <b class="text-emerald-600">${p.correct}</b> | ผิด <b class="text-rose-500">${p.wrong}</b></span>
+            </div>
+          `;
+          rows.appendChild(div);
+        });
+        board.classList.remove('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
