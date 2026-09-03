@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Hunter Cyber Mission - Endless Sweet Edition</title>
+  <title>Hunter Cyber Mission - Sweet Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
@@ -29,28 +29,29 @@
     }
     .game-font { font-family: 'Fredoka', 'Kanit', sans-serif; }
 
-    /* Bento Grid Glassmorphism สไตล์ปี 2026 */
+    /* Bento Grid Glassmorphism */
     .bento-card {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 2.5px solid rgba(255, 255, 255, 0.95);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 3px solid #ffffff;
       border-radius: 32px;
-      box-shadow: 0 20px 45px rgba(255, 77, 109, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      box-shadow: 0 20px 45px rgba(255, 77, 109, 0.22), inset 0 2px 0 rgba(255, 255, 255, 0.9);
     }
     .bento-box {
-      background: rgba(255, 245, 247, 0.85);
-      border: 1.5px solid #ffccd5;
+      background: rgba(255, 245, 247, 0.9);
+      border: 2px solid #ffccd5;
       border-radius: 20px;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .bento-box:focus-within {
       background: #ffffff;
       border-color: #ff4d6d;
-      box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.18);
+      transform: scale(1.02);
+      box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.2);
     }
 
-    /* ปุ่มกด 3D Tactile แบบนูนเด้ง */
+    /* ปุ่มกดสไตล์นูนเด้ง Tactile */
     .btn-sweet-pink {
       background: linear-gradient(180deg, #ff758f 0%, #ff4d6d 100%);
       box-shadow: 0 6px 0 #c9184a, 0 10px 20px rgba(255, 77, 109, 0.35);
@@ -87,39 +88,54 @@
     .stat-badge {
       background: rgba(255, 255, 255, 0.95);
       border: 2px solid #ffffff;
-      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.12);
+      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.15);
       border-radius: 20px;
       padding: 6px 14px;
       font-weight: 800;
     }
 
-    @keyframes softFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+    /* แอนิเมชันลูกเล่นดิ้นได้ */
+    @keyframes jellyBounce {
+      0%, 100% { transform: scale(1, 1); }
+      30% { transform: scale(1.15, 0.85); }
+      50% { transform: scale(0.9, 1.1); }
+      70% { transform: scale(1.05, 0.95); }
     }
-    .float-anim { animation: softFloat 3.5s ease-in-out infinite; }
+    .jelly-anim { animation: jellyBounce 2.5s infinite; }
+
+    @keyframes softFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+    .float-anim { animation: softFloat 3s ease-in-out infinite; }
+
+    @keyframes pulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 117, 143, 0.4)); }
+      50% { filter: drop-shadow(0 0 22px rgba(255, 77, 109, 0.8)); }
+    }
+    .pulse-glow { animation: pulseGlow 2s infinite; }
   </style>
 </head>
 <body class="w-screen h-screen flex justify-center items-center relative overflow-hidden bg-gradient-to-b from-[#bae6fd] via-[#e0f2fe] to-[#ffe4e6]">
 
-  <!-- ลูกบอลแสงนีออนฟุ้งด้านหลัง -->
+  <!-- แสงออร่าฟุ้งด้านหลัง -->
   <div class="absolute -top-24 -left-24 w-80 h-80 bg-pink-300/40 rounded-full blur-3xl pointer-events-none"></div>
   <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-sky-300/40 rounded-full blur-3xl pointer-events-none"></div>
 
   <!-- 1. เมนูหลักเลือกบทบาท (Home Menu) -->
   <div id="view-mode" class="bento-card p-8 w-full max-w-sm text-center z-50 m-4">
-    <div class="inline-block p-4 bg-gradient-to-tr from-pink-400 to-rose-300 rounded-3xl mb-3 shadow-lg shadow-pink-400/30 text-3xl float-anim border-2 border-white">
+    <div class="inline-block p-4 bg-gradient-to-tr from-pink-400 to-rose-300 rounded-3xl mb-3 shadow-lg shadow-pink-400/30 text-4xl float-anim border-3 border-white">
       🧁✨
     </div>
-    <h1 class="game-font text-2xl font-black text-rose-600 mb-1">HUNTER CYBER</h1>
-    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">Word Jump Sweet Edition</p>
+    <h1 class="game-font text-3xl font-black text-rose-600 mb-1 pulse-glow">WORD JUMP!</h1>
+    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">Sweet Cyber Playground</p>
 
     <div class="space-y-3">
       <button onclick="goToHostSetup()" class="btn-sweet-pink w-full py-3.5 rounded-2xl font-black text-base tracking-wide flex items-center justify-center gap-2">
-        <span>👑</span> ผู้สอน (สร้างห้องแข่งขัน)
+        <span class="text-lg">👑</span> คุณครู / โฮสต์ (สร้างห้อง)
       </button>
       <button onclick="goToJoinScreen()" class="btn-sweet-sky w-full py-3.5 rounded-2xl font-black text-base tracking-wide flex items-center justify-center gap-2">
-        <span>🎮</span> ผู้เรียน (เข้าเล่นเกม)
+        <span class="text-lg">🎮</span> นักเรียน (เข้าเล่นเกม)
       </button>
     </div>
   </div>
@@ -185,7 +201,7 @@
     <p class="text-xs font-bold text-slate-400 mb-5">ผู้เล่น: <span id="wait-name-label" class="text-emerald-500 font-black">นักเรียน</span></p>
 
     <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs font-bold text-amber-700 mb-4">
-      รอผู้สอนกดปล่อยตัว... หรือกดเริ่มเล่นซ้อมกระโดดได้ทันทีด้านล่าง
+      รอคุณครูกดปล่อยตัว... หรือกดเริ่มซ้อมกระโดดได้ทันที!
     </div>
 
     <button onclick="forceStartSinglePlay()" class="btn-sweet-green w-full py-3.5 rounded-2xl font-black text-sm">
@@ -262,28 +278,28 @@
       </div>
     </div>
 
-    <!-- ปุ่มตอบคำถามกลางจอ -->
-    <button onclick="openQuizModal()" class="btn-sweet-pink !w-auto !py-2.5 !px-5 rounded-2xl absolute bottom-24 right-4 z-20 font-black text-xs sm:text-sm shadow-xl animate-bounce flex items-center gap-1.5 pointer-events-auto">
-      <span>⚡</span> ตอบคำถามรับพลังงาน
+    <!-- ปุ่มตอบคำถามกลางจอ มีแอนิเมชันเด้งดึ๋ง -->
+    <button onclick="openQuizModal()" class="btn-sweet-pink !w-auto !py-3 !px-6 rounded-2xl absolute bottom-24 right-4 z-20 font-black text-xs sm:text-sm shadow-xl jelly-anim flex items-center gap-2 pointer-events-auto">
+      <span class="text-base">⚡</span> เติมพลังกระโดด!
     </button>
 
     <!-- แผงปุ่มสัมผัสบนมือถือ -->
     <div class="absolute bottom-4 left-4 right-4 max-w-[500px] mx-auto flex justify-between items-center gap-3 z-20 pointer-events-none">
       <div class="flex gap-2.5 flex-1 pointer-events-auto">
-        <button id="btnLeft" class="flex-1 py-3.5 bg-white/95 border-2 border-pink-300 text-rose-500 font-black text-2xl rounded-2xl shadow-md active:bg-pink-100 active:scale-95 transition-all">◀</button>
-        <button id="btnRight" class="flex-1 py-3.5 bg-white/95 border-2 border-pink-300 text-rose-500 font-black text-2xl rounded-2xl shadow-md active:bg-pink-100 active:scale-95 transition-all">▶</button>
+        <button id="btnLeft" class="flex-1 py-3.5 bg-white/95 border-3 border-pink-300 text-rose-500 font-black text-2xl rounded-2xl shadow-md active:bg-pink-100 active:scale-95 transition-all">◀</button>
+        <button id="btnRight" class="flex-1 py-3.5 bg-white/95 border-3 border-pink-300 text-rose-500 font-black text-2xl rounded-2xl shadow-md active:bg-pink-100 active:scale-95 transition-all">▶</button>
       </div>
       <button id="btnJump" class="btn-sweet-green pointer-events-auto flex-1.2 py-3.5 px-6 rounded-2xl font-black text-lg shadow-lg">กระโดด 🚀</button>
     </div>
 
-    <!-- ป๊อปอัปข้อสอบ Word -->
+    <!-- ป๊อปอัปข้อสอบ Word ง่ายๆ น่ารัก -->
     <div id="quiz-modal" class="hidden absolute inset-0 bg-slate-900/45 backdrop-blur-sm flex items-center justify-center z-40 p-4">
       <div class="bento-card max-w-sm w-full p-6 text-slate-800">
         <div class="flex justify-between items-center mb-2">
-          <span id="quiz-badge" class="text-xs font-bold px-3 py-0.5 rounded-full border border-pink-200 bg-pink-50 text-rose-600">ข้อสอบ Word</span>
+          <span class="text-xs font-bold px-3 py-0.5 rounded-full border border-pink-200 bg-pink-50 text-rose-600">คำถามง่ายๆ รับพลัง ⚡</span>
           <span class="text-xs font-bold text-emerald-600">+5 Energy</span>
         </div>
-        <h2 id="quiz-question-text" class="text-base font-bold text-slate-800 mb-3 leading-snug">คำถาม...</h2>
+        <h2 id="quiz-question-text" class="text-base font-black text-slate-800 mb-3 leading-snug">คำถาม...</h2>
         <div id="quiz-options-box" class="space-y-2"></div>
       </div>
     </div>
@@ -300,28 +316,28 @@
   </div>
 
   <script>
-    // --- 1. คลังข้อสอบ Word 20 ข้อ ---
+    // --- 1. คลังข้อสอบ Word ระดับง่ายมาก (พื้นฐาน เหมาะกับทุกคน) ---
     const WORD_QUIZ = [
-      { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'บันทึกเอกสาร' (Save)?", a: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + V"], c: 0 },
-      { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'ทำตัวอักษรหนา' (Bold)?", a: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + H"], c: 1 },
-      { q: "ปุ่มคีย์ลัดใดใช้สำหรับ 'ยกเลิกคำสั่งล่าสุด' (Undo)?", a: ["Ctrl + Y", "Ctrl + Z", "Ctrl + X", "Ctrl + A"], c: 1 },
-      { q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องใช้คีย์ลัดใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + D"], c: 0 },
-      { q: "การ 'วางข้อความ' (Paste) ที่คัดลอกไว้ ใช้คีย์ลัดใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + Shift + V", "Ctrl + B"], c: 1 },
-      { q: "ต้องการเปิดสร้าง 'เอกสารเปล่าแผ่นใหม่' ทันที กดปุ่มใด?", a: ["Ctrl + M", "Ctrl + N", "Ctrl + O", "Ctrl + W"], c: 1 },
-      { q: "คีย์ลัดสำหรับสั่ง 'พิมพ์เอกสาร' (Print) คือข้อใด?", a: ["Ctrl + P", "Ctrl + Shift + P", "Alt + P", "F12"], c: 0 },
-      { q: "การจัดข้อความให้อยู่ 'กึ่งกลางหน้ากระดาษ' (Center) ใช้ปุ่มใด?", a: ["Ctrl + C", "Ctrl + E", "Ctrl + J", "Ctrl + M"], c: 1 },
-      { q: "การขึ้นหน้าใหม่ทันที (Page Break) ใช้คีย์ลัดใด?", a: ["Ctrl + Enter", "Shift + Enter", "Alt + Enter", "Tab + Enter"], c: 0 },
-      { q: "ฟังก์ชัน Mail Merge (จดหมายเวียน) อยู่ภายใต้แท็บเมนูใด?", a: ["References", "Mailings", "Review", "Insert"], c: 1 },
-      { q: "คีย์ลัดเปิดหน้าต่าง 'ค้นหาและแทนที่คำ' (Find and Replace) คืออะไร?", a: ["Ctrl + F", "Ctrl + H", "Ctrl + G", "Ctrl + R"], c: 1 },
-      { q: "การแทรกเชิงอรรถอ้างอิง (Footnote) อยู่ภายใต้แท็บเครื่องมือใด?", a: ["Layout", "References", "Insert", "View"], c: 1 },
-      { q: "คีย์ลัดในการแทรกลิงก์ (Hyperlink) ลงในเอกสารคือข้อใด?", a: ["Ctrl + L", "Ctrl + K", "Ctrl + H", "Alt + K"], c: 1 },
-      { q: "การกดบันทึกเป็นชื่อใหม่ (Save As) ด้วยปุ่มฟังก์ชันลัดด้านบน คือปุ่มใด?", a: ["F2", "F7", "F12", "F5"], c: 2 },
-      { q: "การขึ้นบรรทัดใหม่โดยไม่เริ่มย่อหน้าใหม่ (Line Break) ต้องกดปุ่มใด?", a: ["Ctrl + Enter", "Shift + Enter", "Alt + Enter", "Tab + Enter"], c: 1 },
-      { q: "ต้องการตั้งค่าให้หน้าถัดไปเป็นแนวนอนโดยไม่กระทบหน้าเดิม ต้องใช้คำสั่งใด?", a: ["Page Break", "Section Break (Next Page)", "Column Break", "Text Wrapping"], c: 1 },
-      { q: "คีย์ลัด Format Painter (คัดลอกเฉพาะรูปแบบตัวอักษร) คือข้อใด?", a: ["Ctrl + Shift + C แล้ว Ctrl + Shift + V", "Ctrl + Alt + C แล้ว Ctrl + Alt + V", "Shift + F3", "Alt + Shift + C"], c: 0 },
-      { q: "คีย์ลัดสลับตัวพิมพ์เล็ก/ใหญ่ภาษาอังกฤษ (Change Case) คือปุ่มใด?", a: ["Ctrl + F3", "Shift + F3", "Alt + F3", "Ctrl + Shift + A"], c: 1 },
-      { q: "การสร้างสารบัญอัตโนมัติ (Table of Contents) ดึงข้อมูลมาจากสิ่งใดเป็นหลัก?", a: ["Font Size", "Heading Styles (Heading 1, 2)", "Bookmarks", "Bold Words"], c: 1 },
-      { q: "การสั่งอัปเดตฟิลด์หรือเลขหน้าสารบัญแบบด่วน กดปุ่มฟังก์ชันใด?", a: ["F5", "F7", "F9", "F11"], c: 2 }
+      { q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องกดปุ่มใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"], c: 0 },
+      { q: "ต้องการ 'วาง' (Paste) ข้อความที่คัดลอกไว้ กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + S", "Ctrl + C"], c: 1 },
+      { q: "ต้องการ 'บันทึกเอกสาร' (Save) กดปุ่มใด?", a: ["Ctrl + S", "Ctrl + O", "Ctrl + N", "Ctrl + A"], c: 0 },
+      { q: "ต้องการทำตัวอักษรเป็น 'ตัวหนา' ต้องกดไอคอนสัญลักษณ์ใด?", a: ["ตัว B", "ตัว I", "ตัว U", "ตัว A"], c: 0 },
+      { q: "ต้องการทำตัวอักษรเป็น 'ตัวเอียง' ต้องกดไอคอนใด?", a: ["ตัว B", "ตัว I (Italic)", "ตัว U", "รูปถังสี"], c: 1 },
+      { q: "ต้องการ 'ขีดเส้นใต้' ข้อความ ต้องกดไอคอนใด?", a: ["ตัว U (Underline)", "ตัว B", "ตัว I", "รูปกรรไกร"], c: 0 },
+      { q: "หากพิมพ์ผิด แล้วต้องการ 'ยกเลิกคำสั่งล่าสุด' (Undo) กดปุ่มใด?", a: ["Ctrl + Z", "Ctrl + Y", "Ctrl + X", "Ctrl + F"], c: 0 },
+      { q: "ปุ่มใดบนแป้นพิมพ์ ใช้สำหรับ 'ขึ้นบรรทัดใหม่'?", a: ["Enter", "Spacebar", "Shift", "Backspace"], c: 0 },
+      { q: "ปุ่มยาวๆ บนแป้นพิมพ์ ใช้สำหรับ 'เคาะเว้นวรรค' คือปุ่มใด?", a: ["Spacebar", "Enter", "Tab", "Delete"], c: 0 },
+      { q: "ต้องการ 'ลบตัวอักษร' ที่อยู่ข้างหน้าเคอร์เซอร์ ต้องกดปุ่มใด?", a: ["Backspace", "Enter", "Shift", "Alt"], c: 0 },
+      { q: "ต้องการ 'พิมพ์เอกสารออกทางเครื่องพิมพ์' (Print) กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + S", "Ctrl + C", "Ctrl + E"], c: 0 },
+      { q: "ต้องการเลือกคลุมข้อความ 'ทั้งหมดทั้งหน้า' (Select All) กดปุ่มใด?", a: ["Ctrl + A", "Ctrl + S", "Ctrl + D", "Ctrl + W"], c: 0 },
+      { q: "ไอคอนรูป 'กรรไกร' ใน Microsoft Word ใช้ทำอะไร?", a: ["ตัดข้อความ (Cut)", "คัดลอก (Copy)", "วาง (Paste)", "พิมพ์เอกสาร"], c: 0 },
+      { q: "ต้องการเปลี่ยน 'สีตัวอักษร' ต้องมองหาไอคอนรูปใด?", a: ["รูปตัว A มีแถบสีข้างล่าง", "รูปตัว B", "รูปยางลบ", "รูปดินสอ"], c: 0 },
+      { q: "การใส่ 'รูปภาพ' ลงในเอกสาร ต้องไปที่เมนูใด?", a: ["แทรก (Insert)", "หน้าแรก (Home)", "มุมมอง (View)", "แฟ้ม (File)"], c: 0 },
+      { q: "ต้องการสร้าง 'เอกสารเปล่าแผ่นใหม่' ทันที กดปุ่มใด?", a: ["Ctrl + N (New)", "Ctrl + O", "Ctrl + S", "Ctrl + P"], c: 0 },
+      { q: "การจัดข้อความให้อยู่ 'กึ่งกลางหน้ากระดาษ' ใช้ปุ่มใด?", a: ["Ctrl + E (Center)", "Ctrl + L", "Ctrl + R", "Ctrl + J"], c: 0 },
+      { q: "โปรแกรม Microsoft Word เหมาะสำหรับงานประเภทใดมากที่สุด?", a: ["พิมพ์งานเอกสาร / รายงาน", "ตัดต่อวิดีโอ", "แต่งรูปถ่าย", "เขียนโปรแกรม"], c: 0 },
+      { q: "ไอคอนสัญลักษณ์ 'แผ่นดิสก์' สีฟ้าในโปรแกรม Word ใช้ทำอะไร?", a: ["บันทึกข้อมูล (Save)", "ปิดโปรแกรม", "เปิดไฟล์ใหม่", "พิมพ์งาน"], c: 0 },
+      { q: "ถ้าต้องการซูมเข้า-ออก หน้ากระดาษ ให้ดูที่มุมใดของจอ?", a: ["มุมล่างขวา (มีแถบเปอร์เซ็นต์ + -)", "มุมบนซ้าย", "กลางหน้าจอ", "มุมบนขวา"], c: 0 }
     ];
 
     const CHARACTER_COLORS = ['#ff758f', '#38bdf8', '#34d399', '#fbbf24', '#a855f7', '#fb923c', '#ec4899', '#06b6d4'];
@@ -358,7 +374,6 @@
       roomPin = Math.floor(100000 + Math.random() * 900000).toString();
       document.getElementById('host-pin-display').innerText = roomPin;
 
-      // สร้าง QR Code อิง URL ปัจจุบัน
       const joinUrl = `${window.location.origin}${window.location.pathname}?pin=${roomPin}`;
       document.getElementById('qrcode-box').innerHTML = "";
       new QRCode(document.getElementById('qrcode-box'), {
@@ -618,7 +633,7 @@
       link.click();
     }
 
-    // --- 4. ฟิสิกส์เกม & แอนิเมชันล็อกตัวละคร ไม่หลุดเฟรม ---
+    // --- 4. ฟิสิกส์เกม & แอนิเมชันดิ้นได้ (Living Characters & Platforms) ---
     const WORLD_WIDTH = 1000;
     const LEFT_WALL = 45;
     const RIGHT_WALL = WORLD_WIDTH - 45;
@@ -626,10 +641,20 @@
     let canvas, ctx;
     let cssWidth = 0, cssHeight = 0;
     let dpr = window.devicePixelRatio || 1;
-    const player = { x: 500, y: 510, vx: 0, vy: 0, grounded: false, scaleX: 1, scaleY: 1 };
+    const player = { x: 500, y: 510, vx: 0, vy: 0, grounded: false, scaleX: 1, scaleY: 1, breathTick: 0 };
     let cameraY = 510;
-    const platforms = [{ x: -200, y: 550, w: 1400, h: 250 }];
+    const platforms = [{ x: -200, y: 550, w: 1400, h: 250, floatOffset: 0 }];
     let highestGeneratedY = 470;
+    let animTicks = 0;
+    const particles = [];
+
+    // ประกายดาวลอยในท้องฟ้า
+    const stars = Array.from({ length: 30 }, () => ({
+      x: Math.random() * WORLD_WIDTH,
+      y: Math.random() * 2000 - 1000,
+      size: Math.random() * 3 + 1,
+      speed: Math.random() * 0.05 + 0.02
+    }));
 
     function createRoomRandom(seedStr) {
       let seed = 0;
@@ -646,7 +671,7 @@
         highestGeneratedY -= Math.floor(roomRandom() * 16 + 50);
         const pWidth = Math.floor(roomRandom() * 40 + 155);
         const pX = Math.floor(roomRandom() * (WORLD_WIDTH - pWidth - 120) + 60);
-        platforms.push({ x: pX, y: highestGeneratedY, w: pWidth, h: 26 });
+        platforms.push({ x: pX, y: highestGeneratedY, w: pWidth, h: 26, floatOffset: Math.random() * Math.PI * 2 });
       }
     }
 
@@ -706,6 +731,20 @@
       bJump.onclick = () => doJump();
     }
 
+    function addSparkles(x, y) {
+      for (let i = 0; i < 6; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          vx: (Math.random() - 0.5) * 5,
+          vy: Math.random() * -3 - 1,
+          size: Math.random() * 4 + 2,
+          alpha: 1,
+          color: ['#ff758f', '#fde047', '#38bdf8', '#34d399'][Math.floor(Math.random() * 4)]
+        });
+      }
+    }
+
     function doJump() {
       if (isGameOver) return;
       if (currentEnergy <= 0) {
@@ -713,30 +752,34 @@
         return;
       }
       if (player.grounded) {
-        player.vy = -14.4;
+        player.vy = -14.6;
         player.grounded = false;
-        player.scaleX = 0.85;
-        player.scaleY = 1.25;
+        player.scaleX = 0.8;
+        player.scaleY = 1.3;
         currentEnergy--;
         document.getElementById('hud-energy').innerText = currentEnergy;
+        addSparkles(player.x, player.y + 16);
         if (currentEnergy === 0) openQuizModal();
       }
     }
 
     function gameLoop() {
+      animTicks += 0.05;
+      player.breathTick += 0.08;
+
       if (!isGameOver) {
-        if (keys.left) player.vx = -5.2;
-        else if (keys.right) player.vx = 5.2;
+        if (keys.left) player.vx = -5.4;
+        else if (keys.right) player.vx = 5.4;
         else player.vx *= 0.80;
 
         player.vy += 0.50;
         player.x += player.vx;
         player.y += player.vy;
 
-        player.scaleX += (1 - player.scaleX) * 0.15;
-        player.scaleY += (1 - player.scaleY) * 0.15;
+        // คืนรูปทรง Squash & Stretch สไตล์เยลลี่
+        player.scaleX += (1 - player.scaleX) * 0.16;
+        player.scaleY += (1 - player.scaleY) * 0.16;
 
-        // กำแพงทึบซ้าย-ขวา ล็อกตัวละครไม่ให้ตกแมพ
         if (player.x < LEFT_WALL) {
           player.x = LEFT_WALL;
           player.vx = 0;
@@ -756,8 +799,8 @@
             player.vy >= 0
           ) {
             if (!player.grounded) {
-              player.scaleX = 1.2;
-              player.scaleY = 0.8;
+              player.scaleX = 1.25;
+              player.scaleY = 0.75;
             }
             player.y = p.y - 18;
             player.vy = 0;
@@ -775,7 +818,6 @@
         currentHeightMeters = currentM;
         document.getElementById('hud-height').innerText = `${currentHeightMeters}`;
 
-        // ล็อกกล้องตรงกลางจอแบบ Rigid-Lerp ไม่หลุดเฟรมบน/ล่าง
         const desiredCamY = player.y - cssHeight * 0.60;
         cameraY += (desiredCamY - cameraY) * 0.16;
 
@@ -787,24 +829,38 @@
     }
 
     function renderScene() {
-      // พื้นหลังสีฟ้าสดใสคุมโทน Sweet Pastel
+      // 1. ท้องฟ้าสีฟ้าพาสเทล
       ctx.fillStyle = '#bae6fd';
       ctx.fillRect(0, 0, cssWidth, cssHeight);
 
       const offsetX = (cssWidth - WORLD_WIDTH) / 2;
 
-      // เสากำแพงด้านข้างสีชมพูพาสเทล
+      // 2. ดาววิบวับระยิบระยับในฉากหลัง
+      stars.forEach(st => {
+        const ry = (st.y - cameraY * 0.4) % cssHeight;
+        const actualY = ry < 0 ? ry + cssHeight : ry;
+        const starAlpha = 0.4 + Math.sin(animTicks + st.x) * 0.3;
+        ctx.fillStyle = `rgba(255, 255, 255, ${starAlpha})`;
+        ctx.beginPath();
+        ctx.arc(st.x + offsetX, actualY, st.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 3. เสากำแพงด้านข้างสีชมพูพาสเทล
       ctx.fillStyle = '#ffccd5';
       ctx.fillRect(offsetX + LEFT_WALL - 12, 0, 12, cssHeight);
       ctx.fillRect(offsetX + RIGHT_WALL, 0, 12, cssHeight);
 
-      // วาดแท่นกระโดดขอบมน ขอบชมพู หน้าหญ้ามิ้นต์
+      // 4. วาดแท่นลอยขนมหวาน (มีอนิเมชันลอยดึ๋งเบาๆ)
       platforms.forEach(p => {
-        const ry = p.y - cameraY;
+        // แอนิเมชันลอยขยับเบาๆ
+        const floatY = Math.sin(animTicks + p.floatOffset) * 2;
+        const ry = (p.y + floatY) - cameraY;
         if (ry < -60 || ry > cssHeight + 60) return;
 
         const renderX = p.x + offsetX;
 
+        // ฐานแท่นสีขาว
         ctx.fillStyle = '#ffffff';
         ctx.strokeStyle = '#ff758f';
         ctx.lineWidth = 3;
@@ -813,11 +869,13 @@
         ctx.fill();
         ctx.stroke();
 
+        // แถบหน้าครีมมิ้นต์ด้านบน
         ctx.fillStyle = '#34d399';
         ctx.beginPath();
-        ctx.roundRect(renderX, ry, p.w, 6, [12, 12, 0, 0]);
+        ctx.roundRect(renderX, ry, p.w, 7, [12, 12, 0, 0]);
         ctx.fill();
 
+        // ป้ายระดับเมตร
         const mLevel = Math.max(0, Math.floor((530 - p.y) / 10));
         if (mLevel > 0 && mLevel % 10 === 0) {
           ctx.font = 'bold 11px Kanit';
@@ -826,59 +884,107 @@
         }
       });
 
-      // วาดเพื่อนๆ ทุกคนในห้อง
+      // 5. วาดอนุภาคประกายดาวเวลาโดด
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const pt = particles[i];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= 0.03;
+        if (pt.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+        ctx.fillStyle = pt.color;
+        ctx.globalAlpha = pt.alpha;
+        ctx.beginPath();
+        ctx.arc(pt.x + offsetX, pt.y - cameraY, pt.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+      }
+
+      // 6. วาดเพื่อนๆ ทุกคนในห้อง
       playersInRoom.forEach((p, id) => {
         if (id !== myPeerId) {
-          drawMonster(p.x + offsetX, p.y, p.color, `${p.name} (${p.height || 0}m)`, false, 1, 1);
+          drawLivingMonster(p.x + offsetX, p.y, p.color, `${p.name} (${p.height || 0}m)`, false, 1, 1, 0);
         }
       });
 
-      // วาดตัวเราเอง
-      drawMonster(player.x + offsetX, player.y, myColor, `${myPlayerName} (เรา)`, true, player.scaleX, player.scaleY);
+      // 7. วาดตัวเราเองแบบดิ้นได้
+      drawLivingMonster(player.x + offsetX, player.y, myColor, `${myPlayerName} (เรา)`, true, player.scaleX, player.scaleY, player.breathTick);
     }
 
-    function drawMonster(x, y, color, label, isSelf, sx, sy) {
+    // ตัวการ์ตูนมีชีวิต หายใจกระเพื่อม กระพริบตา ดิ้นได้
+    function drawLivingMonster(x, y, color, label, isSelf, sx, sy, breath) {
       const ry = y - cameraY;
       if (ry < -90 || ry > cssHeight + 90) return;
 
+      // อนิเมชันหายใจ (Breathing Scale)
+      const bScale = 1 + Math.sin(breath) * 0.04;
+
       // เงาตัวละคร
-      ctx.fillStyle = 'rgba(255, 117, 143, 0.2)';
+      ctx.fillStyle = 'rgba(255, 117, 143, 0.25)';
       ctx.beginPath();
-      ctx.ellipse(x, ry + 20, 18 * sx, 5, 0, 0, Math.PI * 2);
+      ctx.ellipse(x, ry + 20, 18 * sx * bScale, 5, 0, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.save();
       ctx.translate(x, ry);
-      ctx.scale(sx, sy);
+      ctx.scale(sx * bScale, sy * (2 - bScale));
 
-      // ลำตัวตัวการ์ตูนตาโต
+      // ลำตัวทรงเจลลี่
       ctx.fillStyle = color;
       ctx.strokeStyle = '#e01e37';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3.2;
       ctx.beginPath();
       ctx.ellipse(0, 0, 20, 18, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // ขา
+      // แสงสะท้อนทรงกลมบนหัวเจลลี่
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
       ctx.beginPath();
-      ctx.arc(-9, 15, 5, 0, Math.PI * 2);
-      ctx.arc(9, 15, 5, 0, Math.PI * 2);
+      ctx.ellipse(-6, -8, 6, 3, -0.3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ขาขยับดุ๊กดิ๊ก
+      const legWiggle = Math.sin(breath * 2) * 1.5;
+      ctx.beginPath();
+      ctx.arc(-9 + legWiggle, 15, 5, 0, Math.PI * 2);
+      ctx.arc(9 - legWiggle, 15, 5, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // ตาการ์ตูนกลมโต
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(-6, -2, 5, 0, Math.PI * 2);
-      ctx.arc(6, -2, 5, 0, Math.PI * 2);
-      ctx.fill();
+      // ตาโตการ์ตูน + อนิเมชันกระพริบตาเป็นระยะ
+      const isBlinking = Math.sin(breath * 0.7) > 0.94;
+      if (isBlinking) {
+        // ตาหยีตอนกระพริบ
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(-9, -2); ctx.lineTo(-3, -2);
+        ctx.moveTo(3, -2); ctx.lineTo(9, -2);
+        ctx.stroke();
+      } else {
+        // ตาโตปกติ
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-6, -2, 5.5, 0, Math.PI * 2);
+        ctx.arc(6, -2, 5.5, 0, Math.PI * 2);
+        ctx.fill();
 
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.arc(-5, -2, 2.5, 0, Math.PI * 2);
-      ctx.arc(7, -2, 2.5, 0, Math.PI * 2);
-      ctx.fill();
+        ctx.fillStyle = '#0f172a';
+        ctx.beginPath();
+        ctx.arc(-5, -2, 2.6, 0, Math.PI * 2);
+        ctx.arc(7, -2, 2.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // ประกายวิ้งในตาดำ
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(-6, -3, 1, 0, Math.PI * 2);
+        ctx.arc(6, -3, 1, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       ctx.restore();
 
@@ -915,10 +1021,10 @@
         currentEnergy += 5;
         correctCount++;
         document.getElementById('hud-energy').innerText = currentEnergy;
-        alert("ยอดเยี่ยม! ตอบถูกต้อง 🌟 ได้รับ +5 Energy");
+        alert("เก่งมาก! ตอบถูกต้อง 🎉 ได้รับ +5 Energy");
       } else {
         wrongCount++;
-        alert("ยังไม่ถูกต้อง! ลองตอบใหม่อีกครั้ง");
+        alert("ยังไม่ถูกต้องนะ ลองตอบใหม่อีกทีจ้า 😊");
       }
       document.getElementById('quiz-modal').classList.add('hidden');
       broadcastMyState();
