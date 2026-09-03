@@ -20,7 +20,7 @@
     }
     .game-font { font-family: 'Fredoka', 'Kanit', sans-serif; }
     .glass-panel {
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 2px solid rgba(255, 255, 255, 0.12);
@@ -93,10 +93,8 @@
 
   <!-- 2. หน้าจอสำหรับ Admin (Spectator Dashboard) -->
   <div id="adminDashboard" class="hidden w-full h-full bg-slate-950 text-white flex flex-col p-4 sm:p-6 overflow-hidden">
-    <!-- แถบด้านบน: ปุ่มย้อนกลับ, ข้อมูลห้อง และเวลา -->
     <div class="glass-panel p-4 rounded-3xl flex flex-wrap justify-between items-center gap-3 shadow-xl">
       <div class="flex items-center gap-3">
-        <!-- ปุ่มย้อนกลับของแอดมิน แก้ไขให้ใช้งานได้จริง 100% -->
         <button type="button" onclick="adminExitRoom()" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white border border-slate-600 rounded-2xl font-bold text-xs sm:text-sm flex items-center gap-2 cursor-pointer shadow-md transition-all active:scale-95">
           <span>🔙</span> ย้อนกลับหน้าแรก
         </button>
@@ -208,23 +206,21 @@
       </div>
     </div>
 
-    <!-- สรุปผลการแข่งขัน -->
+    <!-- สรุปผลการแข่งขันเมื่อหมดเวลา จัดเรียงตามลำดับความสูงจริง -->
     <div id="gameOverModal" class="hidden absolute inset-0 bg-black/90 backdrop-blur-lg flex justify-center items-center z-50 p-4">
       <div class="glass-panel border-2 border-cyan-500/40 rounded-3xl p-6 w-full max-w-md shadow-2xl text-center text-white">
-        <h2 class="game-font font-black text-3xl text-cyan-400 mb-1">🏁 สิ้นสุดการแข่งขัน!</h2>
-        <p class="text-xs font-semibold text-slate-400 mb-4">ข้อมูลคะแนนและความสูงถูกบันทึกเรียบร้อย</p>
-        <div id="summaryRows" class="space-y-2 mb-5 max-h-60 overflow-y-auto"></div>
-        <button onclick="location.reload()" class="btn-3d-cyan w-full py-3.5 rounded-2xl text-slate-950 font-black">เล่นอีกครั้ง</button>
+        <h2 class="game-font font-black text-3xl text-cyan-400 mb-1">🏁 สรุปผลการแข่งขัน</h2>
+        <p class="text-xs font-semibold text-slate-400 mb-4">จัดอันดับตามระยะทางความสูงจริงที่ทำได้</p>
+        <div id="summaryRows" class="space-y-2 mb-5 max-h-64 overflow-y-auto px-1"></div>
+        <button onclick="location.reload()" class="btn-3d-cyan w-full py-3.5 rounded-2xl text-slate-950 font-black">ออกจากห้อง / เล่นใหม่</button>
       </div>
     </div>
   </div>
 
   <script>
-    // สุ่มสีมอนสเตอร์ Cyber-Pop
     const CHARACTER_COLORS = ['#f43f5e', '#ec4899', '#a855f7', '#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#fb923c'];
     const myColor = CHARACTER_COLORS[Math.floor(Math.random() * CHARACTER_COLORS.length)];
 
-    // คลังข้อสอบ Word 20 ข้อ
     const WORD_QUIZ = [
       { q: "คีย์ลัดสำหรับบันทึกเอกสาร (Save) คือข้อใด?", a: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + V"], c: 0, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
       { q: "คีย์ลัดสำหรับทำตัวอักษรหนา (Bold) คือข้อใด?", a: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + H"], c: 1, level: "ง่าย", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" },
@@ -252,7 +248,7 @@
     let roomCode = "WORD1";
     let isAdmin = false;
     let totalTime = 300;
-    let initialEnergy = 5; // เริ่มต้นที่ 5 Energy เป็นค่า Default ตามที่ต้องการ
+    let initialEnergy = 5;
     let energy = 5;
     let currentHeightMeters = 0;
     let correctCount = 0;
@@ -269,7 +265,6 @@
       document.getElementById('adminPanelConfig').classList.toggle('hidden', !e.target.checked);
     };
 
-    // ฟังก์ชันย้อนกลับของแอดมิน (ทำงานได้ 100% แน่นอน)
     function adminExitRoom() {
       if (confirm("ต้องการออกจากห้องควบคุมและกลับไปหน้าแรกหรือไม่?")) {
         if (gameTimer) clearInterval(gameTimer);
@@ -279,8 +274,6 @@
         }
         connections.clear();
         playersInRoom.clear();
-        
-        // สลับหน้าจอกลับไปล็อบบี้ทันที
         document.getElementById('adminDashboard').classList.add('hidden');
         document.getElementById('lobbyScreen').classList.remove('hidden');
         document.getElementById('btnJoinArena').classList.remove('opacity-50', 'pointer-events-none');
@@ -502,6 +495,8 @@
 
     // ================= CYBER-POP HIGH DEF ENGINE =================
     const WORLD_WIDTH = 1000;
+    const LEFT_BOUNDARY = 40;
+    const RIGHT_BOUNDARY = WORLD_WIDTH - 40;
     let canvas, ctx;
     let cssWidth = 0, cssHeight = 0;
     let dpr = window.devicePixelRatio || 1;
@@ -511,7 +506,6 @@
     let highestGeneratedY = 470;
     const particles = [];
 
-    // สร้าง Seed แมพเดียวกัน
     function createRoomRandom(seedStr) {
       let seed = 0;
       for (let i = 0; i < seedStr.length; i++) seed = (seed * 31 + seedStr.charCodeAt(i)) & 0xFFFFFFFF;
@@ -526,7 +520,7 @@
       while (highestGeneratedY > targetY - 1400) {
         highestGeneratedY -= Math.floor(roomRandom() * 18 + 50);
         const pWidth = Math.floor(roomRandom() * 40 + 150);
-        const pX = Math.floor(roomRandom() * (WORLD_WIDTH - pWidth - 100) + 50);
+        const pX = Math.floor(roomRandom() * (WORLD_WIDTH - pWidth - 120) + 60);
         platforms.push({ x: pX, y: highestGeneratedY, w: pWidth, h: 28 });
       }
     }
@@ -624,14 +618,19 @@
         player.x += player.vx;
         player.y += player.vy;
 
-        // คืนขนาดตัวละครนุ่มนวล
         player.scaleX += (1 - player.scaleX) * 0.15;
         player.scaleY += (1 - player.scaleY) * 0.15;
 
-        if (player.x < 30) player.x = 30;
-        if (player.x > WORLD_WIDTH - 30) player.x = WORLD_WIDTH - 30;
+        // กำแพงข้างหนาแน่น ไม่ตกแมพออกด้านข้างแน่นอน
+        if (player.x < LEFT_BOUNDARY) {
+          player.x = LEFT_BOUNDARY;
+          player.vx = 0;
+        }
+        if (player.x > RIGHT_BOUNDARY) {
+          player.x = RIGHT_BOUNDARY;
+          player.vx = 0;
+        }
 
-        // การตกกระทบแท่น
         player.grounded = false;
         platforms.forEach(p => {
           if (
@@ -672,7 +671,6 @@
     }
 
     function renderScene() {
-      // 1. Dynamic Cyber Skybox
       const skyGrad = ctx.createLinearGradient(0, 0, 0, cssHeight);
       const heightFactor = Math.min(1, currentHeightMeters / 120);
       skyGrad.addColorStop(0, heightFactor > 0.5 ? '#030712' : '#0c4a6e');
@@ -682,29 +680,30 @@
 
       const offsetX = (cssWidth - WORLD_WIDTH) / 2;
 
-      // 2. เสากำแพงนีออนข้างจอ
+      // เสากำแพงนีออนกั้นตกด้านข้างแบบเด่นชัด
       ctx.fillStyle = '#090d16';
-      ctx.fillRect(offsetX - 14, 0, 14, cssHeight);
-      ctx.fillRect(offsetX + WORLD_WIDTH, 0, 14, cssHeight);
+      ctx.fillRect(offsetX + LEFT_BOUNDARY - 24, 0, 24, cssHeight);
+      ctx.fillRect(offsetX + RIGHT_BOUNDARY, 0, 24, cssHeight);
 
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(offsetX - 2, 0, 2, cssHeight);
-      ctx.fillRect(offsetX + WORLD_WIDTH, 0, 2, cssHeight);
+      ctx.fillStyle = '#06b6d4';
+      ctx.shadowColor = '#06b6d4';
+      ctx.shadowBlur = 8;
+      ctx.fillRect(offsetX + LEFT_BOUNDARY - 3, 0, 3, cssHeight);
+      ctx.fillRect(offsetX + RIGHT_BOUNDARY, 0, 3, cssHeight);
+      ctx.shadowBlur = 0;
 
-      // 3. วาดแท่นลอยเรืองแสง (Neon Floating Blocks)
+      // วาดแท่นลอย
       platforms.forEach(p => {
         const ry = p.y - cameraY;
         if (ry < -60 || ry > cssHeight + 60) return;
 
         const renderX = p.x + offsetX;
 
-        // แสงเรืองใต้แท่น
         ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
         ctx.beginPath();
         ctx.roundRect(renderX - 4, ry - 2, p.w + 8, p.h + 8, 12);
         ctx.fill();
 
-        // ตัวแท่นหินสี Dark Slate ขอบมน
         ctx.fillStyle = '#1e293b';
         ctx.strokeStyle = '#0284c7';
         ctx.lineWidth = 2.5;
@@ -713,13 +712,11 @@
         ctx.fill();
         ctx.stroke();
 
-        // แถบนีออนสีเขียวมรกตด้านบน
         ctx.fillStyle = '#10b981';
         ctx.beginPath();
         ctx.roundRect(renderX, ry, p.w, 6, [10, 10, 0, 0]);
         ctx.fill();
 
-        // ป้ายระดับเมตรแบบ Hologram ทุกๆ 10m
         const mLevel = Math.max(0, Math.floor((530 - p.y) / 10));
         if (mLevel > 0 && mLevel % 10 === 0) {
           ctx.font = 'bold 11px Kanit';
@@ -728,7 +725,7 @@
         }
       });
 
-      // 4. วาด Shockwave Particles
+      // Shockwave Particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const pt = particles[i];
         pt.x += pt.vx;
@@ -744,14 +741,14 @@
         ctx.fill();
       }
 
-      // 5. วาดเพื่อนในห้อง
+      // วาดเพื่อนในห้อง
       playersInRoom.forEach((p, id) => {
         if (id !== myPeerId) {
           drawMonster(p.x + offsetX, p.y, p.color, `${p.name} (${p.height || 0}m)`, false, 1, 1);
         }
       });
 
-      // 6. วาดตัวเราเอง
+      // วาดตัวเราเอง
       drawMonster(player.x + offsetX, player.y, myColor, `${playerName} (เรา)`, true, player.scaleX, player.scaleY);
     }
 
@@ -759,13 +756,11 @@
       const ry = y - cameraY;
       if (ry < -90 || ry > cssHeight + 90) return;
 
-      // เงา
       ctx.fillStyle = 'rgba(0,0,0,0.35)';
       ctx.beginPath();
       ctx.ellipse(x, ry + 20, 18 * sx, 5, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // วงแหวน Halo เหนือหัวถ้าเป็นตัวเรา
       if (isSelf) {
         ctx.strokeStyle = '#fde047';
         ctx.lineWidth = 2.5;
@@ -778,7 +773,6 @@
       ctx.translate(x, ry);
       ctx.scale(sx, sy);
 
-      // ลำตัวตัวละคร
       ctx.fillStyle = color;
       ctx.strokeStyle = '#0f172a';
       ctx.lineWidth = 3.5;
@@ -787,14 +781,12 @@
       ctx.fill();
       ctx.stroke();
 
-      // ขา
       ctx.beginPath();
       ctx.arc(-9, 15, 5, 0, Math.PI * 2);
       ctx.arc(9, 15, 5, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
 
-      // ตาการ์ตูนตาโต
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.arc(-6, -2, 5, 0, Math.PI * 2);
@@ -809,7 +801,6 @@
 
       ctx.restore();
 
-      // ป้ายชื่อ
       ctx.font = isSelf ? 'bold 13px Kanit' : 'bold 12px Kanit';
       ctx.textAlign = 'center';
       ctx.lineWidth = 3.5;
@@ -861,15 +852,33 @@
         const rows = document.getElementById('summaryRows');
         rows.innerHTML = '';
 
-        const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
-        list.forEach((p, i) => {
+        // รวบรวมทุกคนในห้อง + ตัวเราเอง แล้วเรียงลำดับตามความสูงจริงจากมากไปน้อย
+        const all = [
+          { name: playerName, height: currentHeightMeters, correct: correctCount, wrong: wrongCount, isSelf: true },
+          ...Array.from(playersInRoom.values()).map(p => ({
+            name: p.name,
+            height: p.height || 0,
+            correct: p.correct || 0,
+            wrong: p.wrong || 0,
+            isSelf: false
+          }))
+        ].sort((a, b) => b.height - a.height);
+
+        all.forEach((p, i) => {
+          const rankBadge = i === 0 ? '🥇 อันดับ 1' : i === 1 ? '🥈 อันดับ 2' : i === 2 ? '🥉 อันดับ 3' : `#${i + 1}`;
+          const isTop = i < 3;
           const div = document.createElement('div');
-          div.className = "flex justify-between items-center bg-slate-800/80 p-3 rounded-2xl text-xs sm:text-sm border border-slate-700";
+          div.className = `flex justify-between items-center p-3 rounded-2xl text-xs sm:text-sm border transition-all ${
+            p.isSelf ? 'bg-cyan-950/60 border-cyan-400/80 shadow-[0_0_15px_rgba(6,182,212,0.3)]' : 'bg-slate-900/80 border-slate-800'
+          }`;
           div.innerHTML = `
-            <span class="font-bold text-white">${i + 1}. ${p.name}</span>
+            <div class="flex items-center gap-2.5">
+              <span class="font-black ${isTop ? 'text-amber-400 text-sm' : 'text-slate-400'}">${rankBadge}</span>
+              <span class="font-bold text-white">${p.name} ${p.isSelf ? '<span class="text-cyan-400 text-[11px]">(คุณ)</span>' : ''}</span>
+            </div>
             <div class="text-right">
-              <span class="font-black text-cyan-400 font-mono block">${p.height || 0} m</span>
-              <span class="text-[11px] text-emerald-400 font-bold">ถูก ${p.correct || 0} | ผิด ${p.wrong || 0}</span>
+              <span class="font-black text-cyan-400 font-mono block text-sm">${p.height} m</span>
+              <span class="text-[11px] text-slate-400">ถูก <b class="text-emerald-400">${p.correct}</b> | ผิด <b class="text-rose-400">${p.wrong}</b></span>
             </div>
           `;
           rows.appendChild(div);
