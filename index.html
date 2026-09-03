@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Microsoft Word Jump Arena</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Kanit:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Kanit', sans-serif;
+      margin: 0;
+      overflow: hidden;
+      background-color: #1e293b;
+      user-select: none;
+    }
+    .game-font { font-family: 'Fredoka', 'Kanit', sans-serif; }
+    .btn-3d-purple { background-color: #59359a; box-shadow: 0 5px 0 #3b1f6d; border: 3px solid #28144b; }
+    .btn-3d-purple:active { transform: translateY(4px); box-shadow: 0 1px 0 #3b1f6d; }
+    .btn-3d-green { background-color: #2b9348; box-shadow: 0 5px 0 #1b5e20; border: 3px solid #144017; }
+    .btn-3d-green:active { transform: translateY(4px); box-shadow: 0 1px 0 #1b5e20; }
+    .btn-3d-orange { background-color: #f77f00; box-shadow: 0 5px 0 #c25e00; border: 2px solid #8f4400; }
+    .btn-3d-blue { background-color: #2563eb; box-shadow: 0 5px 0 #1e40af; border: 3px solid #1e3a8a; }
+    .btn-3d-blue:active { transform: translateY(4px); box-shadow: 0 1px 0 #1e40af; }
+  </style>
+</head>
+<body class="w-screen h-screen flex justify-center items-center relative">
+
+  <!-- หน้าต่างสร้างห้อง / ใส่ชื่อ (Lobby) -->
+  <div id="lobbyScreen" class="absolute inset-0 bg-gradient-to-br from-blue-600 via-sky-500 to-indigo-800 flex justify-center items-center z-50 p-4">
+    <div class="bg-white/95 backdrop-blur-md border-4 border-slate-900 rounded-3xl p-8 w-full max-w-md shadow-2xl text-center">
+      <h1 class="game-font text-3xl font-black text-slate-800 tracking-wider mb-1">JUMP QUIZ ARENA 🚀</h1>
+      <p class="text-sm font-bold text-blue-600 mb-6">Microsoft Word Challenge Edition</p>
+
+      <div class="space-y-4 text-left">
+        <div>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">ชื่อผู้เล่นของคุณ</label>
+          <input id="inputPlayerName" type="text" placeholder="พิมพ์ชื่อตัวละคร..." value="ผู้เล่น 1" 
+                 class="w-full mt-1 px-4 py-3 border-2 border-slate-300 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-blue-600">
+        </div>
+
+        <div>
+          <label class="text-xs font-bold text-slate-600 uppercase tracking-wider">รหัสห้อง (Room Code)</label>
+          <input id="inputRoomCode" type="text" placeholder="เช่น ROOM99" value="ROOM1" 
+                 class="w-full mt-1 px-4 py-3 border-2 border-slate-300 rounded-xl font-bold uppercase text-slate-800 focus:outline-none focus:border-blue-600">
+        </div>
+
+        <!-- ตัวเลือกสถานะ Admin -->
+        <div class="pt-2 border-t border-slate-200">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="isAdminCheck" class="w-4 h-4 text-blue-600 rounded">
+            <span class="text-xs font-bold text-slate-700">ฉันเป็นแอดมิน (สร้างห้อง / กำหนดเวลา)</span>
+          </label>
+          <div id="adminPanel" class="hidden mt-3 p-3 bg-blue-50 border-2 border-blue-200 rounded-xl space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-600">เวลาแข่งขัน:</span>
+              <select id="selectDuration" class="px-2 py-1 rounded-lg border font-bold text-sm text-slate-700">
+                <option value="60">1 นาที (ทดสอบด่วน)</option>
+                <option value="180">3 นาที</option>
+                <option value="300" selected>5 นาที</option>
+                <option value="600">10 นาที</option>
+              </select>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-600">ค่าพลังเริ่มต้น:</span>
+              <input id="inputInitialEnergy" type="number" value="10" class="w-16 px-2 py-1 border rounded-lg text-center font-bold text-sm">
+            </div>
+          </div>
+        </div>
+
+        <button onclick="joinGameRoom()" class="btn-3d-blue w-full py-4 rounded-2xl text-white font-black text-xl tracking-wider mt-3">
+          เข้าสู่เกม 🎮
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- หน้าจอเกมหลัก -->
+  <div id="gameContainer" class="relative w-full h-full max-w-[1200px] max-h-[780px] shadow-2xl overflow-hidden rounded-2xl border-4 border-slate-800 bg-[#5ac8fa]">
+    <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+
+    <!-- แถบข้อมูลสถานะด้านบน -->
+    <div class="absolute top-4 left-6 flex flex-wrap items-center gap-3">
+      <div class="bg-black/60 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/30 text-white font-bold text-sm">
+        🏠 ห้อง: <span id="displayRoom" class="text-sky-300">ROOM1</span>
+      </div>
+      <div class="bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-xl border border-white/30 text-white flex items-center gap-2 font-bold text-sm">
+        ⏱️ <span id="displayTimer" class="game-font text-lg text-yellow-300">05:00</span>
+      </div>
+      <div class="bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-xl border border-white/30 text-white flex items-center gap-2 font-bold text-sm">
+        ⚡ พลัง: <span id="displayEnergy" class="game-font text-lg text-yellow-400">10</span>
+      </div>
+      <div class="bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-xl border border-white/30 text-white flex items-center gap-2 font-bold text-sm">
+        🚩 ความสูง: <span id="displayHeight" class="game-font text-lg text-emerald-400">0m</span>
+      </div>
+    </div>
+
+    <!-- แถบปุ่มสั่งเริ่มจับเวลาสำหรับ Admin -->
+    <div id="adminStartBar" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-20">
+      <button onclick="adminStartMatch()" class="btn-3d-green text-white px-6 py-2 rounded-xl font-black text-sm tracking-wider animate-bounce">
+        ▶ กดเริ่มจับเวลาผู้เล่นทุกคน
+      </button>
+    </div>
+
+    <!-- กล่องปุ่ม Answer Questions มุมขวาล่าง -->
+    <div id="quizBanner" class="absolute right-6 bottom-24 bg-slate-900/90 border-4 border-red-500 rounded-2xl p-4 w-72 text-center shadow-2xl">
+      <h3 class="game-font font-black text-xl text-white italic tracking-wider leading-tight">
+        ANSWER QUESTIONS<br><span class="text-yellow-400">EARN ENERGY!</span>
+      </h3>
+      <p class="text-[11px] text-gray-300 mt-1 mb-3">พลังหมดจะหยุดกระโดด ตอบข้อสอบ Word เพื่อเติมพลัง</p>
+      <button onclick="openQuizModal()" class="btn-3d-blue w-full py-2 rounded-xl font-bold text-white text-sm tracking-wide">
+        Answer Questions ⚡
+      </button>
+    </div>
+
+    <!-- ปุ่มควบคุมการเคลื่อนไหว -->
+    <div class="absolute bottom-5 left-6 flex gap-3">
+      <button id="btnLeft" class="btn-3d-purple text-white w-16 h-14 rounded-xl flex justify-center items-center text-3xl font-bold">⬅</button>
+      <button id="btnRight" class="btn-3d-purple text-white w-16 h-14 rounded-xl flex justify-center items-center text-3xl font-bold">➡</button>
+    </div>
+    <div class="absolute bottom-5 right-6">
+      <button id="btnJump" class="btn-3d-green text-white w-20 h-14 rounded-xl flex justify-center items-center text-3xl font-bold">⬆</button>
+    </div>
+
+    <!-- ป๊อปอัปคำถาม Word -->
+    <div id="quizModal" class="hidden absolute inset-0 bg-black/75 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+      <div class="bg-white border-4 border-slate-900 rounded-3xl p-6 w-full max-w-lg shadow-2xl">
+        <div class="flex justify-between items-center mb-3">
+          <span id="quizDifficulty" class="text-xs font-bold px-3 py-1 rounded-full border">ความยาก</span>
+          <span class="text-xs font-bold text-emerald-600">+5 Energy & +10 คะแนน</span>
+        </div>
+        <h2 id="quizQuestion" class="text-base font-bold text-slate-800 mb-4 leading-snug">คำถาม</h2>
+        <div id="quizOptions" class="grid grid-cols-1 gap-2.5 mb-2"></div>
+      </div>
+    </div>
+
+    <!-- กระดานสรุปผลคะแนนและจัดอันดับ (Leaderboard) -->
+    <div id="leaderboardModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md flex flex-col justify-center items-center z-50 p-4">
+      <div class="bg-white border-4 border-slate-900 rounded-3xl p-6 w-full max-w-md shadow-2xl text-center">
+        <h2 class="game-font font-black text-3xl text-slate-800 mb-1">🏁 หมดเวลาการแข่งขัน!</h2>
+        <p class="text-xs font-semibold text-gray-500 mb-5">สรุปอันดับความสูงและคะแนนสอบสำหรับนำไปคำนวณเกรด</p>
+        
+        <div id="leaderboardRows" class="space-y-2 mb-6 max-h-60 overflow-y-auto px-1"></div>
+
+        <button onclick="location.reload()" class="btn-3d-blue px-6 py-3 rounded-xl text-white font-bold w-full">
+          ออกจากห้อง / เล่นใหม่
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // รายการพาเลทสีตัวละครการ์ตูนแบบสุ่มไม่ซ้ำกัน
+    const CHARACTER_COLORS = [
+      '#ff7b00', '#22c55e', '#ec4899', '#a855f7', '#06b6d4', 
+      '#eab308', '#f43f5e', '#8b5cf6', '#10b981', '#f97316'
+    ];
+    const myColor = CHARACTER_COLORS[Math.floor(Math.random() * CHARACTER_COLORS.length)];
+
+    // คลังข้อสอบ Microsoft Word 20 ข้อ (คละระดับง่าย-ปานกลาง-ยาก)
+    const WORD_QUIZ = [
+      // ระดับง่าย (7 ข้อ)
+      { q: "คีย์ลัดสำหรับบันทึกเอกสาร (Save) คืออะไร?", a: ["Ctrl + S", "Ctrl + C", "Ctrl + P", "Ctrl + V"], c: 0, level: "ง่าย", badge: "bg-green-100 text-green-700 border-green-300" },
+      { q: "คีย์ลัดสำหรับทำตัวอักษรหนา (Bold) คืออะไร?", a: ["Ctrl + I", "Ctrl + B", "Ctrl + U", "Ctrl + H"], c: 1, level: "ง่าย", badge: "bg-green-100 text-green-700 border-green-300" },
+      { q: "คีย์ลัดสำหรับยกเลิกคำสั่งล่าสุด (Undo) คือข้อใด?", a: ["Ctrl + Y", "Ctrl + Z", "Ctrl + X", "Ctrl + A"], c: 1, level: "ง่าย", badge: "bg-green-100 text-green-700 border-green-300" },
+      { q: "ต้องการคัดลอกข้อความ (Copy) ต้องใช้คีย์ลัดใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + D"], c: 0, level: "ง่าย", badge: "bg-green-100 text-green-700 border-green-300" },
+      { q: "คีย์ลัดสำหรับวางข้อความที่คัดลอกไว้ (Paste) คืออะไร?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + Shift + V", "Ctrl + B"], c: 1, level: "ง่าย", badge: "bg-green-100 text-green-700 border-green-300" },
+      { q: "ต้องการสร้างเอกสารเปล่าแผ่นใหม่ทันที ต้องกดปุ่มใด?", a: ["Ctrl + M", "Ctrl + N", "Ctrl + O", "Ctrl + W"], c: 1, level: "ง่าย", badge: "bg-green-100 text-green-700 border-green-300" },
+      { q: "สั่งพิมพ์เอกสารออกเครื่องพิมพ์ (Print) ใช้ปุ่มลัดใด?", a: ["Ctrl + P", "Ctrl + Shift + P", "Alt + P", "F12"], c: 0, level: "ง่าย", badge: "bg-green-100 text-green-700 border-green-300" },
+
+      // ระดับปานกลาง (7 ข้อ)
+      { q: "จัดข้อความให้อยู่กึ่งกลางหน้ากระดาษ (Center) ใช้ปุ่มใด?", a: ["Ctrl + C", "Ctrl + E", "Ctrl + J", "Ctrl + M"], c: 1, level: "ปานกลาง", badge: "bg-yellow-100 text-yellow-800 border-yellow-300" },
+      { q: "ขึ้นหน้าใหม่ทันที (Page Break) โดยไม่ต้องเคาะ Enter ซ้ำๆ ใช้ปุ่มใด?", a: ["Ctrl + Enter", "Shift + Enter", "Alt + Enter", "Tab + Enter"], c: 0, level: "ปานกลาง", badge: "bg-yellow-100 text-yellow-800 border-yellow-300" },
+      { q: "ฟังก์ชัน Mail Merge (จดหมายเวียน) อยู่ในแถบเมนู (Tab) ใด?", a: ["References", "Mailings", "Review", "Insert"], c: 1, level: "ปานกลาง", badge: "bg-yellow-100 text-yellow-800 border-yellow-300" },
+      { q: "คีย์ลัดสำหรับค้นหาและแทนที่คำ (Find and Replace) คืออะไร?", a: ["Ctrl + F", "Ctrl + H", "Ctrl + G", "Ctrl + R"], c: 1, level: "ปานกลาง", badge: "bg-yellow-100 text-yellow-800 border-yellow-300" },
+      { q: "การแทรกเชิงอรรถ (Footnote) อยู่ภายใต้แท็บเครื่องมือใด?", a: ["Layout", "References", "Insert", "View"], c: 1, level: "ปานกลาง", badge: "bg-yellow-100 text-yellow-800 border-yellow-300" },
+      { q: "คีย์ลัดในการแทรกลิงก์ (Hyperlink) ไปยังเว็บไซต์หรือไฟล์คือข้อใด?", a: ["Ctrl + L", "Ctrl + K", "Ctrl + H", "Alt + K"], c: 1, level: "ปานกลาง", badge: "bg-yellow-100 text-yellow-800 border-yellow-300" },
+      { q: "กดบันทึกเป็นชื่อใหม่ (Save As) ด้วยปุ่มลัดด้านบนแป้นพิมพ์ คือปุ่มใด?", a: ["F2", "F7", "F12", "F5"], c: 2, level: "ปานกลาง", badge: "bg-yellow-100 text-yellow-800 border-yellow-300" },
+
+      // ระดับยาก (6 ข้อ)
+      { q: "การขึ้นบรรทัดใหม่โดยไม่เริ่มย่อหน้าใหม่ (Line Break) ต้องกดปุ่มใด?", a: ["Ctrl + Enter", "Shift + Enter", "Alt + Enter", "Ctrl + Shift + Enter"], c: 1, level: "ยาก", badge: "bg-red-100 text-red-700 border-red-300" },
+      { q: "ต้องการตั้งค่าให้หน้าถัดไปเป็นแนวนอนโดยไม่กระทบหน้าเดิม ต้องใช้คำสั่งใด?", a: ["Page Break", "Section Break (Next Page)", "Column Break", "Text Wrapping"], c: 1, level: "ยาก", badge: "bg-red-100 text-red-700 border-red-300" },
+      { q: "คีย์ลัดคำสั่ง Format Painter (คัดลอกเฉพาะรูปแบบฟอนต์และสี) คืออะไร?", a: ["Ctrl + Shift + C แล้ว Ctrl + Shift + V", "Ctrl + Alt + C แล้ว Ctrl + Alt + V", "Shift + F3", "Alt + Shift + C"], c: 0, level: "ยาก", badge: "bg-red-100 text-red-700 border-red-300" },
+      { q: "คีย์ลัดสลับตัวพิมพ์เล็ก/ใหญ่ ในภาษาอังกฤษ (Change Case) คือปุ่มใด?", a: ["Ctrl + F3", "Shift + F3", "Alt + F3", "Ctrl + Shift + A"], c: 1, level: "ยาก", badge: "bg-red-100 text-red-700 border-red-300" },
+      { q: "การสร้างสารบัญอัตโนมัติ (Table of Contents) อ่านโครงสร้างจากสิ่งใด?", a: ["Font Size", "Heading Styles (Heading 1, 2)", "Bookmarks", "Paragraph Indent"], c: 1, level: "ยาก", badge: "bg-red-100 text-red-700 border-red-300" },
+      { q: "การสั่งอัปเดตฟิลด์หรือเลขหน้าสารบัญที่เลือกไว้แบบเร่งด่วน กดปุ่มใด?", a: ["F5", "F7", "F9", "F11"], c: 2, level: "ยาก", badge: "bg-red-100 text-red-700 border-red-300" }
+    ];
+
+    // ข้อมูลผู้เล่นและห้อง
+    let playerName = "ผู้เล่น 1";
+    let roomCode = "ROOM1";
+    let isAdmin = false;
+    let totalTime = 300;
+    let currentEnergy = 10;
+    let maxHeight = 0;
+    let quizScore = 0;
+    let isGameOver = false;
+    let gameTimer = null;
+
+    // การเชื่อมต่อซิงก์ตำแหน่งผู้เล่นผ่านห้อง
+    let roomChannel = null;
+    let peerPlayers = new Map();
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const player = {
+      id: Math.random().toString(36).substring(2, 9),
+      x: 350,
+      y: 400,
+      vx: 0,
+      vy: 0,
+      grounded: false
+    };
+
+    let cameraY = 0;
+
+    // ระบบสร้างแท่นหินกระโดดแบบไม่รู้จบ (Endless High Platforms)
+    const platforms = [{ x: 0, y: 560, w: 2000, h: 200 }]; // แท่นพื้นล่างสุด
+    let highestPlatformY = 460;
+
+    function buildPlatformsUpTo(targetY) {
+      while (highestPlatformY > targetY - 1200) {
+        highestPlatformY -= Math.floor(Math.random() * 40 + 75); // ระยะห่างกระโดดถึงง่าย ไม่มีความยากเกินไป
+        const pWidth = Math.floor(Math.random() * 60 + 100);
+        const pX = Math.floor(Math.random() * (canvas.width - pWidth - 80) + 40);
+        platforms.push({ x: pX, y: highestPlatformY, w: pWidth, h: 36 });
+      }
+    }
+    buildPlatformsUpTo(-2000);
+
+    // ควบคุมฟอร์มตั้งค่า
+    document.getElementById('isAdminCheck').onchange = (e) => {
+      document.getElementById('adminPanel').classList.toggle('hidden', !e.target.checked);
+    };
+
+    function joinGameRoom() {
+      playerName = document.getElementById('inputPlayerName').value.trim() || 'ผู้เล่น';
+      roomCode = document.getElementById('inputRoomCode').value.trim().toUpperCase() || 'ROOM1';
+      isAdmin = document.getElementById('isAdminCheck').checked;
+      currentEnergy = parseInt(document.getElementById('inputInitialEnergy').value) || 10;
+      totalTime = parseInt(document.getElementById('selectDuration').value) || 300;
+
+      document.getElementById('displayRoom').innerText = roomCode;
+      document.getElementById('displayEnergy').innerText = currentEnergy;
+      updateTimerDisplay(totalTime);
+
+      document.getElementById('lobbyScreen').classList.add('hidden');
+      if (isAdmin) document.getElementById('adminStartBar').classList.remove('hidden');
+
+      // เริ่มการซิงก์เครือข่ายห้อง
+      setupNetwork();
+    }
+
+    function setupNetwork() {
+      roomChannel = new BroadcastChannel(`jump_room_${roomCode}`);
+      roomChannel.onmessage = (e) => {
+        const msg = e.data;
+        if (msg.type === 'peer_pos') {
+          peerPlayers.set(msg.id, { 
+            name: msg.name, 
+            x: msg.x, 
+            y: msg.y, 
+            color: msg.color, 
+            height: msg.height, 
+            score: msg.score 
+          });
+        } else if (msg.type === 'admin_start') {
+          totalTime = msg.time;
+          startCountdown();
+        }
+      };
+
+      // ส่งพิกัดความสูงและคะแนนของตัวเองไปให้เพื่อนในห้อง
+      setInterval(() => {
+        if (!isGameOver && roomChannel) {
+          roomChannel.postMessage({
+            type: 'peer_pos',
+            id: player.id,
+            name: playerName,
+            x: player.x,
+            y: player.y,
+            color: myColor,
+            height: maxHeight,
+            score: quizScore
+          });
+        }
+      }, 50);
+    }
+
+    function adminStartMatch() {
+      document.getElementById('adminStartBar').classList.add('hidden');
+      if (roomChannel) {
+        roomChannel.postMessage({ type: 'admin_start', time: totalTime });
+      }
+      startCountdown();
+    }
+
+    function startCountdown() {
+      if (gameTimer) clearInterval(gameTimer);
+      gameTimer = setInterval(() => {
+        totalTime--;
+        updateTimerDisplay(totalTime);
+        if (totalTime <= 0) {
+          clearInterval(gameTimer);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay(seconds) {
+      const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+      const s = (seconds % 60).toString().padStart(2, '0');
+      document.getElementById('displayTimer').innerText = `${m}:${s}`;
+    }
+
+    // ระบบปุ่มควบคุม
+    const keys = { left: false, right: false };
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+      if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+      if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') triggerJump();
+    });
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+      if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+    });
+
+    document.getElementById('btnLeft').onmousedown = () => keys.left = true;
+    document.getElementById('btnLeft').onmouseup = () => keys.left = false;
+    document.getElementById('btnRight').onmousedown = () => keys.right = true;
+    document.getElementById('btnRight').onmouseup = () => keys.right = false;
+    document.getElementById('btnJump').onclick = () => triggerJump();
+
+    function triggerJump() {
+      if (isGameOver) return;
+      if (currentEnergy <= 0) {
+        openQuizModal();
+        return;
+      }
+      if (player.grounded) {
+        player.vy = -13.5;
+        player.grounded = false;
+        currentEnergy--;
+        document.getElementById('displayEnergy').innerText = currentEnergy;
+        if (currentEnergy === 0) openQuizModal();
+      }
+    }
+
+    // ฟังก์ชันวาดแท่นหินสไตล์บล็อกการ์ตูนขอบดำ
+    function drawPlatform(p) {
+      const renderY = p.y - cameraY;
+      if (renderY < -100 || renderY > canvas.height + 100) return;
+
+      ctx.fillStyle = '#7a889b';
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(p.x, renderY, p.w, p.h, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 2;
+      const brickCols = Math.floor(p.w / 30);
+      for (let i = 1; i < brickCols; i++) {
+        ctx.beginPath();
+        ctx.moveTo(p.x + i * 30, renderY);
+        ctx.lineTo(p.x + i * 30, renderY + p.h);
+        ctx.stroke();
+      }
+    }
+
+    // ฟังก์ชันวาดตัวละครมอนสเตอร์ตัวกลม + ขา + ตาโต + ป้ายชื่อใต้ตัว
+    function drawCharacter(x, y, color, name) {
+      const renderY = y - cameraY;
+      if (renderY < -100 || renderY > canvas.height + 100) return;
+
+      // เงา
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+      ctx.beginPath();
+      ctx.ellipse(x, renderY + 22, 18, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ลำตัว
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#0f172a';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.ellipse(x, renderY, 20, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // ขาซ้าย-ขวา
+      ctx.beginPath();
+      ctx.arc(x - 9, renderY + 16, 5, 0, Math.PI * 2);
+      ctx.arc(x + 9, renderY + 16, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // ตาโตสีดำ
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.arc(x - 6, renderY - 2, 3, 0, Math.PI * 2);
+      ctx.arc(x + 6, renderY - 2, 3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // ป้ายชื่อลอยด้านล่าง
+      ctx.font = 'bold 13px Kanit';
+      ctx.textAlign = 'center';
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#000000';
+      ctx.strokeText(name, x, renderY + 36);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(name, x, renderY + 36);
+    }
+
+    // ลูปประมวลผลเกม
+    function update() {
+      if (!isGameOver) {
+        if (keys.left) player.vx = -4.5;
+        else if (keys.right) player.vx = 4.5;
+        else player.vx *= 0.8;
+
+        player.vy += 0.55;
+        player.x += player.vx;
+        player.y += player.vy;
+
+        // ขอบจอซ้ายขวา
+        if (player.x < 20) player.x = 20;
+        if (player.x > canvas.width - 20) player.x = canvas.width - 20;
+
+        // ชนแท่นหิน
+        player.grounded = false;
+        platforms.forEach(p => {
+          if (
+            player.x + 14 > p.x &&
+            player.x - 14 < p.x + p.w &&
+            player.y + 18 >= p.y &&
+            player.y + 18 <= p.y + 14 &&
+            player.vy >= 0
+          ) {
+            player.y = p.y - 18;
+            player.vy = 0;
+            player.grounded = true;
+          }
+        });
+
+        // คำนวณความสูง
+        const currentMeters = Math.max(0, Math.floor((400 - player.y) / 10));
+        if (currentMeters > maxHeight) {
+          maxHeight = currentMeters;
+          document.getElementById('displayHeight').innerText = `${maxHeight}m`;
+        }
+
+        // กล้องตามตัวละครขึ้นด้านบน
+        const targetCameraY = player.y - canvas.height * 0.58;
+        if (targetCameraY < cameraY) {
+          cameraY += (targetCameraY - cameraY) * 0.12;
+          buildPlatformsUpTo(cameraY);
+        }
+      }
+
+      // วาดท้องฟ้า
+      ctx.fillStyle = '#5ac8fa';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // วาดแท่นหิน
+      platforms.forEach(drawPlatform);
+
+      // วาดเพื่อนร่วมห้อง (สุ่มสีหลากหลาย)
+      peerPlayers.forEach(p => drawCharacter(p.x, p.y, p.color, p.name));
+
+      // วาดตัวเราเอง
+      drawCharacter(player.x, player.y, myColor, playerName);
+
+      requestAnimationFrame(update);
+    }
+
+    // ฟังก์ชันคำถาม Word
+    function openQuizModal() {
+      if (isGameOver) return;
+      const q = WORD_QUIZ[Math.floor(Math.random() * WORD_QUIZ.length)];
+      const diffBadge = document.getElementById('quizDifficulty');
+      diffBadge.innerText = `ระดับ: ${q.level}`;
+      diffBadge.className = `text-xs font-bold px-3 py-1 rounded-full border ${q.badge}`;
+
+      document.getElementById('quizQuestion').innerText = q.q;
+      const optsContainer = document.getElementById('quizOptions');
+      optsContainer.innerHTML = '';
+
+      q.a.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left font-semibold py-3 px-4 rounded-xl border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-slate-800 text-sm";
+        btn.innerText = `${idx + 1}. ${opt}`;
+        btn.onclick = () => handleAnswer(idx === q.c);
+        optsContainer.appendChild(btn);
+      });
+
+      document.getElementById('quizModal').classList.remove('hidden');
+    }
+
+    function handleAnswer(isCorrect) {
+      if (isCorrect) {
+        currentEnergy += 5;
+        quizScore += 10;
+        document.getElementById('displayEnergy').innerText = currentEnergy;
+        alert("ยอดเยี่ยมมาก! ตอบถูกต้อง 🌟 ได้รับ +5 Energy & +10 คะแนน");
+      } else {
+        alert("ยังไม่ถูกต้อง! พลังงานไม่เพิ่ม ตอบใหม่อีกครั้ง");
+      }
+      document.getElementById('quizModal').classList.add('hidden');
+    }
+
+    // จบเกม & แสดงอันดับ
+    function endGame() {
+      isGameOver = true;
+      document.getElementById('quizModal').classList.add('hidden');
+      const boardModal = document.getElementById('leaderboardModal');
+      const rows = document.getElementById('leaderboardRows');
+      rows.innerHTML = '';
+
+      const allPlayers = [
+        { name: playerName, height: maxHeight, score: quizScore, total: maxHeight + quizScore },
+        ...Array.from(peerPlayers.values()).map(p => ({
+          name: p.name,
+          height: p.height || 0,
+          score: p.score || 0,
+          total: (p.height || 0) + (p.score || 0)
+        }))
+      ].sort((a, b) => b.total - a.total);
+
+      allPlayers.forEach((p, idx) => {
+        const rankIcon = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+        const div = document.createElement('div');
+        div.className = "flex justify-between items-center bg-slate-100 p-3 rounded-xl border border-slate-200";
+        div.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-base">${rankIcon}</span>
+            <span class="font-bold text-sm text-slate-800">${p.name}</span>
+          </div>
+          <div class="text-right">
+            <span class="text-xs font-bold text-blue-600 block">สูง: ${p.height}m</span>
+            <span class="text-[11px] font-bold text-emerald-600">รวม: ${p.total} คะแนน</span>
+          </div>
+        `;
+        rows.appendChild(div);
+      });
+
+      boardModal.classList.remove('hidden');
+    }
+
+    requestAnimationFrame(update);
+  </script>
+</body>
+</html>
