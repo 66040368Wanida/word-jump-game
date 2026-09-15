@@ -89,6 +89,32 @@
     }
     .btn-sweet-green:active { transform: scale(0.97); }
 
+    /* ปุ่ม Excel สไตล์ Emerald Glow ระดับพรีเมียม */
+    .btn-excel-luxury {
+      background: linear-gradient(135deg, #10b981 0%, #047857 50%, #064e3b 100%);
+      color: #ffffff;
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+      padding: 11px 20px;
+      border-radius: 16px;
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-excel-luxury:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(16, 185, 129, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+    .btn-excel-luxury:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
     input, select {
       width: 100%;
       padding: 12px 14px;
@@ -174,7 +200,6 @@
     .badge-kick-btn:active { transform: scale(0.9); }
     .hidden { display: none !important; }
 
-    /* ปรับแต่งหน้า Monitor ของครูให้สมดุลและหรูหรา ไม่ล้นจอ */
     #view-host-live {
       position: fixed;
       top: 0; left: 0;
@@ -262,10 +287,10 @@
       background: rgba(255, 255, 255, 0.95);
       border: 1.5px solid rgba(255, 117, 143, 0.4);
       backdrop-filter: blur(8px);
-      padding: 5px 10px;
+      padding: 6px 12px;
       border-radius: 20px;
       font-weight: 800;
-      font-size: 12px;
+      font-size: 13px;
       color: #0f172a;
       box-shadow: 0 3px 10px rgba(0,0,0,0.08);
       white-space: nowrap;
@@ -274,10 +299,10 @@
       background: linear-gradient(135deg, #ff758f, #ff4d6d);
       border: 1.5px solid #ffffff;
       color: white;
-      padding: 6px 12px;
+      padding: 7px 15px;
       border-radius: 20px;
       font-weight: 900;
-      font-size: 12px;
+      font-size: 13px;
       cursor: pointer;
       box-shadow: 0 4px 14px rgba(255, 77, 109, 0.4);
       pointer-events: auto;
@@ -287,18 +312,19 @@
       background: rgba(255, 255, 255, 0.95);
       border: 1.5px solid #bae6fd;
       border-radius: 20px;
-      padding: 5px 10px;
-      font-size: 13px;
+      padding: 6px 12px;
+      font-size: 14px;
       cursor: pointer;
       pointer-events: auto;
       box-shadow: 0 3px 10px rgba(0,0,0,0.08);
     }
 
+    /* ขยายปุ่ม D-Pad และ Jump ให้ใหญ่ขึ้นอย่างจุใจ สัมผัสง่าย ไม่ล้นจอ */
     .controls-bar {
       position: absolute;
-      bottom: max(env(safe-area-inset-bottom, 12px), 16px);
-      left: max(env(safe-area-inset-left, 12px), 14px);
-      right: max(env(safe-area-inset-right, 12px), 14px);
+      bottom: max(env(safe-area-inset-bottom, 16px), 20px);
+      left: max(env(safe-area-inset-left, 16px), 16px);
+      right: max(env(safe-area-inset-right, 16px), 16px);
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
@@ -306,37 +332,37 @@
       pointer-events: none;
     }
     .touch-dpad-container {
-      background: rgba(255, 255, 255, 0.78);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 2px solid rgba(255, 255, 255, 0.95);
-      border-radius: 32px;
-      padding: 6px;
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 3px solid rgba(255, 255, 255, 0.95);
+      border-radius: 40px;
+      padding: 8px;
+      box-shadow: 0 12px 35px rgba(2, 132, 199, 0.25);
       display: flex;
-      gap: 8px;
+      gap: 12px;
       pointer-events: auto;
     }
     .touch-btn-arrow {
-      width: clamp(52px, 12vw, 64px);
-      height: clamp(52px, 12vw, 64px);
-      border-radius: 22px;
+      width: clamp(68px, 16vw, 84px);
+      height: clamp(68px, 16vw, 84px);
+      border-radius: 28px;
       background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
-      border: 2px solid #bae6fd;
+      border: 2.5px solid #bae6fd;
       color: #0284c7;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: clamp(20px, 5vw, 26px);
+      font-size: clamp(28px, 7vw, 36px);
       font-weight: 900;
-      box-shadow: 0 4px 0 #7dd3fc, 0 6px 14px rgba(2, 132, 199, 0.15);
+      box-shadow: 0 6px 0 #7dd3fc, 0 8px 18px rgba(2, 132, 199, 0.2);
       transition: all 0.08s ease;
       cursor: pointer;
       touch-action: none;
     }
     .touch-btn-arrow.active {
-      transform: translateY(3px);
-      box-shadow: 0 1px 0 #7dd3fc;
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #7dd3fc;
       background: #e0f2fe;
       color: #0369a1;
     }
@@ -348,25 +374,25 @@
       justify-content: center;
     }
     .touch-btn-jump {
-      width: clamp(66px, 15vw, 80px);
-      height: clamp(66px, 15vw, 80px);
+      width: clamp(86px, 20vw, 104px);
+      height: clamp(86px, 20vw, 104px);
       border-radius: 50%;
       background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-      border: 3.5px solid #ffffff;
+      border: 4.5px solid #ffffff;
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.35);
+      box-shadow: 0 8px 0 #047857, 0 14px 28px rgba(16, 185, 129, 0.4);
       transition: all 0.08s ease;
       cursor: pointer;
       touch-action: none;
-      font-size: clamp(26px, 6vw, 34px);
+      font-size: clamp(34px, 8vw, 44px);
       line-height: 1;
     }
     .touch-btn-jump.active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #047857;
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #047857;
       background: #059669;
     }
 
@@ -475,7 +501,6 @@
       border-bottom: 1px solid #f1f5f9;
     }
 
-    /* ตกแต่งตาราง Host Monitor สไตล์การ์ดแถว เรียบหรู */
     .host-table th {
       color: #94a3b8;
       padding: 8px 10px;
@@ -566,6 +591,26 @@
       align-items: flex-start;
       gap: 8px;
     }
+    .qb-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .qb-btn-edit {
+      background: #eff6ff;
+      border: 1px solid #93c5fd;
+      color: #2563eb;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .qb-btn-edit:hover {
+      background: #2563eb;
+      color: white;
+    }
     .qb-btn-delete {
       background: #fff1f2;
       border: 1px solid #fda4af;
@@ -575,7 +620,6 @@
       font-weight: bold;
       font-size: 11px;
       cursor: pointer;
-      flex-shrink: 0;
     }
     .qb-btn-delete:hover {
       background: #e11d48;
@@ -653,7 +697,7 @@
     <button id="btn-start" class="btn btn-sweet-green" disabled>🚀 เริ่มการแข่งขัน</button>
   </div>
 
-  <!-- 3. หน้าจอหลักของ Host / Admin (Live Monitor ปรับใหม่ ไม่ล้นจอ สวยงาม) -->
+  <!-- 3. หน้าจอหลักของ Host / Admin (Live Monitor) -->
   <div id="view-host-live" class="hidden">
     <div class="host-header-card">
       <div style="display: flex; align-items: center; gap: 10px;">
@@ -667,14 +711,15 @@
       </div>
       
       <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-        <button onclick="openQuestionBankModal()" style="padding: 7px 12px; background: #4f46e5; color: white; border: none; border-radius: 12px; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);">
+        <button onclick="openQuestionBankModal()" style="padding: 7px 14px; background: #4f46e5; color: white; border: none; border-radius: 14px; font-weight: bold; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);">
           📝 คลังคำถาม (<span id="total-q-count">20</span>)
         </button>
-        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); padding: 5px 12px; border-radius: 12px; font-family: monospace; font-size: 17px; color: #fde047; font-weight: 900;">
+        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); padding: 5px 14px; border-radius: 14px; font-family: monospace; font-size: 18px; color: #fde047; font-weight: 900;">
           ⏱️ <span id="host-timer-text">03:00</span>
         </div>
-        <button onclick="exportDataCSV()" class="btn-sweet-green" style="width: auto; padding: 7px 14px; margin: 0; font-size: 11px;">
-          📥 Excel (.csv)
+        <!-- ปุ่ม Excel หรูหรา สวยสะดุดตา -->
+        <button onclick="exportDataCSV()" class="btn-excel-luxury">
+          <span>📥</span> ส่งออก Excel (.csv)
         </button>
       </div>
     </div>
@@ -711,7 +756,7 @@
     </div>
   </div>
 
-  <!-- 4. Modal คลังข้อสอบ -->
+  <!-- 4. Modal คลังข้อสอบ (รองรับทั้งเพิ่มข้อใหม่ และแก้ไขข้อสอบเดิม) -->
   <div id="questionBankModal" class="hidden">
     <div class="qb-modal-card">
       <div class="qb-header">
@@ -726,7 +771,7 @@
 
       <div class="qb-tabs">
         <button id="qb-tab-view" class="qb-tab-btn active" onclick="switchQbTab('view')">📋 รายการข้อสอบ</button>
-        <button id="qb-tab-add" class="qb-tab-btn" onclick="switchQbTab('add')">➕ เพิ่มข้อใหม่</button>
+        <button id="qb-tab-add" class="qb-tab-btn" onclick="prepareAddQuestion()">➕ เพิ่มข้อใหม่</button>
       </div>
 
       <div class="qb-body-scroll">
@@ -736,6 +781,9 @@
 
         <div id="qb-panel-add" class="hidden">
           <div style="background: #fff5f7; border: 1.5px solid #ffccd5; border-radius: 18px; padding: 14px;">
+            <input type="hidden" id="edit-q-id" value="">
+            <div id="form-mode-title" style="font-size: 13px; font-weight: 900; color: #e01e37; margin-bottom: 8px;">➕ เพิ่มคำถามข้อใหม่</div>
+
             <label style="font-size: 12px; font-weight: bold; color: #e01e37; display: block; margin-bottom: 4px;">โจทย์คำถาม:</label>
             <input id="new-q-text" type="text" placeholder="พิมพ์โจทย์คำถาม..." style="margin-bottom: 10px; text-align: left; padding: 10px;">
             
@@ -749,15 +797,15 @@
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 8px;">
               <div style="display: flex; align-items: center; gap: 6px;">
-                <span style="font-size: 12px; font-weight: bold; color: #0f172a;">เฉลย:</span>
+                <span style="font-size: 12px; font-weight: bold; color: #0f172a;">เฉลยข้อถูก:</span>
                 <select id="new-q-correct" style="width: auto; margin: 0; padding: 6px 10px; font-size: 13px;">
-                  <option value="0">A</option>
-                  <option value="1">B</option>
-                  <option value="2">C</option>
-                  <option value="3">D</option>
+                  <option value="0">ตัวเลือก A</option>
+                  <option value="1">ตัวเลือก B</option>
+                  <option value="2">ตัวเลือก C</option>
+                  <option value="3">ตัวเลือก D</option>
                 </select>
               </div>
-              <button onclick="addNewCustomQuestion()" class="btn-sweet-green" style="width: auto; padding: 8px 18px; margin: 0; font-size: 12px;">
+              <button id="btn-save-question" onclick="saveQuestionHandler()" class="btn-sweet-green" style="width: auto; padding: 9px 20px; margin: 0; font-size: 12px;">
                 บันทึกข้อสอบ ➕
               </button>
             </div>
@@ -796,6 +844,7 @@
       <button class="btn-music-toggle" id="btn-toggle-music">🔊</button>
     </div>
 
+    <!-- แผงสัมผัสขนาดใหญ่ กดง่าย สะใจ ไม่ติดขอบ -->
     <div class="controls-bar">
       <div class="touch-dpad-container">
         <div class="touch-btn-arrow" id="btn-left">◀</div>
@@ -842,7 +891,9 @@
       <tbody id="result-leaderboard-body"></tbody>
     </table>
 
-    <button class="btn btn-excel hidden" id="btn-export-excel">📥 บันทึกคะแนนลงใน Excel (.csv)</button>
+    <button class="btn btn-excel-luxury hidden" id="btn-export-excel" style="width: 100%; margin-top: 10px;">
+      <span>📥</span> ดาวน์โหลดรายงานผลลัพธ์ Excel (.csv)
+    </button>
     <button class="btn" id="btn-play-again" style="margin-top:8px; background:#475569;">🔄 เริ่มเกมใหม่</button>
   </div>
 
@@ -1031,8 +1082,37 @@
         tabAdd.classList.add('active');
         tabView.classList.remove('active');
         panelAdd.classList.remove('hidden');
-        panelAdd.classList.add('hidden');
+        panelView.classList.add('hidden');
       }
+    }
+
+    window.prepareAddQuestion = function() {
+      document.getElementById('edit-q-id').value = "";
+      document.getElementById('form-mode-title').innerText = "➕ เพิ่มคำถามข้อใหม่";
+      document.getElementById('new-q-text').value = "";
+      document.getElementById('new-q-a1').value = "";
+      document.getElementById('new-q-a2').value = "";
+      document.getElementById('new-q-a3').value = "";
+      document.getElementById('new-q-a4').value = "";
+      document.getElementById('new-q-correct').value = "0";
+      document.getElementById('btn-save-question').innerText = "บันทึกข้อสอบ ➕";
+      switchQbTab('add');
+    }
+
+    window.prepareEditQuestion = function(id) {
+      const qItem = quizData.find(q => q.id === id);
+      if (!qItem) return;
+
+      document.getElementById('edit-q-id').value = qItem.id;
+      document.getElementById('form-mode-title').innerText = "✏️ แก้ไขข้อสอบข้อที่ " + (quizData.findIndex(q => q.id === id) + 1);
+      document.getElementById('new-q-text').value = qItem.q;
+      document.getElementById('new-q-a1').value = qItem.c[0] || "";
+      document.getElementById('new-q-a2').value = qItem.c[1] || "";
+      document.getElementById('new-q-a3').value = qItem.c[2] || "";
+      document.getElementById('new-q-a4').value = qItem.c[3] || "";
+      document.getElementById('new-q-correct').value = qItem.a;
+      document.getElementById('btn-save-question').innerText = "💾 บันทึกการแก้ไข";
+      switchQbTab('add');
     }
 
     window.renderQuestionBankList = function() {
@@ -1059,13 +1139,17 @@
               `).join('')}
             </div>
           </div>
-          <button onclick="deleteQuestion(${item.id})" class="qb-btn-delete">ลบ</button>
+          <div class="qb-actions">
+            <button onclick="prepareEditQuestion(${item.id})" class="qb-btn-edit">✏️ แก้ไข</button>
+            <button onclick="deleteQuestion(${item.id})" class="qb-btn-delete">ลบ</button>
+          </div>
         `;
         listEl.appendChild(div);
       });
     }
 
-    window.addNewCustomQuestion = function() {
+    window.saveQuestionHandler = function() {
+      const editIdStr = document.getElementById('edit-q-id').value;
       const qText = document.getElementById('new-q-text').value.trim();
       const a1 = document.getElementById('new-q-a1').value.trim();
       const a2 = document.getElementById('new-q-a2').value.trim();
@@ -1077,25 +1161,31 @@
         return alert('กรุณากรอกโจทย์และตัวเลือกให้ครบทั้ง 4 ข้อครับ');
       }
 
-      const newId = quizData.length > 0 ? Math.max(...quizData.map(q => q.id)) + 1 : 1;
-      quizData.push({
-        id: newId,
-        q: qText,
-        c: [a1, a2, a3, a4],
-        a: correctIdx
-      });
-
-      myQuizAnswers[newId] = { correct: false, wrongAttempts: 0 };
-
-      document.getElementById('new-q-text').value = "";
-      document.getElementById('new-q-a1').value = "";
-      document.getElementById('new-q-a2').value = "";
-      document.getElementById('new-q-a3').value = "";
-      document.getElementById('new-q-a4').value = "";
+      if (editIdStr) {
+        // แก้ไขข้อสอบเดิม
+        const editId = parseInt(editIdStr);
+        const qIdx = quizData.findIndex(q => q.id === editId);
+        if (qIdx !== -1) {
+          quizData[qIdx].q = qText;
+          quizData[qIdx].c = [a1, a2, a3, a4];
+          quizData[qIdx].a = correctIdx;
+          showToast('💾 แก้ไขข้อสอบสำเร็จ!');
+        }
+      } else {
+        // เพิ่มข้อสอบใหม่
+        const newId = quizData.length > 0 ? Math.max(...quizData.map(q => q.id)) + 1 : 1;
+        quizData.push({
+          id: newId,
+          q: qText,
+          c: [a1, a2, a3, a4],
+          a: correctIdx
+        });
+        myQuizAnswers[newId] = { correct: false, wrongAttempts: 0 };
+        showToast('➕ บันทึกข้อสอบใหม่สำเร็จ!');
+      }
 
       renderQuestionBankList();
       switchQbTab('view');
-      showToast('➕ บันทึกข้อสอบใหม่สำเร็จ!');
     }
 
     window.deleteQuestion = function(id) {
@@ -1290,9 +1380,7 @@
       });
     };
 
-    document.getElementById('btn-export-excel').onclick = exportDataCSV;
-
-    function exportDataCSV() {
+    window.exportDataCSV = function() {
       const sorted = Object.values(allPlayersData)
         .sort((a,b) => (b.height || 0) - (a.height || 0));
 
@@ -1337,7 +1425,9 @@
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    }
+    };
+
+    document.getElementById('btn-export-excel').onclick = window.exportDataCSV;
 
     document.getElementById('btn-open-quiz').onclick = () => triggerQuizModal(false);
     document.getElementById('btn-close-quiz').onclick = () => {
