@@ -3,1476 +3,959 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Hunter Cyber Mission - Sweet Mario Edition</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Hunter Cyber Mission - Professional Edition</title>
+  
+  <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700;800&family=Kanit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Firebase 8 Compat -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
       user-select: none;
       -webkit-user-select: none;
-      -webkit-touch-callout: none;
-      margin: 0;
-      padding: 0;
-      font-family: 'Kanit', sans-serif;
     }
     html, body {
+      margin: 0;
+      padding: 0;
       width: 100vw;
-      height: 100vh;
       height: 100dvh;
+      min-height: -webkit-fill-available;
       overflow: hidden;
-      background: #bae6fd;
-      color: #0f172a;
-      touch-action: none;
+      background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      position: fixed;
     }
-    .game-font { font-family: 'Fredoka', 'Kanit', sans-serif; }
-
-    /* Bento Grid Glassmorphism */
-    .bento-card {
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 3px solid #ffffff;
-      border-radius: 32px;
-      box-shadow: 0 20px 45px rgba(255, 77, 109, 0.22), inset 0 2px 0 rgba(255, 255, 255, 0.9);
-    }
-    .bento-box {
-      background: rgba(255, 245, 247, 0.9);
-      border: 2px solid #ffccd5;
-      border-radius: 20px;
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .bento-box:focus-within {
-      background: #ffffff;
-      border-color: #ff4d6d;
-      transform: scale(1.02);
-      box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.2);
-    }
-
-    /* ปุ่มกดเมนู 3D */
-    .btn-sweet-pink {
-      background: linear-gradient(180deg, #ff758f 0%, #ff4d6d 100%);
-      box-shadow: 0 6px 0 #c9184a, 0 10px 20px rgba(255, 77, 109, 0.35);
-      color: white;
-      transition: all 0.1s ease;
-      cursor: pointer;
-    }
-    .btn-sweet-pink:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #c9184a;
-    }
-
-    .btn-sweet-green {
-      background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
-      box-shadow: 0 6px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.35);
-      color: white;
-      transition: all 0.1s ease;
-      cursor: pointer;
-    }
-    .btn-sweet-green:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #047857;
-    }
-
-    .btn-sweet-sky {
-      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
-      box-shadow: 0 6px 0 #0369a1, 0 10px 20px rgba(2, 132, 199, 0.35);
-      color: white;
-      transition: all 0.1s ease;
-      cursor: pointer;
-    }
-    .btn-sweet-sky:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #0369a1;
-    }
-
-    .stat-badge {
-      background: rgba(255, 255, 255, 0.95);
-      border: 2px solid #ffffff;
-      box-shadow: 0 4px 12px rgba(255, 77, 109, 0.15);
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-weight: 800;
-    }
-
-    /* ปุ่มควบคุมบนมือถือ Cyber-Joypad */
-    .touch-dpad-container {
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 2.5px solid rgba(255, 255, 255, 0.95);
-      border-radius: 36px;
-      padding: 6px;
-      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.2);
-      display: flex;
-      gap: 10px;
-    }
-    .touch-btn-arrow {
-      width: 66px;
-      height: 66px;
-      border-radius: 26px;
-      background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
-      border: 2px solid #bae6fd;
-      color: #0284c7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      font-weight: 900;
-      box-shadow: 0 5px 0 #7dd3fc, 0 8px 16px rgba(2, 132, 199, 0.15);
-      transition: all 0.08s ease;
-      cursor: pointer;
-    }
-    .touch-btn-arrow.active {
-      transform: translateY(4px);
-      box-shadow: 0 1px 0 #7dd3fc;
-      background: #e0f2fe;
-      color: #0369a1;
-    }
-
-    .touch-btn-jump {
-      width: 82px;
-      height: 82px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
-      border: 4px solid #ffffff;
-      color: #ffffff;
+    body {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 0 #047857, 0 14px 28px rgba(16, 185, 129, 0.4);
-      transition: all 0.08s ease;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.96);
+      border: 2px solid rgba(255, 117, 143, 0.4);
+      border-radius: 28px;
+      padding: 24px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 117, 143, 0.2);
+      backdrop-filter: blur(20px);
+      max-height: 90dvh;
+      overflow-y: auto;
+      z-index: 100;
+      position: relative;
+      color: #0f172a;
+    }
+    h1 {
+      color: #e01e37;
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+    }
+    h2 {
+      color: #e01e37;
+      font-weight: 800;
+      margin: 10px 0;
+    }
+    .btn {
+      background: linear-gradient(135deg, #ff758f 0%, #ff4d6d 100%);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 800;
       cursor: pointer;
+      width: 100%;
+      margin: 8px 0;
+      box-shadow: 0 6px 18px rgba(255, 77, 109, 0.35);
+      display: block;
+      transition: all 0.15s ease;
+    }
+    .btn:active { transform: scale(0.98); filter: brightness(0.95); }
+    .btn-sweet-green {
+      background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+      transition: all 0.15s ease;
+    }
+    .btn-sweet-green:active { transform: scale(0.98); }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1.5px solid #cbd5e1;
+      box-shadow: none;
+    }
+    .btn-secondary:active { background: #e2e8f0; }
+
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      margin: 6px 0 12px 0;
+      border-radius: 14px;
+      border: 2px solid #ffccd5;
+      background: #fff5f7;
+      color: #0f172a;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      outline: none;
+      user-select: auto;
+      -webkit-user-select: auto;
+      transition: all 0.2s;
+    }
+    input:focus {
+      border-color: #ff4d6d;
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.15);
+    }
+    .pin-display {
+      font-size: 38px;
+      letter-spacing: 6px;
+      font-weight: 900;
+      color: #e01e37;
+      background: #ffe4e6;
+      padding: 8px;
+      border-radius: 16px;
+      margin: 10px 0;
+      border: 2px dashed #ff758f;
+    }
+    .qr-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #fff;
+      padding: 12px;
+      border-radius: 18px;
+      width: fit-content;
+      margin: 10px auto;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+      border: 1px solid #ffe4e6;
+    }
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin: 10px 0;
+      max-height: 140px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .badge-item {
+      background: #ffe4e6;
+      border: 1px solid #ff758f;
+      padding: 6px 10px 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #9f1239;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge-kick {
+      cursor: pointer;
+      background: #ff4d6d;
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .hidden { display: none !important; }
+
+    /* Teacher Realtime Dashboard */
+    #view-host-live {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100dvh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      overflow: hidden;
+    }
+    .host-header-card {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .host-table-wrapper {
+      margin-top: 14px;
+      flex: 1;
+      overflow-y: auto;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 12px;
+    }
+    table.host-table {
+      width: 100%;
+      border-collapse: collapse;
+      color: white;
+      text-align: left;
+      font-size: 14px;
+    }
+    table.host-table th {
+      padding: 10px;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+      color: #94a3b8;
+    }
+    table.host-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* Game Canvas Screen */
+    #game-wrapper {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100dvh;
+      background: #e0f2fe;
+      overflow: hidden;
+      z-index: 50;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .game-top-bar {
+      position: absolute;
+      top: env(safe-area-inset-top, 12px);
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      z-index: 70;
+      pointer-events: none;
+    }
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1.5px solid rgba(255, 117, 143, 0.4);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 800;
+      font-size: 14px;
+      color: #0f172a;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      white-space: nowrap;
+    }
+
+    /* Controls Bar & Professional SVG Icons */
+    .controls-bar {
+      position: absolute;
+      bottom: max(env(safe-area-inset-bottom), 18px);
+      left: 18px;
+      right: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 80;
+      pointer-events: none;
+    }
+    .touch-dpad-container {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+      border-radius: 28px;
+      padding: 8px;
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
+      display: flex;
+      gap: 10px;
+      pointer-events: auto;
+    }
+    .touch-btn-arrow {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+      border: 1.5px solid #bae6fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 0 #7dd3fc, 0 8px 16px rgba(2, 132, 199, 0.15);
+      cursor: pointer;
+      touch-action: none;
+      transition: all 0.08s ease;
+    }
+    .touch-btn-arrow svg {
+      width: 28px;
+      height: 28px;
+      fill: #0284c7;
+      transition: transform 0.08s ease;
+    }
+    .touch-btn-arrow.active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #7dd3fc;
+      background: #e0f2fe;
+    }
+    .action-pad {
+      pointer-events: auto;
+    }
+    .touch-btn-jump {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+      border: 3.5px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 0 #047857, 0 12px 24px rgba(16, 185, 129, 0.35);
+      cursor: pointer;
+      touch-action: none;
+      transition: all 0.08s ease;
+    }
+    .touch-btn-jump svg {
+      width: 34px;
+      height: 34px;
+      fill: #ffffff;
     }
     .touch-btn-jump.active {
-      transform: translateY(5px);
-      box-shadow: 0 3px 0 #047857;
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #047857;
       background: #059669;
     }
 
-    @keyframes jellyBounce {
-      0%, 100% { transform: scale(1, 1); }
-      30% { transform: scale(1.12, 0.88); }
-      50% { transform: scale(0.92, 1.08); }
-      70% { transform: scale(1.04, 0.96); }
+    #toast-msg {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.95);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      z-index: 300;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
     }
-    .jelly-anim { animation: jellyBounce 2.5s infinite; }
-
-    @keyframes softFloat {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-8px) rotate(2deg); }
+    #toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(10px);
     }
-    .float-anim { animation: softFloat 3s ease-in-out infinite; }
   </style>
 </head>
-<body class="w-screen h-screen flex justify-center items-center relative overflow-hidden bg-gradient-to-b from-[#bae6fd] via-[#e0f2fe] to-[#ffe4e6]">
+<body>
 
-  <button id="btn-audio-toggle" onclick="toggleAudio()" class="fixed top-3 right-3 z-50 p-2.5 bg-white/90 border-2 border-pink-300 rounded-2xl shadow-md text-lg cursor-pointer active:scale-95 transition-all">
-    🔊
-  </button>
+  <!-- Toast Notification -->
+  <div id="toast-msg">แจ้งเตือน</div>
 
-  <div class="absolute -top-24 -left-24 w-80 h-80 bg-pink-300/40 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-24 -right-24 w-80 h-80 bg-sky-300/40 rounded-full blur-3xl pointer-events-none"></div>
-
-  <div id="view-mode" class="bento-card p-8 w-full max-w-sm text-center z-50 m-4">
-    <div class="inline-block p-4 bg-gradient-to-tr from-pink-400 to-rose-300 rounded-3xl mb-3 shadow-lg shadow-pink-400/30 text-4xl float-anim border-4 border-white">
-      🧁✨
-    </div>
-    <h1 class="game-font text-3xl font-black text-rose-600 mb-1">WORD JUMP!</h1>
-    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">Sweet Cyber Playground</p>
-
-    <div class="space-y-3">
-      <button onclick="goToHostSetup()" class="btn-sweet-pink w-full py-3.5 rounded-2xl font-black text-base tracking-wide flex items-center justify-center gap-2">
-        <span class="text-lg">👑</span> คุณครู / โฮสต์ (สร้างห้อง)
-      </button>
-      <button onclick="goToJoinScreen()" class="btn-sweet-sky w-full py-3.5 rounded-2xl font-black text-base tracking-wide flex items-center justify-center gap-2">
-        <span class="text-lg">🎮</span> นักเรียน (เข้าเล่นเกม)
-      </button>
-    </div>
+  <!-- Screen 1: Role Selection -->
+  <div id="view-role" class="container">
+    <h1>CYBER MISSION</h1>
+    <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">เกมตอบคำถามกระโดดตะลุยความสูง</p>
+    <button class="btn" onclick="showTeacherConfig()">ครูผู้จัดห้อง (Host Teacher)</button>
+    <button class="btn btn-secondary" onclick="showStudentLogin()">นักเรียนเข้าร่วม (Student)</button>
   </div>
 
-  <div id="view-host" class="bento-card p-6 w-full max-w-md text-center z-50 m-4 hidden">
-    <h2 class="text-xl font-black text-rose-600 mb-1">ห้องควบคุมการแข่งขัน</h2>
-    <p class="text-xs font-bold text-slate-400 mb-2">รหัสห้องสำหรับผู้เรียน (PIN Code):</p>
-    <div id="host-pin-display" class="game-font text-3xl tracking-widest font-black text-rose-600 bg-pink-100/80 border-2 border-dashed border-pink-400 py-2 rounded-2xl mb-3">------</div>
-
-    <div class="flex flex-col items-center bg-white p-3 rounded-2xl border border-pink-200 shadow-sm w-fit mx-auto mb-3">
-      <div id="qrcode-box"></div>
-      <span class="text-[11px] font-bold text-rose-500 mt-1">สแกน QR เพื่อเข้าเล่นทันที</span>
-    </div>
-
-    <div class="grid grid-cols-2 gap-2 text-left mb-3">
-      <div class="bento-box p-2.5">
-        <label class="text-[11px] font-bold text-slate-400 block mb-1">เวลาแข่งขัน</label>
-        <select id="select-duration" class="w-full bg-transparent font-bold text-xs text-rose-600 outline-none cursor-pointer">
-          <option value="60">1 นาที (ทดสอบ)</option>
-          <option value="180" selected>3 นาที</option>
-          <option value="300">5 นาที</option>
-          <option value="600">10 นาที</option>
-        </select>
-      </div>
-      <div class="bento-box p-2.5">
-        <label class="text-[11px] font-bold text-slate-400 block mb-1">พลังงานเริ่มต้น</label>
-        <input id="input-host-energy" type="number" min="1" max="50" value="5" class="w-full bg-transparent font-black text-xs text-amber-500 outline-none text-center">
-      </div>
-    </div>
-
-    <p class="text-xs font-bold text-slate-500 mb-2">ผู้เรียนในห้อง: <span id="player-count" class="text-emerald-500 font-black">0</span> คน</p>
-    <div id="host-player-badges" class="flex flex-wrap gap-1.5 justify-center max-h-20 overflow-y-auto mb-3"></div>
-
-    <div class="flex gap-2">
-      <button onclick="location.reload()" class="w-1/3 py-3 bg-slate-100 border border-slate-200 text-slate-600 rounded-2xl font-bold text-xs cursor-pointer hover:bg-slate-200">ย้อนกลับ</button>
-      <button id="btn-host-start" onclick="hostStartMatch()" class="btn-sweet-green w-2/3 py-3 rounded-2xl font-black text-sm">🚀 เริ่มการแข่งขัน</button>
-    </div>
+  <!-- Screen 2: Firebase Configuration (Host Setup) -->
+  <div id="view-db-config" class="container hidden">
+    <h2>ตั้งค่า Firebase Database</h2>
+    <p style="font-size: 13px; color: #64748b;">กรอก Firebase Config สำหรับใช้งาน Realtime</p>
+    <input type="text" id="fb-apiKey" placeholder="apiKey">
+    <input type="text" id="fb-authDomain" placeholder="authDomain">
+    <input type="text" id="fb-databaseURL" placeholder="databaseURL (https://...firebaseio.com)">
+    <input type="text" id="fb-projectId" placeholder="projectId">
+    <button class="btn btn-sweet-green" onclick="saveDbConfigAndProceed()">บันทึกและสร้างห้อง</button>
+    <button class="btn btn-secondary" onclick="backToRole()">ย้อนกลับ</button>
   </div>
 
-  <div id="view-join" class="bento-card p-7 w-full max-w-sm text-center z-50 m-4 hidden">
-    <h2 class="text-xl font-black text-sky-600 mb-4">เข้าสู่ห้องแข่งขัน</h2>
-    <div class="space-y-3 text-left">
-      <div class="bento-box p-3">
-        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">รหัสห้อง 6 หลัก</label>
-        <input id="input-join-pin" type="text" placeholder="เช่น 123456" maxlength="6" inputmode="numeric" class="w-full bg-transparent font-black tracking-widest text-sky-600 text-center text-lg outline-none">
-      </div>
-      <div class="bento-box p-3">
-        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">ชื่อเล่นของคุณ</label>
-        <input id="input-join-name" type="text" placeholder="ระบุชื่อ..." value="นักเรียน" maxlength="12" class="w-full bg-transparent font-bold text-slate-700 text-center text-base outline-none">
-      </div>
-      <button onclick="joinGameRoom()" class="btn-sweet-sky w-full py-3.5 rounded-2xl font-black text-base mt-2">เข้าห้อง 🚀</button>
-      <button onclick="location.reload()" class="w-full py-2.5 bg-slate-100 text-slate-500 rounded-xl font-bold text-xs cursor-pointer hover:bg-slate-200">ย้อนกลับ</button>
+  <!-- Screen 3: Teacher Lobby (Waiting Room) -->
+  <div id="view-teacher-lobby" class="container hidden">
+    <h1>ห้องควบคุมเกม (ครู)</h1>
+    <div style="font-size: 13px; color: #64748b; margin-top: 4px;">แชร์ PIN หรือ QR Code ให้นักเรียน</div>
+    <div id="display-room-pin" class="pin-display">------</div>
+    <div class="qr-container" id="qrcode"></div>
+    <div style="font-weight: 800; font-size: 14px; margin-top: 10px;">
+      ผู้เล่นที่เข้าร่วม (<span id="player-count">0</span> คน):
     </div>
+    <div class="badge-list" id="player-badge-list"></div>
+    <button class="btn btn-sweet-green" onclick="teacherStartGame()">เริ่มการแข่งขัน (Start Game)</button>
   </div>
 
-  <div id="view-waiting" class="bento-card p-8 w-full max-w-sm text-center z-50 m-4 hidden">
-    <div class="text-4xl float-anim mb-3">⏳</div>
-    <h2 class="text-xl font-black text-rose-600 mb-1">เตรียมพร้อมแล้ว!</h2>
-    <p class="text-xs font-bold text-slate-400">ห้อง PIN: <span id="wait-pin-label" class="text-rose-600 font-black">------</span></p>
-    <p class="text-xs font-bold text-slate-400 mb-5">ผู้เล่น: <span id="wait-name-label" class="text-emerald-500 font-black">นักเรียน</span></p>
-
-    <div class="p-3 bg-amber-50 border border-amber-200 rounded-2xl text-xs font-bold text-amber-700 mb-4">
-      รอคุณครูกดปล่อยตัว... หรือกดเริ่มซ้อมกระโดดได้ทันที!
-    </div>
-
-    <button onclick="forceStartSinglePlay()" class="btn-sweet-green w-full py-3.5 rounded-2xl font-black text-sm">
-      ▶ เริ่มกระโดดซ้อมทันที
-    </button>
-  </div>
-
-  <div id="view-host-live" class="hidden w-full h-full bg-slate-900 text-white flex flex-col p-4 sm:p-6 overflow-hidden z-40">
-    <div class="bento-card !bg-slate-800/95 !border-slate-700 p-4 rounded-3xl flex flex-wrap justify-between items-center gap-3 shadow-xl">
-      <div class="flex items-center gap-3">
-        <button onclick="location.reload()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-2xl font-bold text-xs transition-all cursor-pointer">🔙 ออกจากห้อง</button>
-        <div>
-          <h2 class="text-lg font-black text-rose-400 mb-0">👑 HOST MONITOR</h2>
-          <p class="text-xs text-slate-400">ห้อง: <span id="live-room-pin" class="font-bold text-rose-300">------</span> | ออนไลน์: <span id="live-player-count" class="font-bold text-emerald-400">0</span> คน</p>
-        </div>
+  <!-- Screen 4: Teacher Live Monitor & End Results -->
+  <div id="view-host-live" class="hidden">
+    <div class="host-header-card">
+      <div>
+        <div style="font-size: 12px; color: #94a3b8; font-weight: 700;">ROOM PIN</div>
+        <div style="font-size: 24px; font-weight: 900; color: #38bdf8;" id="live-pin-text">------</div>
       </div>
-      <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="openQuestionBankModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 shadow-md">
-          <span>📝</span> จัดการคำถาม (<span id="total-q-count">20</span> ข้อ)
-        </button>
-        <div class="bg-black/50 border border-white/20 px-4 py-1.5 rounded-2xl font-mono text-xl text-yellow-300 font-black">
-          ⏱️ <span id="host-timer-text">03:00</span>
-        </div>
-        <button onclick="exportDataCSV()" class="btn-sweet-green !w-auto !py-2 !px-4 !my-0 text-xs font-black">📥 Export รายงาน Excel</button>
+      <div>
+        <span id="live-status-pill" style="background:#0284c7; padding:6px 14px; border-radius:12px; font-weight:800; font-size:13px;">กำลังแข่งขัน</span>
+      </div>
+      <div>
+        <button class="btn btn-sweet-green" style="margin:0; padding:10px 18px; width:auto; font-size:13px;" onclick="teacherRestartMatch()">🔄 เล่นใหม่อีกครั้ง (Reset)</button>
       </div>
     </div>
-
-    <div class="mt-3 bg-gradient-to-r from-amber-500/20 via-yellow-500/10 to-transparent border border-amber-500/40 p-3 rounded-2xl flex items-center justify-between shadow-sm">
-      <div class="flex items-center gap-2.5">
-        <span class="text-2xl animate-bounce">👑</span>
-        <div>
-          <div class="text-[11px] text-amber-300 font-bold uppercase">ผู้นำอันดับ 1 ตอนนี้</div>
-          <div id="leader-name" class="text-sm sm:text-base font-bold text-white">รอเริ่มกระโดด...</div>
-        </div>
-      </div>
-      <div class="text-right">
-        <div class="text-[11px] text-amber-300 font-bold uppercase">ระยะทางนำ</div>
-        <div id="leader-meters" class="text-lg sm:text-xl font-black text-yellow-400 font-mono">0 m</div>
-      </div>
-    </div>
-
-    <div class="mt-3 flex-1 overflow-auto bg-slate-800/80 border border-slate-700 rounded-3xl p-3 sm:p-4">
-      <table class="w-full text-left border-collapse text-xs sm:text-sm">
+    <div class="host-table-wrapper">
+      <table class="host-table">
         <thead>
-          <tr class="border-b border-slate-700 text-slate-400">
-            <th class="p-2.5">อันดับ</th>
-            <th class="p-2.5">ชื่อผู้เรียน</th>
-            <th class="p-2.5 text-center">ความสูง (m)</th>
-            <th class="p-2.5 text-center">ตอบถูก</th>
-            <th class="p-2.5 text-center">ตอบผิด</th>
-            <th class="p-2.5 text-center">ความแม่นยำ</th>
-            <th class="p-2.5 text-center">พลังงาน</th>
+          <tr>
+            <th>อันดับ</th>
+            <th>ชื่อผู้เล่น</th>
+            <th>ความสูงปัจจุบัน (ม.)</th>
+            <th>คำถามที่ตอบ</th>
           </tr>
         </thead>
-        <tbody id="host-live-table" class="divide-y divide-slate-700/50"></tbody>
+        <tbody id="host-leaderboard-body"></tbody>
       </table>
     </div>
   </div>
 
-  <div id="questionBankModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center z-50 p-4">
-    <div class="bento-card max-w-3xl w-full p-6 text-slate-800 max-h-[90vh] flex flex-col shadow-2xl">
-      <div class="flex justify-between items-center border-b pb-3 mb-3">
-        <div>
-          <h2 class="text-lg font-black text-rose-600 flex items-center gap-2">
-            <span>📝</span> คลังข้อสอบ & เพิ่มคำถามใหม่
-          </h2>
-          <p class="text-xs text-slate-500">คุณครูสามารถตรวจสอบคำถาม หรือพิมพ์เพิ่มข้อใหม่ได้ทันที</p>
-        </div>
-        <button onclick="closeQuestionBankModal()" class="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 rounded-xl text-xs font-bold transition-all">✕ ปิด</button>
-      </div>
-
-      <div class="bg-pink-50/90 border-2 border-pink-200 p-3.5 rounded-2xl mb-4 text-xs">
-        <div class="font-bold text-rose-600 mb-2 flex items-center gap-1.5">
-          <span>➕</span> เพิ่มคำถามใหม่เข้าไปในเกม:
-        </div>
-        <div class="space-y-2">
-          <input id="new-q-text" type="text" placeholder="พิมพ์โจทย์คำถาม..." class="w-full p-2 rounded-xl border border-pink-300 bg-white font-semibold text-slate-800 outline-none">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input id="new-q-a1" type="text" placeholder="ตัวเลือก 1" class="p-2 rounded-xl border border-pink-200 bg-white outline-none">
-            <input id="new-q-a2" type="text" placeholder="ตัวเลือก 2" class="p-2 rounded-xl border border-pink-200 bg-white outline-none">
-            <input id="new-q-a3" type="text" placeholder="ตัวเลือก 3" class="p-2 rounded-xl border border-pink-200 bg-white outline-none">
-            <input id="new-q-a4" type="text" placeholder="ตัวเลือก 4" class="p-2 rounded-xl border border-pink-200 bg-white outline-none">
-          </div>
-          <div class="flex items-center justify-between pt-1 gap-2">
-            <div class="flex items-center gap-1.5 font-bold text-slate-600">
-              <span>เฉลยข้อที่ถูก:</span>
-              <select id="new-q-correct" class="p-1.5 rounded-lg border border-pink-300 bg-white font-bold text-rose-600">
-                <option value="0">ตัวเลือก 1</option>
-                <option value="1">ตัวเลือก 2</option>
-                <option value="2">ตัวเลือก 3</option>
-                <option value="3">ตัวเลือก 4</option>
-              </select>
-            </div>
-            <button onclick="addNewCustomQuestion()" class="btn-sweet-green !w-auto !py-2 !px-5 rounded-xl font-bold text-xs shadow-md">
-              บันทึกข้อสอบ ➕
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="font-bold text-slate-700 text-xs mb-1.5">รายการคำถามทั้งหมดในเกม:</div>
-      <div id="questionBankList" class="flex-1 overflow-y-auto space-y-2.5 pr-1.5 text-xs"></div>
-    </div>
+  <!-- Screen 5: Student Login -->
+  <div id="view-student-login" class="container hidden">
+    <h1>เข้าร่วมการแข่งขัน</h1>
+    <input type="number" id="stu-pin" placeholder="ใส่รหัสห้อง 6 หลัก" inputmode="numeric">
+    <input type="text" id="stu-name" placeholder="ตั้งชื่อเล่นของคุณ" maxlength="15">
+    <button class="btn btn-sweet-green" onclick="studentJoinGame()">เข้าห้องแข่งขัน</button>
+    <button class="btn btn-secondary" onclick="backToRole()">ย้อนกลับ</button>
   </div>
 
-  <div id="game-wrapper" class="hidden relative w-full h-full max-w-[1200px] max-h-[950px] overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border-4 border-white shadow-2xl bg-[#bae6fd]">
-    <canvas id="gameCanvas" class="w-full h-full block"></canvas>
+  <!-- Screen 6: Student Lobby (Waiting) -->
+  <div id="view-student-waiting" class="container hidden">
+    <h2>รอคุณครูเริ่มเกม...</h2>
+    <p style="font-size: 14px; color: #64748b;">เชื่อมต่อสำเร็จแล้ว เตรียมพร้อมลุย!</p>
+    <div id="waiting-student-name" style="font-size: 20px; font-weight: 900; color: #e01e37; margin: 16px 0;">-</div>
+    <div style="font-size: 12px; color: #94a3b8;">เกมจะเริ่มอัตโนมัติเมื่อครูกด Start</div>
+  </div>
 
-    <div class="absolute top-3 left-3 right-3 flex justify-between items-center pointer-events-none z-20">
-      <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 pointer-events-auto">
-        <div class="stat-badge text-xs sm:text-sm">🏠 <span id="hud-room-pin" class="text-rose-500 font-black">WORD1</span></div>
-        <div class="stat-badge text-xs sm:text-sm text-rose-500">⏱️ <span id="hud-timer" class="font-mono font-black">03:00</span></div>
-        <div class="stat-badge text-xs sm:text-sm text-amber-500">⚡ <span id="hud-energy" class="font-black">5</span></div>
-        <div class="stat-badge text-xs sm:text-sm text-sky-600">🎯 <span id="hud-height" class="font-black font-mono">0</span> m</div>
-      </div>
-      <div class="stat-badge text-xs sm:text-sm text-slate-600 pointer-events-auto">
-        👥 <span id="hud-player-count" class="font-black text-rose-500">1</span> คน
-      </div>
+  <!-- Screen 7: Active Gameplay Screen (Students) -->
+  <div id="game-wrapper" class="hidden">
+    <div class="game-top-bar">
+      <div class="stat-pill">ความสูง: <span id="ui-height" style="color:#0284c7;">0</span> ม.</div>
+      <div class="stat-pill">ห้อง: <span id="ui-pin">------</span></div>
     </div>
+    <canvas id="gameCanvas"></canvas>
 
-    <button onclick="openQuizModal()" class="btn-sweet-pink !w-auto !py-2.5 !px-5 rounded-2xl absolute bottom-32 right-4 z-20 font-black text-xs sm:text-sm shadow-xl jelly-anim flex items-center gap-1.5 pointer-events-auto">
-      <span class="text-base">⚡</span> เติมพลัง!
-    </button>
-
-    <div class="absolute bottom-5 left-4 right-4 max-w-[650px] mx-auto flex justify-between items-center z-30 pointer-events-none" style="padding-bottom: env(safe-area-inset-bottom, 8px);">
-      <div class="touch-dpad-container pointer-events-auto">
-        <div id="btnLeft" class="touch-btn-arrow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+    <div class="controls-bar">
+      <div class="touch-dpad-container">
+        <!-- Arrow Left SVG -->
+        <div class="touch-btn-arrow" id="btn-left">
+          <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
         </div>
-        <div id="btnRight" class="touch-btn-arrow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-        </div>
-      </div>
-
-      <div class="pointer-events-auto">
-        <div id="btnJump" class="touch-btn-jump">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 fill-current mb-0.5" viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
-          <span class="text-[10px] font-black tracking-wider uppercase leading-none">JUMP</span>
+        <!-- Arrow Right SVG -->
+        <div class="touch-btn-arrow" id="btn-right">
+          <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </div>
       </div>
-    </div>
-
-    <div id="quiz-modal" class="hidden absolute inset-0 bg-slate-900/45 backdrop-blur-sm flex items-center justify-center z-40 p-4">
-      <div class="bento-card max-w-sm w-full p-6 text-slate-800">
-        <div class="flex justify-between items-center mb-2">
-          <span class="text-xs font-bold px-3 py-0.5 rounded-full border border-pink-200 bg-pink-50 text-rose-600">คำถามง่ายๆ รับพลัง ⚡</span>
-          <span class="text-xs font-bold text-emerald-600">+5 Energy</span>
+      <div class="action-pad">
+        <!-- Jump Arrow Up SVG -->
+        <div class="touch-btn-jump" id="btn-jump">
+          <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
         </div>
-        <h2 id="quiz-question-text" class="text-base font-black text-slate-800 mb-3 leading-snug">คำถาม...</h2>
-        <div id="quiz-options-box" class="space-y-2"></div>
-      </div>
-    </div>
-
-    <div id="gameOverModal" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div class="bento-card max-w-md w-full p-6 text-slate-800 text-center">
-        <h2 class="game-font font-black text-2xl text-rose-600 mb-1">🏁 สรุปผลการแข่งขัน</h2>
-        <p class="text-xs font-semibold text-slate-400 mb-4">จัดอันดับตามระยะทางความสูงจริงที่ทำได้</p>
-        <div id="summaryRows" class="space-y-2 mb-4 max-h-60 overflow-y-auto px-1"></div>
-        <button onclick="location.reload()" class="btn-sweet-pink w-full py-3.5 rounded-2xl font-black">ออกจากห้อง / เล่นใหม่</button>
       </div>
     </div>
   </div>
 
   <script>
-    // ================= SOUND & BGM SYNTHESIZER =================
-    let audioCtx = null;
-    let isAudioMuted = false;
-    let bgmInterval = null;
+    /* State Management */
+    let currentRole = null; // 'teacher' | 'student'
+    let currentRoomPin = null;
+    let myPlayerId = null;
+    let myPlayerName = '';
+    let db = null;
+    let roomRef = null;
+    let animationFrameId = null;
 
-    function initAudio() {
-      if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+    /* Local Storage Helper for Config */
+    const DEFAULT_CONFIG_KEY = "CYBER_MISSION_FIREBASE_CONFIG";
+
+    function showToast(msg) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
     }
 
-    function toggleAudio() {
-      initAudio();
-      isAudioMuted = !isAudioMuted;
-      document.getElementById('btn-audio-toggle').innerText = isAudioMuted ? '🔇' : '🔊';
-      if (isAudioMuted) stopBGM();
-      else startBGM();
-    }
-
-    function playJumpSound() {
-      if (isAudioMuted) return;
-      initAudio();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(260, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(750, audioCtx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.15);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.15);
-    }
-
-    function playCorrectSound() {
-      if (isAudioMuted) return;
-      initAudio();
-      const notes = [523.25, 659.25, 783.99, 1046.50];
-      notes.forEach((freq, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.value = freq;
-        const startTime = audioCtx.currentTime + idx * 0.08;
-        gain.gain.setValueAtTime(0.2, startTime);
-        gain.gain.linearRampToValueAtTime(0, startTime + 0.25);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(startTime);
-        osc.stop(startTime + 0.25);
-      });
-    }
-
-    function playWrongSound() {
-      if (isAudioMuted) return;
-      initAudio();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.25);
-      gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.25);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.25);
-    }
-
-    const bgmNotes = [
-      261.63, 329.63, 392.00, 329.63,
-      293.66, 369.99, 440.00, 369.99,
-      329.63, 392.00, 493.88, 392.00,
-      349.23, 440.00, 523.25, 392.00
-    ];
-    let bgmStep = 0;
-
-    function startBGM() {
-      if (bgmInterval || isAudioMuted) return;
-      initAudio();
-      bgmInterval = setInterval(() => {
-        if (isAudioMuted) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.value = bgmNotes[bgmStep % bgmNotes.length];
-        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.22);
-        bgmStep++;
-      }, 240);
-    }
-
-    function stopBGM() {
-      if (bgmInterval) {
-        clearInterval(bgmInterval);
-        bgmInterval = null;
-      }
-    }
-
-    window.addEventListener('click', () => {
-      initAudio();
-      if (!isAudioMuted && !bgmInterval) startBGM();
-    }, { once: true });
-    window.addEventListener('touchstart', () => {
-      initAudio();
-      if (!isAudioMuted && !bgmInterval) startBGM();
-    }, { once: true });
-
-    // ================= 1. คลังข้อสอบเริ่มต้น 20 ข้อ =================
-    let WORD_QUIZ = [
-      { id: 1, q: "ต้องการ 'คัดลอก' (Copy) ข้อความ ต้องกดปุ่มใด?", a: ["Ctrl + C", "Ctrl + V", "Ctrl + X", "Ctrl + Z"], c: 0 },
-      { id: 2, q: "ต้องการ 'วาง' (Paste) ข้อความที่คัดลอกไว้ กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + V", "Ctrl + S", "Ctrl + C"], c: 1 },
-      { id: 3, q: "ต้องการ 'บันทึกเอกสาร' (Save) กดปุ่มใด?", a: ["Ctrl + S", "Ctrl + O", "Ctrl + N", "Ctrl + A"], c: 0 },
-      { id: 4, q: "ต้องการทำตัวอักษรเป็น 'ตัวหนา' ต้องกดไอคอนสัญลักษณ์ใด?", a: ["ตัว B", "ตัว I", "ตัว U", "ตัว A"], c: 0 },
-      { id: 5, q: "ต้องการทำตัวอักษรเป็น 'ตัวเอียง' ต้องกดไอคอนใด?", a: ["ตัว B", "ตัว I (Italic)", "ตัว U", "รูปถังสี"], c: 1 },
-      { id: 6, q: "ต้องการ 'ขีดเส้นใต้' ข้อความ ต้องกดไอคอนใด?", a: ["ตัว U (Underline)", "ตัว B", "ตัว I", "รูปกรรไกร"], c: 0 },
-      { id: 7, q: "หากพิมพ์ผิด แล้วต้องการ 'ยกเลิกคำสั่งล่าสุด' (Undo) กดปุ่มใด?", a: ["Ctrl + Z", "Ctrl + Y", "Ctrl + X", "Ctrl + F"], c: 0 },
-      { id: 8, q: "ปุ่มใดบนแป้นพิมพ์ ใช้สำหรับ 'ขึ้นบรรทัดใหม่'?", a: ["Enter", "Spacebar", "Shift", "Backspace"], c: 0 },
-      { id: 9, q: "ปุ่มยาวๆ บนแป้นพิมพ์ ใช้สำหรับ 'เคาะเว้นวรรค' คือปุ่มใด?", a: ["Spacebar", "Enter", "Tab", "Delete"], c: 0 },
-      { id: 10, q: "ต้องการ 'ลบตัวอักษร' ที่อยู่ข้างหน้าเคอร์เซอร์ ต้องกดปุ่มใด?", a: ["Backspace", "Enter", "Shift", "Alt"], c: 0 },
-      { id: 11, q: "ต้องการ 'พิมพ์เอกสารออกทางเครื่องพิมพ์' (Print) กดปุ่มใด?", a: ["Ctrl + P", "Ctrl + S", "Ctrl + C", "Ctrl + E"], c: 0 },
-      { id: 12, q: "ต้องการเลือกคลุมข้อความ 'ทั้งหมดทั้งหน้า' (Select All) กดปุ่มใด?", a: ["Ctrl + A", "Ctrl + S", "Ctrl + D", "Ctrl + W"], c: 0 },
-      { id: 13, q: "ไอคอนรูป 'กรรไกร' ใน Microsoft Word ใช้ทำอะไร?", a: ["ตัดข้อความ (Cut)", "คัดลอก (Copy)", "วาง (Paste)", "พิมพ์เอกสาร"], c: 0 },
-      { id: 14, q: "ต้องการเปลี่ยน 'สีตัวอักษร' ต้องมองหาไอคอนรูปใด?", a: ["รูปตัว A มีแถบสีข้างล่าง", "รูปตัว B", "รูปยางลบ", "รูปดินสอ"], c: 0 },
-      { id: 15, q: "การใส่ 'รูปภาพ' ลงในเอกสาร ต้องไปที่เมนูใด?", a: ["แทรก (Insert)", "หน้าแรก (Home)", "มุมมอง (View)", "แฟ้ม (File)"], c: 0 },
-      { id: 16, q: "ต้องการสร้าง 'เอกสารเปล่าแผ่นใหม่' ทันที กดปุ่มใด?", a: ["Ctrl + N (New)", "Ctrl + O", "Ctrl + S", "Ctrl + P"], c: 0 },
-      { id: 17, q: "การจัดข้อความให้อยู่ 'กึ่งกลางหน้ากระดาษ' ใช้ปุ่มใด?", a: ["Ctrl + E (Center)", "Ctrl + L", "Ctrl + R", "Ctrl + J"], c: 0 },
-      { id: 18, q: "โปรแกรม Microsoft Word เหมาะสำหรับงานประเภทใดมากที่สุด?", a: ["พิมพ์งานเอกสาร / รายงาน", "ตัดต่อวิดีโอ", "แต่งรูปถ่าย", "เขียนโปรแกรม"], c: 0 },
-      { id: 19, q: "ไอคอนสัญลักษณ์ 'แผ่นดิสก์' สีฟ้าในโปรแกรม Word ใช้ทำอะไร?", a: ["บันทึกข้อมูล (Save)", "ปิดโปรแกรม", "เปิดไฟล์ใหม่", "พิมพ์งาน"], c: 0 },
-      { id: 20, q: "ถ้าต้องการซูมเข้า-ออก หน้ากระดาษ ให้ดูที่มุมใดของจอ?", a: ["มุมล่างขวา (แถบเปอร์เซ็นต์ + -)", "มุมบนซ้าย", "กลางหน้าจอ", "มุมบนขวา"], c: 0 }
-    ];
-
-    const CHARACTER_COLORS = ['#ff758f', '#38bdf8', '#34d399', '#fbbf24', '#a855f7', '#fb923c', '#ec4899', '#06b6d4'];
-    const myColor = CHARACTER_COLORS[Math.floor(Math.random() * CHARACTER_COLORS.length)];
-
-    let isHost = false;
-    let roomPin = "123456";
-    let myPlayerName = "ผู้เล่น";
-    let totalGameTime = 180;
-    let initialEnergy = 5;
-    let currentEnergy = 5;
-    let currentHeightMeters = 0;
-    let correctCount = 0;
-    let wrongCount = 0;
-    let isGameOver = false;
-    let gameTimer = null;
-    let currentQuestionItem = null;
-
-    let questionAnswersHistory = {};
-    function initHistoryObj() {
-      WORD_QUIZ.forEach(q => {
-        if (!questionAnswersHistory[q.id]) {
-          questionAnswersHistory[q.id] = { correct: 0, wrong: 0 };
-        }
-      });
-    }
-    initHistoryObj();
-
-    let peer = null;
-    let myPeerId = "";
-    let hostConn = null;
-    let connections = new Map();
-    let playersInRoom = new Map();
-
-    // --- 2. การสลับหน้าจอ (Navigation) ---
-    function hideAllViews() {
-      ['view-mode', 'view-host', 'view-join', 'view-waiting', 'view-host-live', 'game-wrapper'].forEach(id => {
+    function switchView(viewId) {
+      const views = [
+        'view-role', 'view-db-config', 'view-teacher-lobby',
+        'view-host-live', 'view-student-login', 'view-student-waiting', 'game-wrapper'
+      ];
+      views.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
       });
+      const target = document.getElementById(viewId);
+      if (target) target.classList.remove('hidden');
     }
 
-    function goToHostSetup() {
-      isHost = true;
-      hideAllViews();
-      roomPin = Math.floor(100000 + Math.random() * 900000).toString();
-      document.getElementById('host-pin-display').innerText = roomPin;
+    function backToRole() {
+      switchView('view-role');
+    }
 
-      const joinUrl = `${window.location.origin}${window.location.pathname}?pin=${roomPin}`;
-      document.getElementById('qrcode-box').innerHTML = "";
-      new QRCode(document.getElementById('qrcode-box'), {
+    /* Database Init */
+    function initFirebase(cfg) {
+      if (!firebase.apps.length) {
+        firebase.initializeApp(cfg);
+      }
+      db = firebase.database();
+    }
+
+    /* Teacher Flow */
+    function showTeacherConfig() {
+      currentRole = 'teacher';
+      const saved = localStorage.getItem(DEFAULT_CONFIG_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          initFirebase(parsed);
+          createTeacherRoom();
+          return;
+        } catch(e) {}
+      }
+      switchView('view-db-config');
+    }
+
+    function saveDbConfigAndProceed() {
+      const config = {
+        apiKey: document.getElementById('fb-apiKey').value.trim(),
+        authDomain: document.getElementById('fb-authDomain').value.trim(),
+        databaseURL: document.getElementById('fb-databaseURL').value.trim(),
+        projectId: document.getElementById('fb-projectId').value.trim()
+      };
+      if (!config.databaseURL || !config.apiKey) {
+        showToast("กรุณากรอกข้อมูล Firebase ให้ครบถ้วน");
+        return;
+      }
+      localStorage.setItem(DEFAULT_CONFIG_KEY, JSON.stringify(config));
+      initFirebase(config);
+      createTeacherRoom();
+    }
+
+    function createTeacherRoom() {
+      currentRoomPin = Math.floor(100000 + Math.random() * 900000).toString();
+      roomRef = db.ref('rooms/' + currentRoomPin);
+
+      // Create new Room Node
+      roomRef.set({
+        state: 'waiting', // waiting, playing, finished
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        players: {}
+      }).then(() => {
+        setupTeacherLobbyView();
+      });
+    }
+
+    function setupTeacherLobbyView() {
+      switchView('view-teacher-lobby');
+      document.getElementById('display-room-pin').innerText = currentRoomPin;
+      
+      // QR Code
+      const qrContainer = document.getElementById('qrcode');
+      qrContainer.innerHTML = '';
+      const joinUrl = window.location.origin + window.location.pathname + '?pin=' + currentRoomPin;
+      new QRCode(qrContainer, {
         text: joinUrl,
-        width: 120,
-        height: 120,
-        colorDark : "#e11d48",
+        width: 140,
+        height: 140,
+        colorDark : "#0f172a",
         colorLight : "#ffffff"
       });
 
-      initPeerNetwork(true);
-      document.getElementById('view-host').classList.remove('hidden');
+      // Listen for players in waiting room
+      roomRef.child('players').on('value', snapshot => {
+        const players = snapshot.val() || {};
+        renderWaitingBadges(players);
+      });
     }
 
-    function goToJoinScreen() {
-      isHost = false;
-      hideAllViews();
-      document.getElementById('view-join').classList.remove('hidden');
+    function renderWaitingBadges(players) {
+      const list = document.getElementById('player-badge-list');
+      list.innerHTML = '';
+      const keys = Object.keys(players);
+      document.getElementById('player-count').innerText = keys.length;
+
+      keys.forEach(k => {
+        const p = players[k];
+        const span = document.createElement('div');
+        span.className = 'badge-item';
+        span.innerHTML = `
+          <span>${p.name}</span>
+          <span class="badge-kick" title="เตะออก" onclick="kickPlayer('${k}')">✕</span>
+        `;
+        list.appendChild(span);
+      });
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    function kickPlayer(playerId) {
+      if (roomRef) {
+        roomRef.child('players/' + playerId).remove();
+        showToast("ลบผู้เล่นแล้ว");
+      }
+    }
+
+    function teacherStartGame() {
+      roomRef.child('players').once('value', snap => {
+        if (!snap.exists() || snap.numChildren() === 0) {
+          showToast("ต้องมีผู้เล่นอย่างน้อย 1 คน");
+          return;
+        }
+        roomRef.update({ state: 'playing' });
+        openTeacherDashboard();
+      });
+    }
+
+    function openTeacherDashboard() {
+      switchView('view-host-live');
+      document.getElementById('live-pin-text').innerText = currentRoomPin;
+      document.getElementById('live-status-pill').innerText = "กำลังแข่งขัน";
+
+      roomRef.child('players').on('value', snap => {
+        const players = snap.val() || {};
+        const tbody = document.getElementById('host-leaderboard-body');
+        tbody.innerHTML = '';
+
+        // Sort players by height descending
+        const sorted = Object.values(players).sort((a, b) => (b.height || 0) - (a.height || 0));
+        sorted.forEach((p, index) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="font-weight:900; color:#f59e0b;">#${index + 1}</td>
+            <td style="font-weight:700;">${p.name}</td>
+            <td style="font-weight:900; color:#38bdf8;">${Math.max(0, Math.floor(p.height || 0))} ม.</td>
+            <td>${p.solvedCount || 0}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    // Teacher Restarts Match (Resets stats but stays in room)
+    function teacherRestartMatch() {
+      if (!roomRef) return;
+      roomRef.child('players').once('value', snap => {
+        const players = snap.val() || {};
+        const resetUpdates = {};
+        Object.keys(players).forEach(uid => {
+          resetUpdates[`players/${uid}/height`] = 0;
+          resetUpdates[`players/${uid}/solvedCount`] = 0;
+          resetUpdates[`players/${uid}/y`] = 0;
+        });
+        resetUpdates['state'] = 'waiting';
+
+        roomRef.update(resetUpdates).then(() => {
+          showToast("รีเซ็ตการแข่งขันเรียบร้อย");
+          setupTeacherLobbyView();
+        });
+      });
+    }
+
+    /* Student Flow */
+    function showStudentLogin() {
+      currentRole = 'student';
+      // Load stored Firebase config
+      const saved = localStorage.getItem(DEFAULT_CONFIG_KEY);
+      if (!saved) {
+        showToast("ไม่พบการเชื่อมต่อฐานข้อมูล ครูต้องเป็นผู้สร้างห้องก่อน");
+        return;
+      }
+      initFirebase(JSON.parse(saved));
+
+      // Auto-fill PIN if in query URL
       const urlParams = new URLSearchParams(window.location.search);
       const pinParam = urlParams.get('pin');
       if (pinParam) {
-        document.getElementById('input-join-pin').value = pinParam;
-        goToJoinScreen();
+        document.getElementById('stu-pin').value = pinParam;
       }
-    });
+      switchView('view-student-login');
+    }
 
-    function joinGameRoom() {
-      roomPin = document.getElementById('input-join-pin').value.trim();
-      myPlayerName = document.getElementById('input-join-name').value.trim() || "นักเรียน";
-      if (roomPin.length !== 6) {
-        alert("กรุณากรอกรหัสห้อง 6 หลักให้ถูกต้อง");
+    function studentJoinGame() {
+      const pin = document.getElementById('stu-pin').value.trim();
+      const name = document.getElementById('stu-name').value.trim();
+
+      if (pin.length !== 6) {
+        showToast("กรุณากรอก PIN 6 หลัก");
         return;
       }
-      hideAllViews();
-      document.getElementById('wait-pin-label').innerText = roomPin;
-      document.getElementById('wait-name-label').innerText = myPlayerName;
-      document.getElementById('view-waiting').classList.remove('hidden');
-      initPeerNetwork(false);
-    }
-
-    function forceStartSinglePlay() {
-      hideAllViews();
-      document.getElementById('hud-room-pin').innerText = roomPin;
-      document.getElementById('hud-energy').innerText = currentEnergy;
-      document.getElementById('game-wrapper').classList.remove('hidden');
-      initGameEngine();
-      startCountdown(false);
-    }
-
-    function openQuestionBankModal() {
-      renderQuestionBankList();
-      document.getElementById('questionBankModal').classList.remove('hidden');
-    }
-
-    function closeQuestionBankModal() {
-      document.getElementById('questionBankModal').classList.add('hidden');
-    }
-
-    function renderQuestionBankList() {
-      document.getElementById('total-q-count').innerText = WORD_QUIZ.length;
-      const box = document.getElementById('questionBankList');
-      box.innerHTML = '';
-      WORD_QUIZ.forEach((q) => {
-        const item = document.createElement('div');
-        item.className = 'p-3 bg-pink-50/70 border border-pink-200 rounded-2xl';
-        item.innerHTML = `
-          <div class="font-black text-rose-600 mb-1.5 flex justify-between">
-            <span>ข้อที่ ${q.id}: ${q.q}</span>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-slate-600">
-            ${q.a.map((ans, idx) => `
-              <div class="px-2.5 py-1.5 rounded-lg border ${idx === q.c ? 'bg-emerald-100 border-emerald-400 font-bold text-emerald-800' : 'bg-white border-slate-200'}">
-                ${idx === q.c ? '✅ ' : ''}${idx + 1}. ${ans}
-              </div>
-            `).join('')}
-          </div>
-        `;
-        box.appendChild(item);
-      });
-    }
-
-    function addNewCustomQuestion() {
-      const qText = document.getElementById('new-q-text').value.trim();
-      const a1 = document.getElementById('new-q-a1').value.trim();
-      const a2 = document.getElementById('new-q-a2').value.trim();
-      const a3 = document.getElementById('new-q-a3').value.trim();
-      const a4 = document.getElementById('new-q-a4').value.trim();
-      const correctIdx = parseInt(document.getElementById('new-q-correct').value);
-
-      if (!qText || !a1 || !a2 || !a3 || !a4) {
-        alert("กรุณากรอกโจทย์และตัวเลือกให้ครบทั้ง 4 ข้อ");
+      if (!name) {
+        showToast("กรุณากรอกชื่อเล่น");
         return;
       }
 
-      const newId = WORD_QUIZ.length + 1;
-      const newQuestion = {
-        id: newId,
-        q: qText,
-        a: [a1, a2, a3, a4],
-        c: correctIdx
-      };
-
-      WORD_QUIZ.push(newQuestion);
-      initHistoryObj();
-
-      document.getElementById('new-q-text').value = '';
-      document.getElementById('new-q-a1').value = '';
-      document.getElementById('new-q-a2').value = '';
-      document.getElementById('new-q-a3').value = '';
-      document.getElementById('new-q-a4').value = '';
-
-      renderQuestionBankList();
-
-      connections.forEach(conn => {
-        if (conn.open) conn.send({ type: 'sync_questions', questions: WORD_QUIZ });
-      });
-
-      alert(`เพิ่มข้อสอบข้อที่ ${newId} เรียบร้อยแล้ว! ✨`);
-    }
-
-    // --- 3. ระบบเชื่อมต่อ PeerJS Mesh ---
-    function initPeerNetwork(asHost) {
-      myPeerId = asHost ? `sweet_host_${roomPin}` : `sweet_plr_${roomPin}_${Math.random().toString(36).substring(2, 7)}`;
-      peer = new Peer(myPeerId, { debug: 1 });
-
-      peer.on('open', () => {
-        if (!asHost) {
-          hostConn = peer.connect(`sweet_host_${roomPin}`);
-          setupClientConn(hostConn);
+      const targetRoomRef = db.ref('rooms/' + pin);
+      targetRoomRef.once('value', snap => {
+        if (!snap.exists()) {
+          showToast("ไม่พบหมายเลขห้องนี้");
+          return;
         }
-      });
 
-      peer.on('connection', (conn) => {
-        if (asHost) setupHostConn(conn);
-        else setupMeshConn(conn);
-      });
+        const roomData = snap.val();
 
-      peer.on('error', (err) => {
-        if (err.type === 'unavailable-id' && asHost) {
-          alert("รหัสห้องซ้ำ กรุณาลองใหม่อีกครั้ง");
-          location.reload();
+        // Check 1: Game must NOT be in progress
+        if (roomData.state !== 'waiting') {
+          showToast("เกมเริ่มไปแล้ว ไม่สามารถเข้าร่วมได้ในขณะนี้");
+          return;
         }
-      });
-    }
 
-    function setupHostConn(conn) {
-      conn.on('open', () => {
-        connections.set(conn.peer, conn);
-        totalGameTime = parseInt(document.getElementById('select-duration').value);
-        initialEnergy = parseInt(document.getElementById('input-host-energy').value) || 5;
-
-        conn.send({ type: 'sync_config', time: totalGameTime, energy: initialEnergy });
-        conn.send({ type: 'sync_questions', questions: WORD_QUIZ });
-        conn.send({ type: 'peer_list', peers: Array.from(connections.keys()) });
-      });
-
-      conn.on('data', (data) => {
-        if (data.type === 'state') {
-          playersInRoom.set(data.id, data);
-          updateHostLobbyBadges();
-          renderHostTable();
+        // Check 2: Player name must NOT be duplicated
+        const existingPlayers = roomData.players || {};
+        const isDuplicate = Object.values(existingPlayers).some(
+          p => p.name.trim().toLowerCase() === name.toLowerCase()
+        );
+        if (isDuplicate) {
+          showToast("ชื่อนี้มีผู้ใช้แล้ว กรุณาตั้งชื่ออื่น");
+          return;
         }
-      });
 
-      conn.on('close', () => {
-        connections.delete(conn.peer);
-        playersInRoom.delete(conn.peer);
-        updateHostLobbyBadges();
-        renderHostTable();
-      });
-    }
+        // Register Student
+        currentRoomPin = pin;
+        roomRef = targetRoomRef;
+        myPlayerName = name;
+        myPlayerId = 'usr_' + Math.random().toString(36).substr(2, 9);
 
-    function setupClientConn(conn) {
-      conn.on('open', () => broadcastMyState());
-      conn.on('data', (data) => {
-        if (data.type === 'sync_config') {
-          totalGameTime = data.time;
-          currentEnergy = data.energy;
-          document.getElementById('hud-energy').innerText = currentEnergy;
-          updateTimerUI(totalGameTime, false);
-        } else if (data.type === 'sync_questions') {
-          WORD_QUIZ = data.questions;
-          initHistoryObj();
-        } else if (data.type === 'start_game') {
-          totalGameTime = data.time;
-          currentEnergy = data.energy;
-          document.getElementById('hud-energy').innerText = currentEnergy;
-          hideAllViews();
-          document.getElementById('hud-room-pin').innerText = roomPin;
-          document.getElementById('game-wrapper').classList.remove('hidden');
-          initGameEngine();
-          startCountdown(false);
-        } else if (data.type === 'peer_list') {
-          data.peers.forEach(pId => {
-            if (pId !== myPeerId && !connections.has(pId)) {
-              setupMeshConn(peer.connect(pId));
-            }
-          });
-        }
-      });
-    }
+        const newPlayerRef = roomRef.child('players/' + myPlayerId);
+        newPlayerRef.set({
+          name: myPlayerName,
+          height: 0,
+          solvedCount: 0,
+          joinedAt: firebase.database.ServerValue.TIMESTAMP
+        });
 
-    function setupMeshConn(conn) {
-      conn.on('open', () => {
-        connections.set(conn.peer, conn);
-        broadcastMyState();
-      });
-      conn.on('data', (data) => {
-        if (data.type === 'state') {
-          playersInRoom.set(data.id, data);
-        }
-      });
-      conn.on('close', () => {
-        connections.delete(conn.peer);
-        playersInRoom.delete(conn.peer);
-      });
-    }
+        // Handle Disconnect Removal
+        newPlayerRef.onDisconnect().remove();
 
-    function updateHostLobbyBadges() {
-      document.getElementById('player-count').innerText = playersInRoom.size;
-      const box = document.getElementById('host-player-badges');
-      box.innerHTML = '';
-      playersInRoom.forEach(p => {
-        const span = document.createElement('span');
-        span.className = "px-2.5 py-1 bg-pink-100 text-rose-600 rounded-full text-xs font-bold border border-pink-300";
-        span.innerText = p.name;
-        box.appendChild(span);
-      });
-    }
-
-    function broadcastMyState() {
-      const payload = {
-        type: 'state',
-        id: myPeerId,
-        name: myPlayerName,
-        x: Math.round(player.x),
-        y: Math.round(player.y),
-        color: myColor,
-        height: currentHeightMeters,
-        correct: correctCount,
-        wrong: wrongCount,
-        energy: currentEnergy,
-        history: questionAnswersHistory
-      };
-      connections.forEach(conn => { if (conn.open) conn.send(payload); });
-      if (hostConn && hostConn.open) hostConn.send(payload);
-    }
-
-    function hostStartMatch() {
-      totalGameTime = parseInt(document.getElementById('select-duration').value);
-      initialEnergy = parseInt(document.getElementById('input-host-energy').value) || 5;
-
-      connections.forEach(conn => {
-        if (conn.open) conn.send({ type: 'start_game', time: totalGameTime, energy: initialEnergy });
-      });
-
-      hideAllViews();
-      document.getElementById('live-room-pin').innerText = roomPin;
-      document.getElementById('view-host-live').classList.remove('hidden');
-      startCountdown(true);
-    }
-
-    function startCountdown(forHost) {
-      if (gameTimer) clearInterval(gameTimer);
-      gameTimer = setInterval(() => {
-        totalGameTime--;
-        updateTimerUI(totalGameTime, forHost);
-        if (totalGameTime <= 0) {
-          clearInterval(gameTimer);
-          endGameMatch();
-        }
-      }, 1000);
-    }
-
-    function updateTimerUI(sec, forHost) {
-      const m = Math.floor(sec / 60).toString().padStart(2, '0');
-      const s = (sec % 60).toString().padStart(2, '0');
-      if (forHost) {
-        document.getElementById('host-timer-text').innerText = `${m}:${s}`;
-      } else {
-        document.getElementById('hud-timer').innerText = `${m}:${s}`;
-      }
-    }
-
-    function renderHostTable() {
-      document.getElementById('live-player-count').innerText = playersInRoom.size;
-      const tbody = document.getElementById('host-live-table');
-      tbody.innerHTML = '';
-      const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
-
-      if (list.length > 0) {
-        document.getElementById('leader-name').innerText = list[0].name;
-        document.getElementById('leader-meters').innerText = `${list[0].height} m`;
-      }
-
-      list.forEach((p, idx) => {
-        const total = (p.correct || 0) + (p.wrong || 0);
-        const acc = total > 0 ? Math.round((p.correct / total) * 100) : 0;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td class="p-2.5 font-bold">${idx === 0 ? '🥇 1' : idx === 1 ? '🥈 2' : idx === 2 ? '🥉 3' : idx + 1}</td>
-          <td class="p-2.5 font-bold text-rose-400 flex items-center gap-1.5">
-            <span class="w-3 h-3 rounded-full" style="background:${p.color}"></span>
-            ${p.name}
-          </td>
-          <td class="p-2.5 text-center font-black text-sky-400 font-mono">${p.height || 0} m</td>
-          <td class="p-2.5 text-center font-bold text-emerald-400">${p.correct || 0}</td>
-          <td class="p-2.5 text-center font-bold text-rose-400">${p.wrong || 0}</td>
-          <td class="p-2.5 text-center font-bold text-amber-300">${acc}%</td>
-          <td class="p-2.5 text-center font-bold text-amber-400">${p.energy || 0} ⚡</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function exportDataCSV() {
-      let csv = "อันดับ,ชื่อผู้เรียน,ความสูง (เมตร),ตอบถูกรวม,ตอบผิดรวม,ความแม่นยำ (%),พลังงานคงเหลือ";
-      WORD_QUIZ.forEach((q) => {
-        csv += `,ข้อที่ ${q.id} ("${q.q.replace(/"/g, '""')}")`;
-      });
-      csv += "\n";
-
-      const list = Array.from(playersInRoom.values()).sort((a, b) => b.height - a.height);
-      list.forEach((p, idx) => {
-        const total = (p.correct || 0) + (p.wrong || 0);
-        const acc = total > 0 ? Math.round((p.correct / total) * 100) : 0;
-        let row = `${idx + 1},"${p.name}",${p.height || 0},${p.correct || 0},${p.wrong || 0},${acc}%,${p.energy || 0}`;
-        
-        const hist = p.history || {};
-        WORD_QUIZ.forEach((q) => {
-          const item = hist[q.id];
-          if (item && (item.correct > 0 || item.wrong > 0)) {
-            row += `,"ตอบแล้ว (ถูก ${item.correct} / ผิด ${item.wrong})"`;
-          } else {
-            row += `,"ยังไม่ได้ตอบข้อนี้"`;
+        // Listen for kick event
+        newPlayerRef.on('value', pSnap => {
+          if (!pSnap.exists() && currentRole === 'student') {
+            alert("คุณถูกนำออกจากห้องโดยคุณครู");
+            window.location.reload();
           }
         });
-        csv += row + "\n";
+
+        // Show Waiting screen
+        document.getElementById('waiting-student-name').innerText = myPlayerName;
+        switchView('view-student-waiting');
+
+        // Watch room state
+        roomRef.child('state').on('value', stateSnap => {
+          const st = stateSnap.val();
+          if (st === 'playing') {
+            startStudentGameLoop();
+          } else if (st === 'waiting') {
+            // If teacher restarts
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            switchView('view-student-waiting');
+          }
+        });
       });
-
-      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `รายงานผลการตอบคำถาม_WordJump_${roomPin}.csv`;
-      link.click();
     }
 
-    // --- 4. ฟิสิกส์เกม & การวาดกราฟิก ---
-    const WORLD_WIDTH = 1000;
-    const LEFT_WALL = 45;
-    const RIGHT_WALL = WORLD_WIDTH - 45;
-
+    /* Game Engine: Canvas & Realtime Physics */
     let canvas, ctx;
-    let cssWidth = 0, cssHeight = 0;
-    let dpr = window.devicePixelRatio || 1;
-    const player = { x: 500, y: 510, vx: 0, vy: 0, grounded: false, scaleX: 1, scaleY: 1, breathTick: 0 };
-    let cameraY = 510;
-    const platforms = [{ x: -200, y: 550, w: 1400, h: 250, floatOffset: 0 }];
-    let highestGeneratedY = 470;
-    let animTicks = 0;
-    const particles = [];
+    let player = {
+      x: 180,
+      y: 0,
+      vx: 0,
+      vy: 0,
+      width: 32,
+      height: 44,
+      grounded: false
+    };
+    let cameraY = 0;
+    let platforms = [];
+    let inputs = { left: false, right: false, jump: false };
 
-    const stars = Array.from({ length: 30 }, () => ({
-      x: Math.random() * WORLD_WIDTH,
-      y: Math.random() * 2000 - 1000,
-      size: Math.random() * 3 + 1
-    }));
-
-    function createRoomRandom(seedStr) {
-      let seed = 0;
-      for (let i = 0; i < seedStr.length; i++) seed = (seed * 31 + seedStr.charCodeAt(i)) & 0xFFFFFFFF;
-      return function() {
-        seed = (seed * 1664525 + 1013904223) & 0xFFFFFFFF;
-        return (seed >>> 0) / 4294967296;
-      };
-    }
-    let roomRandom;
-
-    function buildWorldPlatformsUpTo(targetY) {
-      while (highestGeneratedY > targetY - 1400) {
-        highestGeneratedY -= Math.floor(roomRandom() * 16 + 50);
-        const pWidth = Math.floor(roomRandom() * 40 + 155);
-        const pX = Math.floor(roomRandom() * (WORLD_WIDTH - pWidth - 120) + 60);
-        platforms.push({ x: pX, y: highestGeneratedY, w: pWidth, h: 28, floatOffset: Math.random() * Math.PI * 2 });
-      }
-    }
-
-    function resizeCanvasHD() {
-      cssWidth = canvas.parentElement.clientWidth;
-      cssHeight = canvas.parentElement.clientHeight;
-      dpr = window.devicePixelRatio || 1;
-      canvas.width = cssWidth * dpr;
-      canvas.height = cssHeight * dpr;
-      ctx.scale(dpr, dpr);
-    }
-
-    function initGameEngine() {
+    function startStudentGameLoop() {
+      switchView('game-wrapper');
+      document.getElementById('ui-pin').innerText = currentRoomPin;
       canvas = document.getElementById('gameCanvas');
       ctx = canvas.getContext('2d');
-      window.addEventListener('resize', resizeCanvasHD);
-      resizeCanvasHD();
 
-      roomRandom = createRoomRandom(roomPin);
-      cameraY = player.y - cssHeight * 0.60;
-      buildWorldPlatformsUpTo(cameraY);
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Generate Seeded Platforms
+      platforms = [
+        { x: 0, y: 0, w: canvas.width, h: 20, base: true }
+      ];
+      for (let i = 1; i < 200; i++) {
+        platforms.push({
+          x: Math.random() * (canvas.width - 90),
+          y: i * 75,
+          w: 80 + Math.random() * 20,
+          h: 16
+        });
+      }
+
+      player.x = canvas.width / 2 - 16;
+      player.y = 20;
+      player.vy = 0;
+      cameraY = 0;
+
       setupControls();
-
-      setInterval(() => {
-        if (!isGameOver) broadcastMyState();
-      }, 35);
-
+      lastSyncTime = 0;
       requestAnimationFrame(gameLoop);
     }
 
-    const keys = { left: false, right: false };
+    function resizeCanvas() {
+      if (!canvas) return;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
     function setupControls() {
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
-        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
-        if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') doJump();
-      });
-      window.addEventListener('keyup', (e) => {
-        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
-        if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
-      });
+      const bLeft = document.getElementById('btn-left');
+      const bRight = document.getElementById('btn-right');
+      const bJump = document.getElementById('btn-jump');
 
-      const bLeft = document.getElementById('btnLeft');
-      const bRight = document.getElementById('btnRight');
-      const bJump = document.getElementById('btnJump');
+      const bindTouch = (el, pressAction, releaseAction) => {
+        el.addEventListener('touchstart', (e) => { e.preventDefault(); el.classList.add('active'); pressAction(); });
+        el.addEventListener('touchend', (e) => { e.preventDefault(); el.classList.remove('active'); releaseAction(); });
+        el.addEventListener('mousedown', () => { el.classList.add('active'); pressAction(); });
+        el.addEventListener('mouseup', () => { el.classList.remove('active'); releaseAction(); });
+      };
 
-      bLeft.addEventListener('touchstart', (e) => { e.preventDefault(); keys.left = true; bLeft.classList.add('active'); }, { passive: false });
-      bLeft.addEventListener('touchend', (e) => { e.preventDefault(); keys.left = false; bLeft.classList.remove('active'); }, { passive: false });
-      bLeft.addEventListener('touchcancel', () => { keys.left = false; bLeft.classList.remove('active'); });
-
-      bRight.addEventListener('touchstart', (e) => { e.preventDefault(); keys.right = true; bRight.classList.add('active'); }, { passive: false });
-      bRight.addEventListener('touchend', (e) => { e.preventDefault(); keys.right = false; bRight.classList.remove('active'); }, { passive: false });
-      bRight.addEventListener('touchcancel', () => { keys.right = false; bRight.classList.remove('active'); });
-
-      bJump.addEventListener('touchstart', (e) => { e.preventDefault(); doJump(); bJump.classList.add('active'); }, { passive: false });
-      bJump.addEventListener('touchend', (e) => { e.preventDefault(); bJump.classList.remove('active'); }, { passive: false });
-      bJump.addEventListener('touchcancel', () => { bJump.classList.remove('active'); });
-
-      bLeft.onmousedown = () => { keys.left = true; bLeft.classList.add('active'); };
-      bLeft.onmouseup = () => { keys.left = false; bLeft.classList.remove('active'); };
-      bRight.onmousedown = () => { keys.right = true; bRight.classList.add('active'); };
-      bRight.onmouseup = () => { keys.right = false; bRight.classList.remove('active'); };
-      bJump.onmousedown = () => { doJump(); bJump.classList.add('active'); };
-      bJump.onmouseup = () => bJump.classList.remove('active');
-    }
-
-    function addSparkles(x, y) {
-      for (let i = 0; i < 6; i++) {
-        particles.push({
-          x: x,
-          y: y,
-          vx: (Math.random() - 0.5) * 5,
-          vy: Math.random() * -3 - 1,
-          size: Math.random() * 4 + 2,
-          alpha: 1,
-          color: ['#ff758f', '#fde047', '#38bdf8', '#34d399'][Math.floor(Math.random() * 4)]
-        });
-      }
-    }
-
-    function doJump() {
-      if (isGameOver) return;
-      if (currentEnergy <= 0) {
-        openQuizModal();
-        return;
-      }
-      if (player.grounded) {
-        player.vy = -14.6;
-        player.grounded = false;
-        player.scaleX = 0.8;
-        player.scaleY = 1.3;
-        currentEnergy--;
-        document.getElementById('hud-energy').innerText = currentEnergy;
-        addSparkles(player.x, player.y + 16);
-        playJumpSound();
-        if (currentEnergy === 0) openQuizModal();
-      }
-    }
-
-    function gameLoop() {
-      animTicks += 0.05;
-      player.breathTick += 0.08;
-
-      if (!isGameOver) {
-        if (keys.left) player.vx = -5.4;
-        else if (keys.right) player.vx = 5.4;
-        else player.vx *= 0.80;
-
-        player.vy += 0.50;
-        player.x += player.vx;
-        player.y += player.vy;
-
-        player.scaleX += (1 - player.scaleX) * 0.16;
-        player.scaleY += (1 - player.scaleY) * 0.16;
-
-        if (player.x < LEFT_WALL) {
-          player.x = LEFT_WALL;
-          player.vx = 0;
+      bindTouch(bLeft, () => inputs.left = true, () => inputs.left = false);
+      bindTouch(bRight, () => inputs.right = true, () => inputs.right = false);
+      bindTouch(bJump, () => {
+        if (player.grounded) {
+          player.vy = 15;
+          player.grounded = false;
         }
-        if (player.x > RIGHT_WALL) {
-          player.x = RIGHT_WALL;
-          player.vx = 0;
+      }, () => {});
+
+      // Keyboard support for desktop testing
+      window.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft' || e.key === 'a') inputs.left = true;
+        if (e.key === 'ArrowRight' || e.key === 'd') inputs.right = false;
+        if ((e.key === 'ArrowUp' || e.key === ' ') && player.grounded) {
+          player.vy = 15;
+          player.grounded = false;
         }
+      });
+      window.addEventListener('keyup', e => {
+        if (e.key === 'ArrowLeft' || e.key === 'a') inputs.left = false;
+        if (e.key === 'ArrowRight' || e.key === 'd') inputs.right = false;
+      });
+    }
 
-        player.grounded = false;
-        platforms.forEach(p => {
-          if (
-            player.x + 18 > p.x &&
-            player.x - 18 < p.x + p.w &&
-            player.y + 18 >= p.y &&
-            player.y + 18 <= p.y + 16 &&
-            player.vy >= 0
-          ) {
-            if (!player.grounded) {
-              player.scaleX = 1.25;
-              player.scaleY = 0.75;
-            }
-            player.y = p.y - 18;
-            player.vy = 0;
-            player.grounded = true;
-          }
-        });
+    let lastSyncTime = 0;
 
-        if (player.y > 530) {
-          player.y = 530;
+    function gameLoop(timestamp) {
+      // Physics Update
+      if (inputs.left) player.vx = -4.5;
+      else if (inputs.right) player.vx = 4.5;
+      else player.vx *= 0.8;
+
+      player.vy -= 0.65; // Gravity
+      player.x += player.vx;
+      player.y += player.vy;
+
+      // Screen boundaries
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+      // Platform Collision Detection
+      player.grounded = false;
+      platforms.forEach(plat => {
+        if (
+          player.x + player.width > plat.x &&
+          player.x < plat.x + plat.w &&
+          player.y >= plat.y &&
+          player.y - player.vy <= plat.y + 4 &&
+          player.vy <= 0
+        ) {
+          player.y = plat.y;
           player.vy = 0;
           player.grounded = true;
         }
-
-        const currentM = Math.max(0, Math.floor((530 - player.y) / 10));
-        currentHeightMeters = currentM;
-        document.getElementById('hud-height').innerText = `${currentHeightMeters}`;
-
-        const desiredCamY = player.y - cssHeight * 0.60;
-        cameraY += (desiredCamY - cameraY) * 0.16;
-
-        buildWorldPlatformsUpTo(cameraY);
-      }
-
-      renderScene();
-      requestAnimationFrame(gameLoop);
-    }
-
-    // ================= วาดฉากสไตล์ MARIO CANDY WORLD =================
-    function renderScene() {
-      // พื้นหลังท้องฟ้าการ์ตูน
-      ctx.fillStyle = '#bae6fd';
-      ctx.fillRect(0, 0, cssWidth, cssHeight);
-
-      const offsetX = (cssWidth - WORLD_WIDTH) / 2;
-
-      // ดาวลอยวิบวับในฉากหลัง
-      stars.forEach(st => {
-        const ry = (st.y - cameraY * 0.4) % cssHeight;
-        const actualY = ry < 0 ? ry + cssHeight : ry;
-        const starAlpha = 0.4 + Math.sin(animTicks + st.x) * 0.3;
-        ctx.fillStyle = `rgba(255, 255, 255, ${starAlpha})`;
-        ctx.beginPath();
-        ctx.arc(st.x + offsetX, actualY, st.size, 0, Math.PI * 2);
-        ctx.fill();
       });
 
-      // ท่อเสากำแพงด้านข้างสไตล์มาริโอ้พาสเทล
-      ctx.fillStyle = '#ffccd5';
-      ctx.fillRect(offsetX + LEFT_WALL - 14, 0, 14, cssHeight);
-      ctx.fillRect(offsetX + RIGHT_WALL, 0, 14, cssHeight);
-      ctx.fillStyle = '#ff758f';
-      ctx.fillRect(offsetX + LEFT_WALL - 3, 0, 3, cssHeight);
-      ctx.fillRect(offsetX + RIGHT_WALL, 0, 3, cssHeight);
+      // Floor boundary
+      if (player.y < 0) {
+        player.y = 0;
+        player.vy = 0;
+        player.grounded = true;
+      }
 
-      // วาดแท่นกระโดดสไตล์ Mario Clay / Candy Block 3D
-      platforms.forEach(p => {
-        const floatY = Math.sin(animTicks + p.floatOffset) * 2;
-        const ry = (p.y + floatY) - cameraY;
-        if (ry < -70 || ry > cssHeight + 70) return;
+      // Height decreases immediately when falling down
+      const currentHeightMeters = Math.max(0, Math.floor(player.y / 10));
+      document.getElementById('ui-height').innerText = currentHeightMeters;
 
-        const renderX = p.x + offsetX;
-        const rad = 14;
+      // Smooth Camera Follow
+      cameraY += (player.y - cameraY - 200) * 0.1;
+      if (cameraY < 0) cameraY = 0;
 
-        // เงาตกกระทบใต้แท่นบล็อก
-        ctx.fillStyle = 'rgba(2, 132, 199, 0.16)';
-        ctx.beginPath();
-        ctx.roundRect(renderX, ry + 6, p.w, p.h, rad);
-        ctx.fill();
+      // Render
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // 1. ตัวบล็อกดินเผาสีชมพูพีชสไตล์มาริโอ้ (Base Block)
-        const blockGrad = ctx.createLinearGradient(renderX, ry, renderX, ry + p.h);
-        blockGrad.addColorStop(0, '#ffe5ec');
-        blockGrad.addColorStop(1, '#fbb1bd');
-        ctx.fillStyle = blockGrad;
-        ctx.strokeStyle = '#e01e37';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.roundRect(renderX, ry, p.w, p.h, rad);
-        ctx.fill();
-        ctx.stroke();
-
-        // หมุดสตั๊ดกลมแบบของเล่นบนตัวบล็อก
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-        for (let i = 20; i < p.w - 15; i += 32) {
+      // Render Platforms
+      platforms.forEach(plat => {
+        const drawY = canvas.height - (plat.y - cameraY);
+        if (drawY > -30 && drawY < canvas.height + 30) {
+          ctx.fillStyle = plat.base ? '#334155' : '#10b981';
           ctx.beginPath();
-          ctx.arc(renderX + i, ry + p.h - 8, 3.5, 0, Math.PI * 2);
+          ctx.roundRect(plat.x, drawY - plat.h, plat.w, plat.h, 6);
           ctx.fill();
         }
-
-        // 2. หน้าหญ้าปุยสไตล์มาริโอ้ (Grass Cap with Puffy Drops)
-        const grassGrad = ctx.createLinearGradient(renderX, ry, renderX, ry + 12);
-        grassGrad.addColorStop(0, '#86efac');
-        grassGrad.addColorStop(1, '#22c55e');
-        ctx.fillStyle = grassGrad;
-        ctx.strokeStyle = '#15803d';
-        ctx.lineWidth = 2.5;
-
-        ctx.beginPath();
-        ctx.moveTo(renderX, ry + 12);
-        ctx.lineTo(renderX, ry + rad);
-        ctx.quadraticCurveTo(renderX, ry, renderX + rad, ry);
-        ctx.lineTo(renderX + p.w - rad, ry);
-        ctx.quadraticCurveTo(renderX + p.w, ry, renderX + p.w, ry + rad);
-        ctx.lineTo(renderX + p.w, ry + 12);
-
-        // ชายหญ้าหยักมนสไตล์การ์ตูน
-        const waveCount = Math.max(3, Math.floor(p.w / 22));
-        const step = p.w / waveCount;
-        for (let i = waveCount - 1; i >= 0; i--) {
-          const cx = renderX + i * step + step / 2;
-          const cy = ry + 15;
-          const ex = renderX + i * step;
-          ctx.quadraticCurveTo(cx, cy, ex, ry + 12);
-        }
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-
-        // 3. ไฮไลต์แสงสีขาวแวววาวด้านบนขอบหญ้า
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.beginPath();
-        ctx.roundRect(renderX + 8, ry + 2.5, p.w - 16, 3, 2);
-        ctx.fill();
-
-        // 4. ดอกไม้ประดับน่ารักบนแท่น
-        ctx.fillStyle = '#ff4d6d';
-        ctx.beginPath();
-        ctx.arc(renderX + 16, ry + 4, 3, 0, Math.PI * 2);
-        ctx.arc(renderX + 22, ry + 4, 3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#fde047';
-        ctx.beginPath();
-        ctx.arc(renderX + 19, ry + 4, 2, 0, Math.PI * 2);
-        ctx.fill();
-
-        // 5. ป้ายบอกระยะเมตรทรงกระดานไม้เห็ดมาริโอ้
-        const mLevel = Math.max(0, Math.floor((530 - p.y) / 10));
-        if (mLevel > 0 && mLevel % 10 === 0) {
-          const signW = 54;
-          const signH = 20;
-          const signX = renderX + p.w - signW - 6;
-          const signY = ry - signH - 4;
-
-          // เสาป้ายไม้
-          ctx.fillStyle = '#b45309';
-          ctx.fillRect(signX + signW / 2 - 2.5, signY + signH, 5, 6);
-
-          // ตัวป้าย
-          ctx.fillStyle = '#fffbeb';
-          ctx.strokeStyle = '#d97706';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.roundRect(signX, signY, signW, signH, 7);
-          ctx.fill();
-          ctx.stroke();
-
-          ctx.font = 'bold 11px Kanit';
-          ctx.fillStyle = '#b45309';
-          ctx.textAlign = 'center';
-          ctx.fillText(`🚩 ${mLevel}m`, signX + signW / 2, signY + 14);
-        }
       });
 
-      // ละอองดาวเวลาเคลื่อนไหว
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const pt = particles[i];
-        pt.x += pt.vx;
-        pt.y += pt.vy;
-        pt.alpha -= 0.03;
-        if (pt.alpha <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-        ctx.fillStyle = pt.color;
-        ctx.globalAlpha = pt.alpha;
-        ctx.beginPath();
-        ctx.arc(pt.x + offsetX, pt.y - cameraY, pt.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-      }
-
-      // วาดเพื่อนๆ ทุกคนในห้อง
-      playersInRoom.forEach((p, id) => {
-        if (id !== myPeerId) {
-          drawLivingMonster(p.x + offsetX, p.y, p.color, `${p.name} (${p.height || 0}m)`, false, 1, 1, 0);
-        }
-      });
-
-      // วาดตัวละครของเรา
-      drawLivingMonster(player.x + offsetX, player.y, myColor, `${myPlayerName} (เรา)`, true, player.scaleX, player.scaleY, player.breathTick);
-    }
-
-    function drawLivingMonster(x, y, color, label, isSelf, sx, sy, breath) {
-      const ry = y - cameraY;
-      if (ry < -90 || ry > cssHeight + 90) return;
-
-      const bScale = 1 + Math.sin(breath) * 0.04;
-
-      ctx.fillStyle = 'rgba(255, 117, 143, 0.25)';
+      // Render Player Character
+      const playerDrawY = canvas.height - (player.y - cameraY);
+      ctx.fillStyle = '#f43f5e';
       ctx.beginPath();
-      ctx.ellipse(x, ry + 20, 18 * sx * bScale, 5, 0, 0, Math.PI * 2);
+      ctx.roundRect(player.x, playerDrawY - player.height, player.width, player.height, 10);
       ctx.fill();
 
-      ctx.save();
-      ctx.translate(x, ry);
-      ctx.scale(sx * bScale, sy * (2 - bScale));
-
-      ctx.fillStyle = color;
-      ctx.strokeStyle = '#e01e37';
-      ctx.lineWidth = 3.2;
+      // Eye
+      ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.ellipse(0, 0, 20, 18, 0, 0, Math.PI * 2);
+      ctx.arc(player.x + (inputs.left ? 8 : 22), playerDrawY - player.height + 14, 5, 0, Math.PI * 2);
       ctx.fill();
-      ctx.stroke();
-
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.fillStyle = '#0f172a';
       ctx.beginPath();
-      ctx.ellipse(-6, -8, 6, 3, -0.3, 0, Math.PI * 2);
+      ctx.arc(player.x + (inputs.left ? 7 : 23), playerDrawY - player.height + 14, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      const legWiggle = Math.sin(breath * 2) * 1.5;
-      ctx.beginPath();
-      ctx.arc(-9 + legWiggle, 15, 5, 0, Math.PI * 2);
-      ctx.arc(9 - legWiggle, 15, 5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      const isBlinking = Math.sin(breath * 0.7) > 0.94;
-      if (isBlinking) {
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(-9, -2); ctx.lineTo(-3, -2);
-        ctx.moveTo(3, -2); ctx.lineTo(9, -2);
-        ctx.stroke();
-      } else {
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(-6, -2, 5.5, 0, Math.PI * 2);
-        ctx.arc(6, -2, 5.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#0f172a';
-        ctx.beginPath();
-        ctx.arc(-5, -2, 2.6, 0, Math.PI * 2);
-        ctx.arc(7, -2, 2.6, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(-6, -3, 1, 0, Math.PI * 2);
-        ctx.arc(6, -3, 1, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      ctx.restore();
-
-      ctx.font = isSelf ? 'bold 13px Kanit' : 'bold 12px Kanit';
-      ctx.textAlign = 'center';
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = '#ffffff';
-      ctx.strokeText(label, x, ry + 36);
-      ctx.fillStyle = isSelf ? '#e01e37' : '#334155';
-      ctx.fillText(label, x, ry + 36);
-    }
-
-    // --- 5. จัดการข้อสอบ & หน้าสรุปผล ---
-    function openQuizModal() {
-      if (isGameOver) return;
-      currentQuestionItem = WORD_QUIZ[Math.floor(Math.random() * WORD_QUIZ.length)];
-      document.getElementById('quiz-question-text').innerText = `ข้อที่ ${currentQuestionItem.id}: ${currentQuestionItem.q}`;
-
-      const optsBox = document.getElementById('quiz-options-box');
-      optsBox.innerHTML = '';
-      currentQuestionItem.a.forEach((ans, idx) => {
-        const btn = document.createElement('button');
-        btn.className = "w-full text-left font-bold py-2.5 px-4 rounded-xl border border-pink-200 bg-pink-50 hover:bg-pink-100 transition-all text-slate-700 text-xs sm:text-sm cursor-pointer";
-        btn.innerText = `${idx + 1}. ${ans}`;
-        btn.onclick = () => handleAnswer(idx === currentQuestionItem.c);
-        optsBox.appendChild(btn);
-      });
-      document.getElementById('quiz-modal').classList.remove('hidden');
-    }
-
-    function handleAnswer(isCorrect) {
-      if (!currentQuestionItem) return;
-      const qId = currentQuestionItem.id;
-
-      if (isCorrect) {
-        currentEnergy += 5;
-        correctCount++;
-        questionAnswersHistory[qId].correct++;
-        document.getElementById('hud-energy').innerText = currentEnergy;
-        playCorrectSound();
-        alert("เก่งมาก! ตอบถูกต้อง 🎉 ได้รับ +5 Energy");
-      } else {
-        wrongCount++;
-        questionAnswersHistory[qId].wrong++;
-        playWrongSound();
-        alert("ยังไม่ถูกต้องนะ ลองตอบใหม่อีกทีจ้า 😊");
-      }
-      document.getElementById('quiz-modal').classList.add('hidden');
-      broadcastMyState();
-    }
-
-    function endGameMatch() {
-      isGameOver = true;
-      stopBGM();
-      document.getElementById('quiz-modal').classList.add('hidden');
-      if (!isHost) {
-        const board = document.getElementById('gameOverModal');
-        const rows = document.getElementById('summaryRows');
-        rows.innerHTML = '';
-
-        const all = [
-          { name: myPlayerName, height: currentHeightMeters, correct: correctCount, wrong: wrongCount, isSelf: true },
-          ...Array.from(playersInRoom.values()).map(p => ({
-            name: p.name,
-            height: p.height || 0,
-            correct: p.correct || 0,
-            wrong: p.wrong || 0,
-            isSelf: false
-          }))
-        ].sort((a, b) => b.height - a.height);
-
-        all.forEach((p, i) => {
-          const rankBadge = i === 0 ? '🥇 1' : i === 1 ? '🥈 2' : i === 2 ? '🥉 3' : `#${i + 1}`;
-          const div = document.createElement('div');
-          div.className = `flex justify-between items-center p-3 rounded-2xl text-xs sm:text-sm border transition-all ${
-            p.isSelf ? 'bg-pink-50 border-pink-400 font-bold' : 'bg-slate-50 border-slate-200'
-          }`;
-          div.innerHTML = `
-            <div class="flex items-center gap-2">
-              <span class="font-black text-rose-600">${rankBadge}</span>
-              <span class="text-slate-800">${p.name} ${p.isSelf ? '<span class="text-rose-500 text-[11px]">(คุณ)</span>' : ''}</span>
-            </div>
-            <div class="text-right">
-              <span class="font-black text-rose-600 block text-sm">${p.height} m</span>
-              <span class="text-[11px] text-slate-500">ถูก <b class="text-emerald-600">${p.correct}</b> | ผิด <b class="text-rose-500">${p.wrong}</b></span>
-            </div>
-          `;
-          rows.appendChild(div);
+      // Sync Realtime Height to Firebase (Throttled every 250ms)
+      if (timestamp - lastSyncTime > 250 && roomRef && myPlayerId) {
+        lastSyncTime = timestamp;
+        roomRef.child('players/' + myPlayerId).update({
+          height: currentHeightMeters
         });
-        board.classList.remove('hidden');
       }
+
+      animationFrameId = requestAnimationFrame(gameLoop);
     }
   </script>
 </body>
