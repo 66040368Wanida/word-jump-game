@@ -599,11 +599,13 @@
       background: #eff6ff;
       border: 1px solid #93c5fd;
       color: #2563eb;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 8px;
       font-weight: bold;
       font-size: 11px;
       cursor: pointer;
+      display: inline-block;
+      text-align: center;
     }
     .qb-btn-edit:hover {
       background: #2563eb;
@@ -613,11 +615,13 @@
       background: #fff1f2;
       border: 1px solid #fda4af;
       color: #e11d48;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 8px;
       font-weight: bold;
       font-size: 11px;
       cursor: pointer;
+      display: inline-block;
+      text-align: center;
     }
     .qb-btn-delete:hover {
       background: #e11d48;
@@ -653,7 +657,6 @@
   <div id="view-mode" class="container">
     <h1>HUNTER CYBER MISSION</h1>
     <p style="color: #64748b; font-size:14px; margin-bottom: 20px;">เกมตอบคำถามชิงความสูง (Word Master)</p>
-    <!-- ให้กดแล้วเปิดหน้าต่างยืนยันรหัสผ่านผู้สอนก่อน -->
     <button class="btn" id="btn-mode-host" onclick="openTeacherAuthModal()">👑 ผู้สอน (Host สร้างห้อง)</button>
     <button class="btn" id="btn-mode-join" style="background:#475569;" onclick="switchScreen('view-join')">🎮 ผู้เรียน (Join เข้าเล่น)</button>
   </div>
@@ -854,7 +857,7 @@
       <button class="btn-music-toggle" id="btn-toggle-music">🔊</button>
     </div>
 
-    <!-- แผงสัมผัสขนาดใหญ่ กดง่าย สะใจ ไม่ติดขอบ -->
+    <!-- แผงปุ่มสัมผัสขนาดใหญ่ -->
     <div class="controls-bar">
       <div class="touch-dpad-container">
         <div class="touch-btn-arrow" id="btn-left">◀</div>
@@ -925,7 +928,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // รหัสผ่านยืนยันสิทธิ์ของคุณครู
     const TEACHER_PASS = "1234";
 
     window.openTeacherAuthModal = function() {
@@ -1116,7 +1118,7 @@
         tabAdd.classList.add('active');
         tabView.classList.remove('active');
         panelAdd.classList.remove('hidden');
-        panelAdd.classList.add('hidden');
+        panelView.classList.add('hidden');
       }
     }
 
@@ -1131,7 +1133,7 @@
       document.getElementById('new-q-correct').value = "0";
       document.getElementById('btn-save-question').innerText = "บันทึกข้อสอบ ➕";
       switchQbTab('add');
-    }
+    };
 
     window.prepareEditQuestion = function(id) {
       const qItem = quizData.find(q => q.id === id);
@@ -1147,7 +1149,7 @@
       document.getElementById('new-q-correct').value = qItem.a;
       document.getElementById('btn-save-question').innerText = "💾 บันทึกการแก้ไข";
       switchQbTab('add');
-    }
+    };
 
     window.renderQuestionBankList = function() {
       const listEl = document.getElementById('questionBankList');
@@ -1159,7 +1161,7 @@
         const div = document.createElement('div');
         div.className = "qb-question-card";
         div.innerHTML = `
-          <div>
+          <div style="flex:1;">
             <div style="font-weight: 800; font-size: 12px; color: #0f172a; line-height: 1.4;">
               ${index + 1}. ${item.q}
             </div>
@@ -1174,13 +1176,13 @@
             </div>
           </div>
           <div class="qb-actions">
-            <button onclick="prepareEditQuestion(${item.id})" class="qb-btn-edit">✏️ แก้ไข</button>
-            <button onclick="deleteQuestion(${item.id})" class="qb-btn-delete">ลบ</button>
+            <button type="button" onclick="prepareEditQuestion(${item.id})" class="qb-btn-edit">✏️ แก้ไข</button>
+            <button type="button" onclick="deleteQuestion(${item.id})" class="qb-btn-delete">ลบ</button>
           </div>
         `;
         listEl.appendChild(div);
       });
-    }
+    };
 
     window.saveQuestionHandler = function() {
       const editIdStr = document.getElementById('edit-q-id').value;
@@ -1218,7 +1220,7 @@
 
       renderQuestionBankList();
       switchQbTab('view');
-    }
+    };
 
     window.deleteQuestion = function(id) {
       if (quizData.length <= 3) {
@@ -1227,7 +1229,7 @@
       quizData = quizData.filter(q => q.id !== id);
       renderQuestionBankList();
       showToast('🗑️ ลบคำถามเรียบร้อย');
-    }
+    };
 
     window.kickPlayer = function(pid) {
       if (!currentPin || !isHost) return;
@@ -1370,7 +1372,7 @@
           set(pRef, {
             name: playerName,
             height: 0,
-            x: window.innerWidth / 2 - 17,
+            x: 240 - 17,
             y: 400,
             facing: 'right',
             styleIndex: myStyleIndex,
@@ -1828,12 +1830,12 @@
       ctx.restore();
     }
 
-    function drawCutePlatform(ctx, p, dy) {
+    function drawCutePlatform(ctx, p, dy, offsetX) {
       ctx.save();
       ctx.shadowColor = 'rgba(0, 0, 0, 0.06)';
       ctx.shadowOffsetY = 4;
 
-      let px = p.x;
+      let px = p.x + offsetX;
       let py = dy;
 
       if (p.isDisappearing && p.stepped) {
@@ -1929,6 +1931,8 @@
       const canvas = document.getElementById('gameCanvas');
       const ctx = canvas.getContext('2d');
 
+      const V_WIDTH = 480; // กำหนดความกว้างสนามแข่งขันมาตรฐานกลาง
+
       function resize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -1938,7 +1942,7 @@
       window.addEventListener('orientationchange', () => setTimeout(resize, 200));
 
       const player = {
-        x: canvas.width / 2 - 17,
+        x: V_WIDTH / 2 - 17,
         y: canvas.height - 120,
         w: 34,
         h: 40,
@@ -1958,12 +1962,8 @@
       let cameraY = 0;
       let lastNetworkSync = 0;
 
-      // ปรับปรุงการวางแท่นกระโดดให้อยู่กึ่งกลางเสมอ (Center Alignment ในทุกหน้าจอ)
-      const WORLD_WIDTH = Math.min(480, canvas.width);
-      const startX = (canvas.width - WORLD_WIDTH) / 2;
-
       const platforms = [
-        { x: -500, y: canvas.height - 60, w: 3500, h: 100, type: 'cake' }
+        { x: -500, y: canvas.height - 60, w: 2000, h: 100, type: 'cake' }
       ];
       const boosters = [];
       const traps = [];
@@ -2010,12 +2010,11 @@
           movePeriod = (i < 80 ? 2400 : 1800) + norm1 * 600;
         }
 
-        const xSpan = WORLD_WIDTH - w - 40;
-        const relX = (i % 2 === 0) 
+        const xSpan = V_WIDTH - w - 40;
+        const x = (i % 2 === 0) 
           ? (norm2 * (xSpan * 0.45) + 20) 
-          : (WORLD_WIDTH - w - 20 - norm2 * (xSpan * 0.45));
+          : (V_WIDTH - w - 20 - norm2 * (xSpan * 0.45));
         
-        const x = startX + relX;
         baseStartX = x;
 
         platforms.push({ 
@@ -2152,6 +2151,9 @@
         const H = canvas.height;
         const currentTime = Date.now();
 
+        // คำนวณจุดกึ่งกลางแบบไดนามิก รองรับทั้งแนวตั้ง แนวนอน มือถือ ไอแพด คอมฯ
+        const offsetX = (W - V_WIDTH) / 2;
+
         if (trapImmunity > 0) trapImmunity--;
 
         blinkTimer++;
@@ -2209,7 +2211,7 @@
 
         player.x += player.vx;
         if (player.x < 10) player.x = 10;
-        if (player.x + player.w > W - 10) player.x = W - player.w - 10;
+        if (player.x + player.w > V_WIDTH - 10) player.x = V_WIDTH - player.w - 10;
 
         player.vy += 0.65;
         if (player.vy > 14) player.vy = 14;
@@ -2299,7 +2301,7 @@
           if (p.broken) return;
           const dy = p.y - cameraY;
           if (dy + p.h < -50 || dy > H + 50) return;
-          drawCutePlatform(ctx, p, dy);
+          drawCutePlatform(ctx, p, dy, offsetX);
         });
 
         boosters.forEach(b => {
@@ -2307,10 +2309,10 @@
           if (dy < -40 || dy > H + 40) return;
           ctx.fillStyle = '#10b981';
           ctx.beginPath();
-          ctx.roundRect(b.x, dy, b.w, b.h, 4);
+          ctx.roundRect(b.x + offsetX, dy, b.w, b.h, 4);
           ctx.fill();
           ctx.fillStyle = '#34d399';
-          ctx.fillRect(b.x + 4, dy + 2, b.w - 8, 2);
+          ctx.fillRect(b.x + offsetX + 4, dy + 2, b.w - 8, 2);
         });
 
         traps.forEach(t => {
@@ -2318,7 +2320,7 @@
           if (dy < -40 || dy > H + 40) return;
           ctx.fillStyle = '#ef4444';
           ctx.beginPath();
-          ctx.roundRect(t.x, dy, t.w, t.h, 3);
+          ctx.roundRect(t.x + offsetX, dy, t.w, t.h, 3);
           ctx.fill();
         });
 
@@ -2332,7 +2334,7 @@
           smoothPositions[pid].x += (other.x - smoothPositions[pid].x) * 0.22;
           smoothPositions[pid].y += (other.y - smoothPositions[pid].y) * 0.22;
 
-          const ox = smoothPositions[pid].x + 17;
+          const ox = smoothPositions[pid].x + offsetX + 17;
           const oy = smoothPositions[pid].y + 18 - cameraY;
 
           if (oy > -60 && oy < H + 60) {
@@ -2341,7 +2343,7 @@
           }
         });
 
-        const drawX = player.x + player.w / 2;
+        const drawX = player.x + offsetX + player.w / 2;
         const drawY = player.y + 18 - cameraY;
         const myColor = SWEET_PALETTES[myStyleIndex];
         drawCuteCharacter(ctx, drawX, drawY, 20, isMoving, myColor, facing, isBlinking, playerName, isTrapped);
