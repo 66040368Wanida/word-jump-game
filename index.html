@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Hunter Cyber Mission - Professional Edition</title>
+  <title>Hunter Cyber Mission - Perfect Edition</title>
   
   <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <!-- Firebase 8 Compat -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -37,14 +36,14 @@
       justify-content: center;
     }
     .container {
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.95);
       border: 2px solid rgba(255, 117, 143, 0.4);
-      border-radius: 28px;
-      padding: 24px;
+      border-radius: 32px;
+      padding: 26px;
       max-width: 480px;
       width: 90%;
       text-align: center;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 117, 143, 0.2);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 117, 143, 0.2);
       backdrop-filter: blur(20px);
       max-height: 90dvh;
       overflow-y: auto;
@@ -54,95 +53,93 @@
     }
     h1 {
       color: #e01e37;
-      margin: 0 0 8px 0;
-      font-size: 24px;
+      margin: 0 0 6px 0;
+      font-size: 26px;
+      letter-spacing: 0.5px;
       font-weight: 900;
-      letter-spacing: -0.5px;
     }
     h2 {
       color: #e01e37;
       font-weight: 800;
-      margin: 10px 0;
     }
     .btn {
       background: linear-gradient(135deg, #ff758f 0%, #ff4d6d 100%);
       color: white;
       border: none;
       padding: 14px;
-      border-radius: 16px;
+      border-radius: 18px;
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
       width: 100%;
       margin: 8px 0;
-      box-shadow: 0 6px 18px rgba(255, 77, 109, 0.35);
+      box-shadow: 0 8px 20px rgba(255, 77, 109, 0.35);
       display: block;
       transition: all 0.15s ease;
     }
-    .btn:active { transform: scale(0.98); filter: brightness(0.95); }
+    .btn:active { transform: scale(0.97); }
     .btn-sweet-green {
       background: linear-gradient(135deg, #34d399 0%, #059669 100%);
       color: white;
       border: none;
-      padding: 14px;
-      border-radius: 16px;
+      padding: 13px;
+      border-radius: 18px;
       font-weight: 800;
       cursor: pointer;
       width: 100%;
-      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
       transition: all 0.15s ease;
     }
-    .btn-sweet-green:active { transform: scale(0.98); }
+    .btn-sweet-green:active { transform: scale(0.97); }
     .btn-secondary {
       background: #f1f5f9;
       color: #475569;
       border: 1.5px solid #cbd5e1;
       box-shadow: none;
     }
-    .btn-secondary:active { background: #e2e8f0; }
 
     input, select {
       width: 100%;
-      padding: 12px 16px;
+      padding: 13px 16px;
       margin: 6px 0 12px 0;
-      border-radius: 14px;
+      border-radius: 16px;
       border: 2px solid #ffccd5;
       background: #fff5f7;
-      color: #0f172a;
+      color: #e01e37;
       text-align: center;
       font-size: 16px;
-      font-weight: 700;
+      font-weight: bold;
       outline: none;
       user-select: auto;
       -webkit-user-select: auto;
       transition: all 0.2s;
     }
-    input:focus {
+    input:focus, select:focus {
       border-color: #ff4d6d;
       background: #ffffff;
       box-shadow: 0 0 0 4px rgba(255, 77, 109, 0.15);
     }
     .pin-display {
-      font-size: 38px;
-      letter-spacing: 6px;
+      font-size: 42px;
+      letter-spacing: 8px;
       font-weight: 900;
       color: #e01e37;
       background: #ffe4e6;
       padding: 8px;
-      border-radius: 16px;
+      border-radius: 18px;
       margin: 10px 0;
-      border: 2px dashed #ff758f;
+      border: 2.5px dashed #ff758f;
     }
     .qr-container {
       display: flex;
       flex-direction: column;
       align-items: center;
       background: #fff;
-      padding: 12px;
-      border-radius: 18px;
+      padding: 14px;
+      border-radius: 20px;
       width: fit-content;
       margin: 10px auto;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
       border: 1px solid #ffe4e6;
     }
     .badge-list {
@@ -151,24 +148,23 @@
       gap: 8px;
       justify-content: center;
       margin: 10px 0;
-      max-height: 140px;
+      max-height: 130px;
       overflow-y: auto;
       padding: 4px;
     }
-    .badge-item {
+    .badge {
       background: #ffe4e6;
       border: 1px solid #ff758f;
       padding: 6px 10px 6px 14px;
       border-radius: 20px;
       font-size: 13px;
-      color: #9f1239;
-      font-weight: 700;
+      color: #e01e37;
+      font-weight: bold;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
-    .badge-kick {
-      cursor: pointer;
+    .badge-del {
       background: #ff4d6d;
       color: white;
       border-radius: 50%;
@@ -177,19 +173,20 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       font-size: 11px;
-      font-weight: bold;
+      line-height: 1;
     }
     .hidden { display: none !important; }
 
-    /* Teacher Realtime Dashboard */
+    /* Teacher Live View */
     #view-host-live {
       position: fixed;
       top: 0; left: 0;
       width: 100vw;
       height: 100dvh;
       background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      z-index: 90;
+      z-index: 40;
       display: flex;
       flex-direction: column;
       padding: 20px;
@@ -199,13 +196,25 @@
       background: rgba(30, 41, 59, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(16px);
-      border-radius: 20px;
-      padding: 16px 20px;
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       gap: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .host-leader-bar {
+      margin-top: 14px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(234, 179, 8, 0.05) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      padding: 14px 20px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
     .host-table-wrapper {
       margin-top: 14px;
@@ -213,27 +222,26 @@
       overflow-y: auto;
       background: rgba(15, 23, 42, 0.75);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 12px;
+      box-shadow: inset 0 4px 15px rgba(0,0,0,0.4);
     }
     table.host-table {
       width: 100%;
       border-collapse: collapse;
       color: white;
       text-align: left;
-      font-size: 14px;
+    }
+    table.host-table th, table.host-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
     table.host-table th {
-      padding: 10px;
-      border-bottom: 2px solid rgba(255,255,255,0.1);
       color: #94a3b8;
-    }
-    table.host-table td {
-      padding: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px;
     }
 
-    /* Game Canvas Screen */
+    /* Game View */
     #game-wrapper {
       position: fixed;
       top: 0; left: 0;
@@ -248,37 +256,38 @@
       width: 100%;
       height: 100%;
     }
+
     .game-top-bar {
       position: absolute;
       top: env(safe-area-inset-top, 12px);
-      left: 14px;
-      right: 14px;
+      left: 12px;
+      right: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       z-index: 70;
       pointer-events: none;
     }
     .stat-pill {
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.95);
       border: 1.5px solid rgba(255, 117, 143, 0.4);
       backdrop-filter: blur(8px);
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 20px;
       font-weight: 800;
-      font-size: 14px;
+      font-size: 13px;
       color: #0f172a;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
       white-space: nowrap;
     }
 
-    /* Controls Bar & Professional SVG Icons */
+    /* Fixed Controls & Vectors */
     .controls-bar {
       position: absolute;
       bottom: max(env(safe-area-inset-bottom), 18px);
-      left: 18px;
-      right: 18px;
+      left: 16px;
+      right: 16px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
@@ -286,39 +295,39 @@
       pointer-events: none;
     }
     .touch-dpad-container {
-      background: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 2px solid rgba(255, 255, 255, 0.95);
-      border-radius: 28px;
+      border: 2.5px solid rgba(255, 255, 255, 0.95);
+      border-radius: 36px;
       padding: 8px;
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.2);
       display: flex;
       gap: 10px;
       pointer-events: auto;
     }
     .touch-btn-arrow {
-      width: 64px;
-      height: 64px;
-      border-radius: 20px;
+      width: 66px;
+      height: 66px;
+      border-radius: 26px;
       background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
-      border: 1.5px solid #bae6fd;
+      border: 2px solid #bae6fd;
+      color: #0284c7;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 0 #7dd3fc, 0 8px 16px rgba(2, 132, 199, 0.15);
+      box-shadow: 0 5px 0 #7dd3fc, 0 8px 16px rgba(2, 132, 199, 0.15);
+      transition: all 0.08s ease;
       cursor: pointer;
       touch-action: none;
-      transition: all 0.08s ease;
     }
     .touch-btn-arrow svg {
       width: 28px;
       height: 28px;
       fill: #0284c7;
-      transition: transform 0.08s ease;
     }
     .touch-btn-arrow.active {
-      transform: translateY(3px);
+      transform: translateY(4px);
       box-shadow: 0 1px 0 #7dd3fc;
       background: #e0f2fe;
     }
@@ -326,27 +335,28 @@
       pointer-events: auto;
     }
     .touch-btn-jump {
-      width: 78px;
-      height: 78px;
+      width: 82px;
+      height: 82px;
       border-radius: 50%;
       background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
-      border: 3.5px solid #ffffff;
+      border: 4px solid #ffffff;
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 0 #047857, 0 12px 24px rgba(16, 185, 129, 0.35);
+      box-shadow: 0 8px 0 #047857, 0 14px 28px rgba(16, 185, 129, 0.4);
+      transition: all 0.08s ease;
       cursor: pointer;
       touch-action: none;
-      transition: all 0.08s ease;
     }
     .touch-btn-jump svg {
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
       fill: #ffffff;
     }
     .touch-btn-jump.active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #047857;
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #047857;
       background: #059669;
     }
 
@@ -355,17 +365,17 @@
       top: 24px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.95);
+      background: rgba(15, 23, 42, 0.92);
       color: white;
-      padding: 10px 24px;
+      padding: 10px 22px;
       border-radius: 20px;
       font-size: 14px;
-      font-weight: 700;
-      z-index: 300;
+      font-weight: bold;
+      z-index: 250;
       opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
       pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
     #toast-msg.show {
       opacity: 1;
@@ -375,33 +385,33 @@
 </head>
 <body>
 
-  <!-- Toast Notification -->
+  <!-- Toast Box -->
   <div id="toast-msg">แจ้งเตือน</div>
 
   <!-- Screen 1: Role Selection -->
   <div id="view-role" class="container">
-    <h1>CYBER MISSION</h1>
-    <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">เกมตอบคำถามกระโดดตะลุยความสูง</p>
+    <h1>Hunter Cyber Mission</h1>
+    <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">ภารกิจพิชิตยอดหอคอยความปลอดภัยไซเบอร์</p>
     <button class="btn" onclick="showTeacherConfig()">ครูผู้จัดห้อง (Host Teacher)</button>
     <button class="btn btn-secondary" onclick="showStudentLogin()">นักเรียนเข้าร่วม (Student)</button>
   </div>
 
-  <!-- Screen 2: Firebase Configuration (Host Setup) -->
+  <!-- Screen 2: Firebase Configuration -->
   <div id="view-db-config" class="container hidden">
-    <h2>ตั้งค่า Firebase Database</h2>
-    <p style="font-size: 13px; color: #64748b;">กรอก Firebase Config สำหรับใช้งาน Realtime</p>
+    <h2>ตั้งค่าระบบ Realtime (Firebase)</h2>
+    <p style="font-size: 13px; color: #64748b;">ระบุ Firebase Config ของคุณ</p>
     <input type="text" id="fb-apiKey" placeholder="apiKey">
     <input type="text" id="fb-authDomain" placeholder="authDomain">
-    <input type="text" id="fb-databaseURL" placeholder="databaseURL (https://...firebaseio.com)">
+    <input type="text" id="fb-databaseURL" placeholder="databaseURL">
     <input type="text" id="fb-projectId" placeholder="projectId">
-    <button class="btn btn-sweet-green" onclick="saveDbConfigAndProceed()">บันทึกและสร้างห้อง</button>
+    <button class="btn btn-sweet-green" onclick="saveDbConfigAndProceed()">บันทึกและเปิดห้อง</button>
     <button class="btn btn-secondary" onclick="backToRole()">ย้อนกลับ</button>
   </div>
 
-  <!-- Screen 3: Teacher Lobby (Waiting Room) -->
+  <!-- Screen 3: Teacher Lobby Room -->
   <div id="view-teacher-lobby" class="container hidden">
     <h1>ห้องควบคุมเกม (ครู)</h1>
-    <div style="font-size: 13px; color: #64748b; margin-top: 4px;">แชร์ PIN หรือ QR Code ให้นักเรียน</div>
+    <div style="font-size: 13px; color: #64748b;">สแกน QR Code หรือใช้รหัส PIN เพื่อเข้าร่วม</div>
     <div id="display-room-pin" class="pin-display">------</div>
     <div class="qr-container" id="qrcode"></div>
     <div style="font-weight: 800; font-size: 14px; margin-top: 10px;">
@@ -411,18 +421,19 @@
     <button class="btn btn-sweet-green" onclick="teacherStartGame()">เริ่มการแข่งขัน (Start Game)</button>
   </div>
 
-  <!-- Screen 4: Teacher Live Monitor & End Results -->
+  <!-- Screen 4: Teacher Live Monitor -->
   <div id="view-host-live" class="hidden">
     <div class="host-header-card">
       <div>
-        <div style="font-size: 12px; color: #94a3b8; font-weight: 700;">ROOM PIN</div>
-        <div style="font-size: 24px; font-weight: 900; color: #38bdf8;" id="live-pin-text">------</div>
+        <div style="font-size: 12px; color: #94a3b8; font-weight: 800;">ROOM PIN</div>
+        <div style="font-size: 26px; font-weight: 900; color: #38bdf8;" id="live-pin-text">------</div>
       </div>
       <div>
-        <span id="live-status-pill" style="background:#0284c7; padding:6px 14px; border-radius:12px; font-weight:800; font-size:13px;">กำลังแข่งขัน</span>
+        <span id="live-status-pill" style="background:#0284c7; padding:8px 16px; border-radius:14px; font-weight:800; font-size:13px;">กำลังแข่งขัน</span>
       </div>
       <div>
-        <button class="btn btn-sweet-green" style="margin:0; padding:10px 18px; width:auto; font-size:13px;" onclick="teacherRestartMatch()">🔄 เล่นใหม่อีกครั้ง (Reset)</button>
+        <!-- ครูสามารถเล่นใหม่ได้ตรงนี้ โดยไม่หลุดไปหน้าเด็ก -->
+        <button class="btn btn-sweet-green" style="margin:0; padding:10px 18px; width:auto; font-size:13px;" onclick="teacherResetGame()">🔄 เล่นใหม่อีกครั้ง (Reset Game)</button>
       </div>
     </div>
     <div class="host-table-wrapper">
@@ -431,8 +442,7 @@
           <tr>
             <th>อันดับ</th>
             <th>ชื่อผู้เล่น</th>
-            <th>ความสูงปัจจุบัน (ม.)</th>
-            <th>คำถามที่ตอบ</th>
+            <th>ความสูงปัจจุบัน (เมตร)</th>
           </tr>
         </thead>
         <tbody id="host-leaderboard-body"></tbody>
@@ -442,42 +452,42 @@
 
   <!-- Screen 5: Student Login -->
   <div id="view-student-login" class="container hidden">
-    <h1>เข้าร่วมการแข่งขัน</h1>
+    <h1>เข้าร่วมภารกิจ</h1>
     <input type="number" id="stu-pin" placeholder="ใส่รหัสห้อง 6 หลัก" inputmode="numeric">
-    <input type="text" id="stu-name" placeholder="ตั้งชื่อเล่นของคุณ" maxlength="15">
+    <input type="text" id="stu-name" placeholder="ตั้งชื่อของคุณ" maxlength="15">
     <button class="btn btn-sweet-green" onclick="studentJoinGame()">เข้าห้องแข่งขัน</button>
     <button class="btn btn-secondary" onclick="backToRole()">ย้อนกลับ</button>
   </div>
 
-  <!-- Screen 6: Student Lobby (Waiting) -->
+  <!-- Screen 6: Student Lobby Waiting -->
   <div id="view-student-waiting" class="container hidden">
-    <h2>รอคุณครูเริ่มเกม...</h2>
-    <p style="font-size: 14px; color: #64748b;">เชื่อมต่อสำเร็จแล้ว เตรียมพร้อมลุย!</p>
-    <div id="waiting-student-name" style="font-size: 20px; font-weight: 900; color: #e01e37; margin: 16px 0;">-</div>
-    <div style="font-size: 12px; color: #94a3b8;">เกมจะเริ่มอัตโนมัติเมื่อครูกด Start</div>
+    <h2>เตรียมพร้อมเข้าสู่ภารกิจ...</h2>
+    <p style="font-size: 14px; color: #64748b;">รอคุณครูกดเริ่มเกม</p>
+    <div id="waiting-student-name" style="font-size: 22px; font-weight: 900; color: #e01e37; margin: 16px 0;">-</div>
+    <div style="font-size: 12px; color: #94a3b8;">ระบบจะเข้าสู่เกมอัตโนมัติเมื่อการแข่งขันเริ่มต้น</div>
   </div>
 
-  <!-- Screen 7: Active Gameplay Screen (Students) -->
+  <!-- Screen 7: Active Game Canvas (Student) -->
   <div id="game-wrapper" class="hidden">
     <div class="game-top-bar">
-      <div class="stat-pill">ความสูง: <span id="ui-height" style="color:#0284c7;">0</span> ม.</div>
+      <div class="stat-pill">ความสูง: <span id="ui-height" style="color:#e01e37;">0</span> ม.</div>
       <div class="stat-pill">ห้อง: <span id="ui-pin">------</span></div>
     </div>
     <canvas id="gameCanvas"></canvas>
 
     <div class="controls-bar">
       <div class="touch-dpad-container">
-        <!-- Arrow Left SVG -->
+        <!-- SVG ปุ่มซ้าย -->
         <div class="touch-btn-arrow" id="btn-left">
           <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
         </div>
-        <!-- Arrow Right SVG -->
+        <!-- SVG ปุ่มขวา -->
         <div class="touch-btn-arrow" id="btn-right">
           <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
         </div>
       </div>
       <div class="action-pad">
-        <!-- Jump Arrow Up SVG -->
+        <!-- SVG ปุ่มกระโดด สมบูรณ์แบบ ไม่ตกขอบ -->
         <div class="touch-btn-jump" id="btn-jump">
           <svg viewBox="0 0 24 24"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
         </div>
@@ -495,14 +505,13 @@
     let roomRef = null;
     let animationFrameId = null;
 
-    /* Local Storage Helper for Config */
-    const DEFAULT_CONFIG_KEY = "CYBER_MISSION_FIREBASE_CONFIG";
+    const DB_KEY = "CYBER_MISSION_FIREBASE_CONFIG";
 
     function showToast(msg) {
       const t = document.getElementById('toast-msg');
       t.innerText = msg;
       t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2600);
+      setTimeout(() => t.classList.remove('show'), 2400);
     }
 
     function switchView(viewId) {
@@ -522,7 +531,6 @@
       switchView('view-role');
     }
 
-    /* Database Init */
     function initFirebase(cfg) {
       if (!firebase.apps.length) {
         firebase.initializeApp(cfg);
@@ -533,7 +541,7 @@
     /* Teacher Flow */
     function showTeacherConfig() {
       currentRole = 'teacher';
-      const saved = localStorage.getItem(DEFAULT_CONFIG_KEY);
+      const saved = localStorage.getItem(DB_KEY);
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -553,10 +561,10 @@
         projectId: document.getElementById('fb-projectId').value.trim()
       };
       if (!config.databaseURL || !config.apiKey) {
-        showToast("กรุณากรอกข้อมูล Firebase ให้ครบถ้วน");
+        showToast("กรุณาระบุข้อมูล Firebase ให้ครบถ้วน");
         return;
       }
-      localStorage.setItem(DEFAULT_CONFIG_KEY, JSON.stringify(config));
+      localStorage.setItem(DB_KEY, JSON.stringify(config));
       initFirebase(config);
       createTeacherRoom();
     }
@@ -565,9 +573,8 @@
       currentRoomPin = Math.floor(100000 + Math.random() * 900000).toString();
       roomRef = db.ref('rooms/' + currentRoomPin);
 
-      // Create new Room Node
       roomRef.set({
-        state: 'waiting', // waiting, playing, finished
+        state: 'waiting', // waiting, playing
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         players: {}
       }).then(() => {
@@ -579,7 +586,6 @@
       switchView('view-teacher-lobby');
       document.getElementById('display-room-pin').innerText = currentRoomPin;
       
-      // QR Code
       const qrContainer = document.getElementById('qrcode');
       qrContainer.innerHTML = '';
       const joinUrl = window.location.origin + window.location.pathname + '?pin=' + currentRoomPin;
@@ -591,7 +597,7 @@
         colorLight : "#ffffff"
       });
 
-      // Listen for players in waiting room
+      // ดึงรายชื่อผู้เล่นแบบเรียลไทม์ และเปิดให้ครูกดลบผู้เล่นได้
       roomRef.child('players').on('value', snapshot => {
         const players = snapshot.val() || {};
         renderWaitingBadges(players);
@@ -604,13 +610,13 @@
       const keys = Object.keys(players);
       document.getElementById('player-count').innerText = keys.length;
 
-      keys.forEach(k => {
-        const p = players[k];
+      keys.forEach(uid => {
+        const p = players[uid];
         const span = document.createElement('div');
-        span.className = 'badge-item';
+        span.className = 'badge';
         span.innerHTML = `
           <span>${p.name}</span>
-          <span class="badge-kick" title="เตะออก" onclick="kickPlayer('${k}')">✕</span>
+          <span class="badge-del" title="ลบผู้เล่น" onclick="kickPlayer('${uid}')">✕</span>
         `;
         list.appendChild(span);
       });
@@ -619,7 +625,7 @@
     function kickPlayer(playerId) {
       if (roomRef) {
         roomRef.child('players/' + playerId).remove();
-        showToast("ลบผู้เล่นแล้ว");
+        showToast("ลบผู้เล่นออกจากห้องแล้ว");
       }
     }
 
@@ -644,7 +650,7 @@
         const tbody = document.getElementById('host-leaderboard-body');
         tbody.innerHTML = '';
 
-        // Sort players by height descending
+        // เรียงลำดับคะแนนความสูงมากไปน้อย
         const sorted = Object.values(players).sort((a, b) => (b.height || 0) - (a.height || 0));
         sorted.forEach((p, index) => {
           const tr = document.createElement('tr');
@@ -652,27 +658,25 @@
             <td style="font-weight:900; color:#f59e0b;">#${index + 1}</td>
             <td style="font-weight:700;">${p.name}</td>
             <td style="font-weight:900; color:#38bdf8;">${Math.max(0, Math.floor(p.height || 0))} ม.</td>
-            <td>${p.solvedCount || 0}</td>
           `;
           tbody.appendChild(tr);
         });
       });
     }
 
-    // Teacher Restarts Match (Resets stats but stays in room)
-    function teacherRestartMatch() {
+    // ครูกดเล่นใหม่: รีเซ็ตสถานะและคะแนน แต่คงอยู่ในห้องเดิม ไม่เด้งไปหน้าเด็ก
+    function teacherResetGame() {
       if (!roomRef) return;
       roomRef.child('players').once('value', snap => {
         const players = snap.val() || {};
-        const resetUpdates = {};
+        const updates = {};
         Object.keys(players).forEach(uid => {
-          resetUpdates[`players/${uid}/height`] = 0;
-          resetUpdates[`players/${uid}/solvedCount`] = 0;
-          resetUpdates[`players/${uid}/y`] = 0;
+          updates[`players/${uid}/height`] = 0;
+          updates[`players/${uid}/y`] = 0;
         });
-        resetUpdates['state'] = 'waiting';
+        updates['state'] = 'waiting';
 
-        roomRef.update(resetUpdates).then(() => {
+        roomRef.update(updates).then(() => {
           showToast("รีเซ็ตการแข่งขันเรียบร้อย");
           setupTeacherLobbyView();
         });
@@ -682,20 +686,18 @@
     /* Student Flow */
     function showStudentLogin() {
       currentRole = 'student';
-      // Load stored Firebase config
-      const saved = localStorage.getItem(DEFAULT_CONFIG_KEY);
+      const saved = localStorage.getItem(DB_KEY);
       if (!saved) {
-        showToast("ไม่พบการเชื่อมต่อฐานข้อมูล ครูต้องเป็นผู้สร้างห้องก่อน");
+        showToast("ไม่พบการเชื่อมต่อฐานข้อมูล ครูต้องสร้างห้องก่อน");
         return;
       }
       initFirebase(JSON.parse(saved));
 
-      // Auto-fill PIN if in query URL
+      // ดึง PIN อัตโนมัติจาก URL ถ้ามี
       const urlParams = new URLSearchParams(window.location.search);
-      const pinParam = urlParams.get('pin');
-      if (pinParam) {
-        document.getElementById('stu-pin').value = pinParam;
-      }
+      const pin = urlParams.get('pin');
+      if (pin) document.getElementById('stu-pin').value = pin;
+
       switchView('view-student-login');
     }
 
@@ -721,23 +723,23 @@
 
         const roomData = snap.val();
 
-        // Check 1: Game must NOT be in progress
+        // ตรวจสอบ 1: เริ่มเกมแล้วหรือยัง ห้ามเข้าห้องระหว่างเกมกำลังเล่น
         if (roomData.state !== 'waiting') {
-          showToast("เกมเริ่มไปแล้ว ไม่สามารถเข้าร่วมได้ในขณะนี้");
+          showToast("เกมเริ่มไปแล้ว ไม่สามารถเข้าเล่นได้ในขณะนี้");
           return;
         }
 
-        // Check 2: Player name must NOT be duplicated
+        // ตรวจสอบ 2: ตรวจสอบชื่อผู้เล่น ห้ามซ้ำกันเด็ดขาด
         const existingPlayers = roomData.players || {};
-        const isDuplicate = Object.values(existingPlayers).some(
+        const nameConflict = Object.values(existingPlayers).some(
           p => p.name.trim().toLowerCase() === name.toLowerCase()
         );
-        if (isDuplicate) {
-          showToast("ชื่อนี้มีผู้ใช้แล้ว กรุณาตั้งชื่ออื่น");
+        if (nameConflict) {
+          showToast("ชื่อนี้มีผู้ใช้งานในห้องแล้ว กรุณาใช้ชื่ออื่น");
           return;
         }
 
-        // Register Student
+        // เข้าร่วมห้องสำเร็จ
         currentRoomPin = pin;
         roomRef = targetRoomRef;
         myPlayerName = name;
@@ -747,32 +749,30 @@
         newPlayerRef.set({
           name: myPlayerName,
           height: 0,
-          solvedCount: 0,
           joinedAt: firebase.database.ServerValue.TIMESTAMP
         });
 
-        // Handle Disconnect Removal
+        // หลุดการเชื่อมต่อให้ลบอัตโนมัติ
         newPlayerRef.onDisconnect().remove();
 
-        // Listen for kick event
+        // ดักกรณีครูกดเตะผู้เล่นออก
         newPlayerRef.on('value', pSnap => {
           if (!pSnap.exists() && currentRole === 'student') {
-            alert("คุณถูกนำออกจากห้องโดยคุณครู");
+            alert("คุณถูกลบออกจากห้องโดยคุณครู");
             window.location.reload();
           }
         });
 
-        // Show Waiting screen
+        // แสดงหน้ารอเริ่มเกม
         document.getElementById('waiting-student-name').innerText = myPlayerName;
         switchView('view-student-waiting');
 
-        // Watch room state
+        // ตรวจจับสถานะเริ่มเกมหรือรีเซ็ตเกม
         roomRef.child('state').on('value', stateSnap => {
           const st = stateSnap.val();
           if (st === 'playing') {
             startStudentGameLoop();
           } else if (st === 'waiting') {
-            // If teacher restarts
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             switchView('view-student-waiting');
           }
@@ -780,7 +780,7 @@
       });
     }
 
-    /* Game Engine: Canvas & Realtime Physics */
+    /* Game Engine & Platformer Logic */
     let canvas, ctx;
     let player = {
       x: 180,
@@ -793,7 +793,8 @@
     };
     let cameraY = 0;
     let platforms = [];
-    let inputs = { left: false, right: false, jump: false };
+    let inputs = { left: false, right: false };
+    let lastSyncTime = 0;
 
     function startStudentGameLoop() {
       switchView('game-wrapper');
@@ -804,21 +805,19 @@
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
 
-      // Generate Seeded Platforms
-      platforms = [
-        { x: 0, y: 0, w: canvas.width, h: 20, base: true }
-      ];
+      // สร้างบันไดแท่นกระโดด
+      platforms = [{ x: 0, y: 0, w: canvas.width, h: 22, base: true }];
       for (let i = 1; i < 200; i++) {
         platforms.push({
-          x: Math.random() * (canvas.width - 90),
-          y: i * 75,
-          w: 80 + Math.random() * 20,
+          x: Math.random() * (canvas.width - 95),
+          y: i * 72,
+          w: 85 + Math.random() * 20,
           h: 16
         });
       }
 
       player.x = canvas.width / 2 - 16;
-      player.y = 20;
+      player.y = 22;
       player.vy = 0;
       cameraY = 0;
 
@@ -854,7 +853,6 @@
         }
       }, () => {});
 
-      // Keyboard support for desktop testing
       window.addEventListener('keydown', e => {
         if (e.key === 'ArrowLeft' || e.key === 'a') inputs.left = true;
         if (e.key === 'ArrowRight' || e.key === 'd') inputs.right = false;
@@ -869,23 +867,20 @@
       });
     }
 
-    let lastSyncTime = 0;
-
     function gameLoop(timestamp) {
-      // Physics Update
       if (inputs.left) player.vx = -4.5;
       else if (inputs.right) player.vx = 4.5;
       else player.vx *= 0.8;
 
-      player.vy -= 0.65; // Gravity
+      player.vy -= 0.65; // แรงโน้มถ่วง
       player.x += player.vx;
       player.y += player.vy;
 
-      // Screen boundaries
+      // ล็อกขอบจอซ้าย-ขวา
       if (player.x < 0) player.x = 0;
       if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
 
-      // Platform Collision Detection
+      // ตรวจจับการเหยียบแท่น
       player.grounded = false;
       platforms.forEach(plat => {
         if (
@@ -901,25 +896,25 @@
         }
       });
 
-      // Floor boundary
+      // พื้นล่างสุด
       if (player.y < 0) {
         player.y = 0;
         player.vy = 0;
         player.grounded = true;
       }
 
-      // Height decreases immediately when falling down
+      // คะแนนความสูง: อิงจากตำแหน่งแกน Y ปัจจุบันตรงๆ (ตกลงมาคะแนนจะลดลงตามจริงทันที)
       const currentHeightMeters = Math.max(0, Math.floor(player.y / 10));
       document.getElementById('ui-height').innerText = currentHeightMeters;
 
-      // Smooth Camera Follow
+      // กล้องเลื่อนตามตัวละคร
       cameraY += (player.y - cameraY - 200) * 0.1;
       if (cameraY < 0) cameraY = 0;
 
-      // Render
+      // การวาดภาพลงบน Canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Render Platforms
+      // วาดบันได
       platforms.forEach(plat => {
         const drawY = canvas.height - (plat.y - cameraY);
         if (drawY > -30 && drawY < canvas.height + 30) {
@@ -930,14 +925,14 @@
         }
       });
 
-      // Render Player Character
+      // วาดตัวละคร
       const playerDrawY = canvas.height - (player.y - cameraY);
-      ctx.fillStyle = '#f43f5e';
+      ctx.fillStyle = '#ff4d6d';
       ctx.beginPath();
       ctx.roundRect(player.x, playerDrawY - player.height, player.width, player.height, 10);
       ctx.fill();
 
-      // Eye
+      // ดวงตา
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.arc(player.x + (inputs.left ? 8 : 22), playerDrawY - player.height + 14, 5, 0, Math.PI * 2);
@@ -947,7 +942,7 @@
       ctx.arc(player.x + (inputs.left ? 7 : 23), playerDrawY - player.height + 14, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Sync Realtime Height to Firebase (Throttled every 250ms)
+      // ซิงค์ตำแหน่งความสูงขึ้น Firebase ทุก 250ms
       if (timestamp - lastSyncTime > 250 && roomRef && myPlayerId) {
         lastSyncTime = timestamp;
         roomRef.child('players/' + myPlayerId).update({
