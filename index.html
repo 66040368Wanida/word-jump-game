@@ -89,7 +89,6 @@
     }
     .btn-sweet-green:active { transform: scale(0.97); }
 
-    /* ปุ่ม Excel สไตล์ Emerald Glow ระดับพรีเมียม */
     .btn-excel-luxury {
       background: linear-gradient(135deg, #10b981 0%, #047857 50%, #064e3b 100%);
       color: #ffffff;
@@ -319,7 +318,6 @@
       box-shadow: 0 3px 10px rgba(0,0,0,0.08);
     }
 
-    /* ขยายปุ่ม D-Pad และ Jump ให้ใหญ่ขึ้นอย่างจุใจ สัมผัสง่าย ไม่ล้นจอ */
     .controls-bar {
       position: absolute;
       bottom: max(env(safe-area-inset-bottom, 16px), 20px);
@@ -443,7 +441,7 @@
       color: #334155;
     }
 
-    #quiz-modal, #questionBankModal {
+    #quiz-modal, #questionBankModal, #teacherAuthModal {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(15, 23, 42, 0.75);
@@ -655,8 +653,21 @@
   <div id="view-mode" class="container">
     <h1>HUNTER CYBER MISSION</h1>
     <p style="color: #64748b; font-size:14px; margin-bottom: 20px;">เกมตอบคำถามชิงความสูง (Word Master)</p>
-    <button class="btn" id="btn-mode-host" onclick="window.onHostClick ? window.onHostClick() : switchScreen('view-host')">👑 ผู้สอน (Host สร้างห้อง)</button>
+    <!-- ให้กดแล้วเปิดหน้าต่างยืนยันรหัสผ่านผู้สอนก่อน -->
+    <button class="btn" id="btn-mode-host" onclick="openTeacherAuthModal()">👑 ผู้สอน (Host สร้างห้อง)</button>
     <button class="btn" id="btn-mode-join" style="background:#475569;" onclick="switchScreen('view-join')">🎮 ผู้เรียน (Join เข้าเล่น)</button>
+  </div>
+
+  <!-- Modal ตรวจสอบรหัสผ่านผู้สอน -->
+  <div id="teacherAuthModal" class="hidden">
+    <div class="quiz-card" style="max-width: 360px;">
+      <h3 style="color:#e01e37; margin:0 0 8px 0; font-size:18px;">🔐 ยืนยันสิทธิ์ผู้สอน</h3>
+      <p style="font-size:13px; color:#64748b; margin: 0 0 12px 0;">กรุณาใส่รหัสผ่านสำหรับคุณครูผู้สร้างห้อง</p>
+      <input type="password" id="teacher-pass-input" placeholder="ใส่รหัสผ่าน (PIN)" maxlength="10" style="font-size: 20px; letter-spacing: 4px;">
+      <p style="font-size: 11px; color: #94a3b8; margin: -4px 0 12px 0;">💡 คำใบ้รหัสผ่าน: <b style="color:#e01e37;">1234</b></p>
+      <button class="btn" onclick="verifyTeacherPassword()" style="margin: 4px 0;">เข้าสู่ระบบโฮสต์</button>
+      <button class="btn" style="background:#64748b; margin-top:4px; padding:10px;" onclick="closeTeacherAuthModal()">ยกเลิก</button>
+    </div>
   </div>
 
   <!-- 2. โฮสต์สร้างห้อง -->
@@ -717,7 +728,6 @@
         <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); padding: 5px 14px; border-radius: 14px; font-family: monospace; font-size: 18px; color: #fde047; font-weight: 900;">
           ⏱️ <span id="host-timer-text">03:00</span>
         </div>
-        <!-- ปุ่ม Excel หรูหรา สวยสะดุดตา -->
         <button onclick="exportDataCSV()" class="btn-excel-luxury">
           <span>📥</span> ส่งออก Excel (.csv)
         </button>
@@ -756,7 +766,7 @@
     </div>
   </div>
 
-  <!-- 4. Modal คลังข้อสอบ (รองรับทั้งเพิ่มข้อใหม่ และแก้ไขข้อสอบเดิม) -->
+  <!-- 4. Modal คลังข้อสอบ -->
   <div id="questionBankModal" class="hidden">
     <div class="qb-modal-card">
       <div class="qb-header">
@@ -914,6 +924,30 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+
+    // รหัสผ่านยืนยันสิทธิ์ของคุณครู
+    const TEACHER_PASS = "1234";
+
+    window.openTeacherAuthModal = function() {
+      document.getElementById('teacher-pass-input').value = "";
+      document.getElementById('teacherAuthModal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('teacher-pass-input').focus(), 150);
+    };
+
+    window.closeTeacherAuthModal = function() {
+      document.getElementById('teacherAuthModal').classList.add('hidden');
+    };
+
+    window.verifyTeacherPassword = function() {
+      const input = document.getElementById('teacher-pass-input').value.trim();
+      if (input === TEACHER_PASS) {
+        closeTeacherAuthModal();
+        if (window.onHostClick) window.onHostClick();
+      } else {
+        alert('❌ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
+        document.getElementById('teacher-pass-input').value = "";
+      }
+    };
 
     const SWEET_PALETTES = [
       { main: '#ff758f', dark: '#e01e37', blush: '#ff4d6d' },
@@ -1082,7 +1116,7 @@
         tabAdd.classList.add('active');
         tabView.classList.remove('active');
         panelAdd.classList.remove('hidden');
-        panelView.classList.add('hidden');
+        panelAdd.classList.add('hidden');
       }
     }
 
@@ -1162,7 +1196,6 @@
       }
 
       if (editIdStr) {
-        // แก้ไขข้อสอบเดิม
         const editId = parseInt(editIdStr);
         const qIdx = quizData.findIndex(q => q.id === editId);
         if (qIdx !== -1) {
@@ -1172,7 +1205,6 @@
           showToast('💾 แก้ไขข้อสอบสำเร็จ!');
         }
       } else {
-        // เพิ่มข้อสอบใหม่
         const newId = quizData.length > 0 ? Math.max(...quizData.map(q => q.id)) + 1 : 1;
         quizData.push({
           id: newId,
@@ -1338,7 +1370,7 @@
           set(pRef, {
             name: playerName,
             height: 0,
-            x: 200,
+            x: window.innerWidth / 2 - 17,
             y: 400,
             facing: 'right',
             styleIndex: myStyleIndex,
@@ -1926,14 +1958,17 @@
       let cameraY = 0;
       let lastNetworkSync = 0;
 
+      // ปรับปรุงการวางแท่นกระโดดให้อยู่กึ่งกลางเสมอ (Center Alignment ในทุกหน้าจอ)
+      const WORLD_WIDTH = Math.min(480, canvas.width);
+      const startX = (canvas.width - WORLD_WIDTH) / 2;
+
       const platforms = [
-        { x: -100, y: canvas.height - 60, w: 2500, h: 100, type: 'cake' }
+        { x: -500, y: canvas.height - 60, w: 3500, h: 100, type: 'cake' }
       ];
       const boosters = [];
       const traps = [];
 
       let lastY = canvas.height - 110;
-      const screenW = Math.max(360, canvas.width);
       const platTypes = ['waffle', 'jelly', 'cake', 'choco', 'ice'];
       const TOTAL_PLATFORMS = 380;
 
@@ -1971,14 +2006,16 @@
         const moveChance = i < 30 ? 0.2 : (i < 100 ? 0.45 : 0.65);
         if (i > 4 && norm1 < moveChance && !isDisappearing) {
           isMoving = true;
-          moveAmplitude = (i < 80 ? 45 : 70) + norm2 * 30;
+          moveAmplitude = (i < 80 ? 40 : 60) + norm2 * 25;
           movePeriod = (i < 80 ? 2400 : 1800) + norm1 * 600;
         }
 
-        const xSpan = screenW - w - 40;
-        const x = (i % 2 === 0) 
+        const xSpan = WORLD_WIDTH - w - 40;
+        const relX = (i % 2 === 0) 
           ? (norm2 * (xSpan * 0.45) + 20) 
-          : (screenW - w - 20 - norm2 * (xSpan * 0.45));
+          : (WORLD_WIDTH - w - 20 - norm2 * (xSpan * 0.45));
+        
+        const x = startX + relX;
         baseStartX = x;
 
         platforms.push({ 
